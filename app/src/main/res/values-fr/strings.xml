@@ -26,7 +26,7 @@
     <string name="pe_ui_theme_dark">Noir</string>
     <string name="pe_ui_theme_from_device">Suivre le thème de l’appareil</string>
     <string name="pe_ui_theme_light">Clair</string>
-    <string name="pref_not_set">Non défini</string>
+    <string name="pref_not_set">Non définie</string>
     <string name="ps_foreground_off">Le service ne s’exécutera que lorsque cette application sera au premier plan.</string>
     <string name="ps_foreground_on">Le service continuera à fonctionner même si l’application est en arrière-plan. Une notification permanente et discrète sera affichée.</string>
     <string name="ps_single_use_password_info">Autoriser les connexions à l’aide d’un mot de passe à usage unique, qui sera affiché dans le journal à l’écran lors d’une tentative de connexion.</string>

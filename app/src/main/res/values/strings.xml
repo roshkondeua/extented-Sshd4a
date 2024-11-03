@@ -86,6 +86,7 @@
     <!-- Preference value for "pt_ui_theme" -->
     <string name="pe_ui_theme_light">Light</string>
 
+    <!-- [VERIFIED] -->
     <string name="pref_not_set">Not set</string>
 
     <!-- Preference option -->
