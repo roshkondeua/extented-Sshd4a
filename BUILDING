@@ -1,23 +1,39 @@
 BUILD INSTRUCTIONS:
 - Android SDK and NDK
-- 7Zip command line '7z'
+- bash shell
+- 7Zip command line tool '7z'
 - wget
+- awk
 
 # ############################################################################
-# Typically in ~/.bashrc
+# Environment as typically set in ~/.bashrc
 # ############################################################################
 
 export JAVA_HOME=/cygdrive/c/d/jdk/
 export PATH=${JAVA_HOME}/bin:${PATH}
 
+# Android SDK location
 SDK=/cygdrive/c/d/sdk
+
+# Android NDK location/version; upgrade as needed/wanted
 NDK=${SDK}/ndk/27.2.12479018
+
+# Android minSdkVersion. The minimal version is 26, upgrade as needed/wanted
+export ANDROID_MIN_SDK=26
+
+# Only choose ONE of these, depending on your device...
+# the first, "aarch64", is most likely the one you want.
+export ANDROID_TARGET=aarch64-linux-android
+# export ANDROID_TARGET=armv7a-linux-androideabi
+# export ANDROID_TARGET=i686-linux-android
+# export ANDROID_TARGET=x86_64-linux-android
+
 
 export TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/windows-x86_64
 export PATH=${SDK}/platform-tools:${TOOLCHAIN}/bin:${PATH}
 
 # ############################################################################
-# Step 1 - Setting up the toolchain
+# Define the versions for the external project code
 #
 # https://download.samba.org/pub/rsync/src/rsync-3.3.0.tar.gz
 # https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/openssh-9.9p1.tar.gz
@@ -28,50 +44,33 @@ export RSYNC_VERSION="rsync-3.3.0"
 export OPENSSH_VERSION="openssh-9.9p1"
 export DROPBEAR_VERSION="dropbear-2024.86"
 
-# From the root dir with the tarballs
+# ############################################################################
+# Setting up the toolchain
+# ############################################################################
+
+# The working directory where the tarballs will be downloaded and git remotes will be setup.
+# Defaults to current directory. Either make sure you are where you want to be,
+# or modify the next line with an absolute path.
+
 export SRC_ROOT=`pwd`
 
+# Sanity checks for the .bashrc settings.
 # TOOLCHAIN is expected to point to your ndk environment toolchain.
 [ -n "${TOOLCHAIN}" ] || { echo "TOOLCHAIN must be set"; exit 1; }
 
 if [ ! -d "$NDK" ]; then
   echo "$NDK does not exist."
-  return
+  exit 1
 fi
 
-
-# Set this to your minSdkVersion.
-export API=26
-
-echo "Only choose one of these, depending on your device..."
-echo "1) aarch64-linux-android ... which is most likely this one"
-echo "2) armv7a-linux-androideabi"
-echo "3) i686-linux-android"
-echo "4) x86_64-linux-android"
-echo -n "Select target: "
-read REPLY
-case $REPLY in
-    "1")
-        export TARGET=aarch64-linux-android
-        ;;
-    "2")
-        export TARGET=armv7a-linux-androideabi
-        ;;
-    "3")
-        export TARGET=i686-linux-android
-        ;;
-    "4")
-        export TARGET=x86_64-linux-android
-        ;;
-esac
-
-echo "TARGET=${TARGET}"
-echo "API=${API}"
+# info dump as reminder...
+echo "ANDROID_TARGET=${ANDROID_TARGET}"
+echo "ANDROID_MIN_SDK=${ANDROID_MIN_SDK}"
 
 export AR=${TOOLCHAIN}/bin/llvm-ar
-export CC=${TOOLCHAIN}/bin/${TARGET}${API}-clang
+export CC=${TOOLCHAIN}/bin/${ANDROID_TARGET}${ANDROID_MIN_SDK}-clang
 export AS=${CC}
-export CXX=${TOOLCHAIN}/bin/${TARGET}${API}-clang++
+export CXX=${TOOLCHAIN}/bin/${ANDROID_TARGET}${ANDROID_MIN_SDK}-clang++
 export LD=${TOOLCHAIN}/bin/ld
 export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
 export STRIP=${TOOLCHAIN}/bin/llvm-strip
@@ -105,7 +104,8 @@ cd ${SRC_ROOT}
 
 # Configure rsync
 cd ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/rsync
-./configure --host $TARGET --disable-openssl --disable-xxhash --disable-zstd --disable-lz4 \
+./configure --host ${ANDROID_TARGET} --disable-openssl --disable-xxhash --disable-zstd \
+            --disable-lz4 \
             --disable-md2man --disable-roll-simd --disable-md5-asm --disable-roll-asm \
             --enable-largefile
 cd ${SRC_ROOT}
@@ -148,7 +148,7 @@ cd ${SRC_ROOT}
 cd ${SRC_ROOT}/${OPENSSH}/app/src/main/cpp/openssh
 # autoreconf is normally in /usr/bin
 autoreconf
-./configure --host $TARGET --disable-lastlog --disable-utmp --disable-wtmp \
+./configure --host ${ANDROID_TARGET} --disable-lastlog --disable-utmp --disable-wtmp \
             --enable-largefile --without-openssl
 cd ${SRC_ROOT}
 
@@ -189,7 +189,7 @@ cd ${SRC_ROOT}
 
 # Configure dropbear
 cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp/dropbear
-./configure --host $TARGET --disable-syslog --disable-lastlog \
+./configure --host ${ANDROID_TARGET} --disable-syslog --disable-lastlog \
             --disable-utmp --disable-wtmp \
             --enable-bundled-libtom --enable-largefile
 cd ${SRC_ROOT}
@@ -207,60 +207,3 @@ cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp
 ./prebuild-dropbear.sh
 
 #    Commit and build...
-
-# ############################################################################
-config.h changes - should not be needed to reapply these after a code drop
-as the config.h should be untouched.
-
-------------------------------------------------------------------------------
-# ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/rsync/config.h
-------------------------------------------------------------------------------
-- armv7: extra "#define _FILE_OFFSET_BITS 64"
-  which can be added to the 64 bit versions without any issue. Done.
-- armv7 versus 64 using  #if defined(__aarch64__) || defined(__x86_64__ ) ...
-  #define HAVE_LONG_DOUBLE 1        <==> absent
-  #define HAVE_LONG_DOUBLE_WIDER 1  <==> absent
-  #define SIZEOF_CHARP  8           <==> 4
-  #define SIZEOF_LONG   8           <==> 4
-  #define SIZEOF_TIME_T 8           <==> 4
-
-------------------------------------------------------------------------------
-# ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/dropbear/config.h
-------------------------------------------------------------------------------
-- aarch64 and x86_64 were identical
-- armv7: extra "#define _FILE_OFFSET_BITS 64"
-  which can be added to the 64 bit versions without any issue. Done.
-
-------------------------------------------------------------------------------
-# ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/openssh/config.h
-------------------------------------------------------------------------------
-- aarch64 and x86_64 were identical
-- armv7: extra "#define _FILE_OFFSET_BITS 64"
-  which can be added to the 64 bit versions without any issue. Done.
-- armv7 versus 64 using  #if defined(__aarch64__) || defined(__x86_64__ ) ...
-  #define SIZEOF_LONG_INT 8  <=>  4
-  #define SIZEOF_TIME_T   8  <=>  4
-- added manually:
-  // configure presumes openbsd only, but android needs it.
-  #define HAVE_ATTRIBUTE__SENTINEL__ 1
-  // configure fails to find it due to android using an "#include_next"
-  #define HAVE_MALLOC 1
-  // see "openbsd-compat/explicit_bzero.c" workaround
-  #define HAVE_BZERO 1
-
-# ############################################################################
-
-Setup signing:
-
-    Edit your "~/.gradle/gradle.properties" and add a line:
-
-        Sshd4a.properties=/path/to/Sshd4a.properties
-
-    Edit/create the file "/path/to/Sshd4a.properties":
-
-        sign.storeFile=/path/to/myKeystore.jks
-        sign.storePassword=myPass
-        sign.keyAlias=myAlias
-        sign.keyPassword=myPass
-
-# ############################################################################

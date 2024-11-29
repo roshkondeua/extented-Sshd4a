@@ -1,0 +1,12 @@
+Setup signing:
+
+    Edit your private/local "~/.gradle/gradle.properties" and add a line:
+
+        Sshd4a.properties=/path/to/Sshd4a.properties
+
+    Edit/create the file "/path/to/Sshd4a.properties":
+
+        sign.storeFile=/path/to/myKeystore.jks
+        sign.storePassword=myPass
+        sign.keyAlias=myAlias
+        sign.keyPassword=myPass
