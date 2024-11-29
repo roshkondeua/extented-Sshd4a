@@ -156,13 +156,13 @@ cd ${SRC_ROOT}
 git remote add upstream-openssh ${SRC_ROOT}/${OPENSSH}
 git fetch upstream-openssh
 git merge --allow-unrelated-histories upstream-openssh/dev
-
-#    All changes are (should be) marked with SSHD4A_*
+#    Merge and solve conflicts as usual.
+#    Typically just "Accept theirs" for all files
+     EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
 #
 #    2024-11-29: the only file modified:
 #      cpp/openssh/openbsd-compat/explicit_bzero.c
 #
-#    Merge and solve conflicts as usual.
 #    Commit and build...
 
 # ############################################################################
