@@ -22,6 +22,9 @@ The latest release contains:
 - rsync 3.3.0
 - sftp-server from OpenSSH 9.8p1
 
+To be explicitly clear: there is no rsync daemon included.
+The **services** are all provided via the dropbear port (default 2222).  
+
 ## User interface:
 Available in Chinese, English, French and German.
 
