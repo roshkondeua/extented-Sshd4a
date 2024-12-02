@@ -155,12 +155,14 @@ cd ${SRC_ROOT}
 # Add remote: "upstream-openssh" pointing to the location used above
 git remote add upstream-openssh ${SRC_ROOT}/${OPENSSH}
 git fetch upstream-openssh
+
 git merge --allow-unrelated-histories upstream-openssh/dev
+
 #    Merge and solve conflicts as usual.
 #    Typically just "Accept theirs" for all files
-     EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
+#    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
 #
-#    2024-11-29: the only file modified:
+#    2024-11-29: files modified:
 #      cpp/openssh/openbsd-compat/explicit_bzero.c
 #
 #    Commit and build...
@@ -200,7 +202,24 @@ git fetch upstream-dropbear
 
 git merge --allow-unrelated-histories upstream-dropbear/dev
 
-#    All changes are (should be) marked with SSHD4A_*
+#    Merge and solve conflicts as usual.
+#    Typically just "Accept theirs" for all files
+#    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
+#
+#    2024-11-29: files modified:
+#      cpp/dropbear/src/
+#         common-session.c
+#         dbrandom.c
+#         dbutil.c
+#         localoptions.h
+#         scp.c
+#         signkey.c
+#         svr-auth.c
+#         svr-authpasswd.c
+#         svr-authpubkey.c
+#         svr-chansession.c
+#         svr-main.c
+#
 #    Merge and solve conflicts as usual.
 
 cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp
