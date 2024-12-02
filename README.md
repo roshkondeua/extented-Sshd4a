@@ -22,8 +22,20 @@ The latest release contains:
 - rsync 3.3.0
 - sftp-server from OpenSSH 9.8p1
 
-To be explicitly clear: there is no rsync daemon included.
-The **services** are all provided via the dropbear port (default 2222).  
+## Rsync support:
+
+For those who are unclear about how rsync works, a brief and very simple description
+can be found on [wikipedia](https://en.wikipedia.org/wiki/Rsync):
+
+    rsync will use SSH to connect as user to remote-host.[14] Once connected,
+    it will invoke the remote host's rsync and then the two programs will
+    determine what parts of the local file need to be transferred so that
+    the remote file matches the local one.
+
+
+More details can be found on [how-rsync-works](https://rsync.samba.org/how-rsync-works.html)
+
+To be **explicitly** clear: there is **no rsync daemon** included! 
 
 ## User interface:
 Available in Chinese, English, French and German.
