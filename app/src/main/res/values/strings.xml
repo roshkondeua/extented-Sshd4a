@@ -16,7 +16,7 @@
     <string name="err_key_import">Something went wrong while importing your keys.</string>
     <string name="err_no_version">Unknown</string>
     <string name="err_no_ip">No network interfaces found?</string>
-    <string name="err_port_number">The port must be between 1024 and 32768</string>
+    <string name="err_port_number">The port must be between 1024 and 32768.</string>
     <string name="err_failed_to_save">Failed to save the password</string>
 
     <!-- Dialog title. -->
@@ -62,7 +62,7 @@
     <!-- Preference category title -->
     <string name="pc_dropbear" translatable="false">Dropbear SSH</string>
     <!-- Preference option -->
-    <string name="pt_port">Port Number (1024 &lt; port &lt; 32768).</string>
+    <string name="pt_port">Port Number (1024 &lt; port &lt; 32768)</string>
     <!-- Preference option -->
     <string name="pt_cmdline_options">Extra Commandline options</string>
     <!-- Preference option -->
