@@ -31,7 +31,7 @@
     <string name="ps_foreground_on">Le service continuera à fonctionner même si l’application est en arrière-plan. Une notification permanente et discrète sera affichée.</string>
     <string name="ps_single_use_password_info">Autoriser les connexions à l’aide d’un mot de passe à usage unique, qui sera affiché dans le journal à l’écran lors d’une tentative de connexion.</string>
     <string name="pt_cmdline_options">Options supplémentaires de la ligne de commande</string>
-    <string name="pt_env">Variables d’environnement. (Un « nom=valeur » par ligne)</string>
+    <string name="pt_env">Variables d’environnement.\n(Un « nom=valeur » par ligne)</string>
     <string name="pt_foreground">Service d’avant-plan</string>
     <string name="pt_home">Répertoire d’accueil</string>
     <string name="pt_authorized_password">Mot de passe maître</string>

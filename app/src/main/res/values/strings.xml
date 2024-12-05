@@ -62,7 +62,7 @@
     <!-- Preference category title -->
     <string name="pc_dropbear" translatable="false">Dropbear SSH</string>
     <!-- Preference option -->
-    <string name="pt_port">Port Number (1024 &lt; port &lt; 32768)</string>
+    <string name="pt_port">Port Number (1024 &lt; port &lt; 32768).</string>
     <!-- Preference option -->
     <string name="pt_cmdline_options">Extra Commandline options</string>
     <!-- Preference option -->
