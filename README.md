@@ -53,6 +53,7 @@ Translations are editable on [Weblate](https://hosted.weblate.org/engage/sshd4a/
 <img src="https://hosted.weblate.org/widget/sshd4a/multi-auto.svg"
      alt="Translation status" />
 </a>
+
 ## Device support:
 
 - Requires minimal Android 11 (API 30)
