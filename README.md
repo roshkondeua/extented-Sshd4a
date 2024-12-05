@@ -37,9 +37,22 @@ More details can be found on [how-rsync-works](https://rsync.samba.org/how-rsync
 
 To be **explicitly** clear: there is **no rsync daemon** included! 
 
-## User interface:
+## User Interface languages:
+
 Available in Chinese, English, French and German.
 
+Translations are editable on [Weblate](https://hosted.weblate.org/engage/sshd4a/)
+
+- Pull-requests with translations are also welcome.
+- Contact me by logging an [issue](https://github.com/tfonteyn/Sshd4a/issues) if you want
+  to provide translations in another way.
+- Please log a GitHub [issue](https://github.com/tfonteyn/Sshd4a/issues)
+  if you want to be credited by name (instead of github alias) with your help.
+
+<a href="https://hosted.weblate.org/engage/sshd4a/">
+<img src="https://hosted.weblate.org/widget/sshd4a/multi-auto.svg"
+     alt="Translation status" />
+</a>
 ## Device support:
 
 - Requires minimal Android 11 (API 30)
