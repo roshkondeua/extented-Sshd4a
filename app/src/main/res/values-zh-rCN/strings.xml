@@ -24,7 +24,7 @@
     <string name="err_service_failed_to_start">服务无法启动。请重试并检查日志。</string>
     <string name="err_key_import">导入密钥时出现问题。</string>
     <string name="err_no_ip">啊咧，找不到网络接口？</string>
-    <string name="err_port_number">端口必须在 1024 ~ 32768 之间</string>
+    <string name="err_port_number">端口必须在 1024 ~ 32768 之间。</string>
     <string name="err_failed_to_save">无法保存密码</string>
     <string name="warning_no_auth_methods">您已禁用所有身份验证方式。你确定要这么做吗?</string>
     <string name="lbl_interface">网络接口：</string>
