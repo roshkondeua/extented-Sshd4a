@@ -68,6 +68,8 @@ android {
 
         signingConfig(signingConfigs.release)
 
+        resourceConfigurations +=  ["de", "en", "fr", "zh_CN"]
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("int", "NR_OF_LOG_LINES", "50")
