@@ -35,7 +35,7 @@ can be found on [wikipedia](https://en.wikipedia.org/wiki/Rsync):
 
 More details can be found on [how-rsync-works](https://rsync.samba.org/how-rsync-works.html)
 
-To be **explicitly** clear: there is **no rsync daemon** included! 
+To be **explicitly** clear: there is **no rsync daemon** started! 
 
 ## User Interface languages:
 
