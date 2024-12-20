@@ -48,6 +48,9 @@ export DROPBEAR_VERSION="dropbear-2024.86"
 # Setting up the toolchain
 # ############################################################################
 
+# The root directory of th Ssh4d project (i.e. where the projects .git is)
+export PROJECT_ROOT=/cygdrive/c/Data/AndroidStudioProjects/Sshd4a/
+
 # The working directory where the tarballs will be downloaded and git remotes will be setup.
 # Defaults to current directory. Either make sure you are where you want to be,
 # or modify the next line with an absolute path.
@@ -108,8 +111,8 @@ cd ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/rsync
             --disable-lz4 \
             --disable-md2man --disable-roll-simd --disable-md5-asm --disable-roll-asm \
             --enable-largefile
-cd ${SRC_ROOT}
 
+cd ${PROJECT_ROOT}
 # Add remote: "upstream-rsync" pointing to the location used above
 git remote add upstream-rsync ${SRC_ROOT}/${RSYNC}
 git fetch upstream-rsync
@@ -118,7 +121,7 @@ git merge --allow-unrelated-histories upstream-rsync/dev
 #    All changes are (should be) marked with SSHD4A_*
 #    Merge and solve conflicts as usual.
 
-cd ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/
+cd ${PROJECT_ROOT}/app/src/main/cpp/
 ./prebuild-rsyn.sh
 
 #    Commit and build...
@@ -150,8 +153,9 @@ cd ${SRC_ROOT}/${OPENSSH}/app/src/main/cpp/openssh
 autoreconf
 ./configure --host ${ANDROID_TARGET} --disable-lastlog --disable-utmp --disable-wtmp \
             --enable-largefile --without-openssl
-cd ${SRC_ROOT}
 
+
+cd ${PROJECT_ROOT}
 # Add remote: "upstream-openssh" pointing to the location used above
 git remote add upstream-openssh ${SRC_ROOT}/${OPENSSH}
 git fetch upstream-openssh
@@ -194,8 +198,9 @@ cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp/dropbear
 ./configure --host ${ANDROID_TARGET} --disable-syslog --disable-lastlog \
             --disable-utmp --disable-wtmp \
             --enable-bundled-libtom --enable-largefile
-cd ${SRC_ROOT}
 
+
+cd ${PROJECT_ROOT}
 # Add remote: "upstream-dropbear" pointing to the location used above
 git remote add upstream-dropbear ${SRC_ROOT}/${DROPBEAR}
 git fetch upstream-dropbear
@@ -222,7 +227,7 @@ git merge --allow-unrelated-histories upstream-dropbear/dev
 #
 #    Merge and solve conflicts as usual.
 
-cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp
+cd ${PROJECT_ROOT}/app/src/main/cpp
 ./prebuild-dropbear.sh
 
 #    Commit and build...
