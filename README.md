@@ -2,9 +2,9 @@ Provides an 'sshd' server with shell access, rsync and scp/sftp services.
 
 Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a/wiki)
 
-### Download the latest release: 1.3.1
+### Download the latest release: 1.4.0
 
-<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.3.1/Sshd4a-1.3.1.apk">
+<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.4.0/Sshd4a-1.4.0.apk">
 <img src="metadata/en-US/images/get-it-on-github.png" alt="Get it on GitHub" style="width:150px;"/></a>
 
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.hardbacknutter.sshd/">
@@ -18,9 +18,9 @@ Services are provided by:
 - https://github.com/openssh/openssh-portable
 
 The latest release contains:
-- Dropbear 2024.85
+- Dropbear 2024.86
 - rsync 3.3.0
-- sftp-server from OpenSSH 9.8p1
+- sftp-server from OpenSSH 9.9p1
 
 ## Rsync support:
 
@@ -57,7 +57,7 @@ Translations are editable on [Weblate](https://hosted.weblate.org/engage/sshd4a/
 ## Device support:
 
 - Requires minimal Android 11 (API 30)
-- Supported/tested up to Android 14 (API 34).
+- Supported/tested up to Android 15 (API 35).
 
 ## Android Permissions:
 
