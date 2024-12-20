@@ -3,6 +3,7 @@
 .cxx
 .externalNativeBuild
 .gradle
+/.idea/AndroidProjectSystem.xml
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/assetWizardSettings.xml
 /.idea/caches
