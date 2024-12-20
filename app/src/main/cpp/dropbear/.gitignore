@@ -22,8 +22,7 @@
 /scp-progress
 config.h
 default_options_guard.h
-# SSHD4A_REQUIRED_CHANGE: we should add the localoptions to git. They are essential for building.
-# localoptions.h
+localoptions.h
 Makefile
 tags
 .pytest*
