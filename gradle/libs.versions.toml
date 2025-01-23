@@ -5,7 +5,7 @@ androidKotlinPlugin = "2.1.0"
 
 # https://developer.android.com/jetpack/androidx/versions
 
-androidxActivity = '1.9.3'
+androidxActivity = "1.10.0"
 androidxAppcompat = '1.7.0'
 androidxConstraintlayout = '2.2.0'
 androidxCore = '1.15.0'
