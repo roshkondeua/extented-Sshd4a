@@ -1,0 +1,7 @@
+Updated services:
+  Dropbear 2024.86
+  sftp-server from OpenSSH 9.9p1
+Support for Android 15
+full-screen support for older Android versions.
+
+Potential fix for issue #8 : the missing text for the dialog buttons should now be visible even on OEM devices with missing text resources.

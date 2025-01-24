@@ -22,12 +22,12 @@ Repo: https://github.com/tfonteyn/Sshd4a.git
 Binaries: https://github.com/tfonteyn/Sshd4a/releases/download/v%v/Sshd4a-%v.apk
 
 Builds:
-  - versionName: '1.2.0'
-    versionCode: 5
-    commit: v1.2.0
+  - versionName: '1.4.1'
+    versionCode: 9
+    commit: v1.4.1
     subdir: app
     gradle: [ 'release' ]
-    output: Sshd4a-release-v1.2.0.apk
+    output: Sshd4a-release-v1.4.1.apk
 
 
 # MaintainerNotes: |-
@@ -39,5 +39,5 @@ Builds:
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 AllowedAPKSigningKeys: df971ce7d58d3cdf377c32e0e2f53d6599bd7f130a50c0529c45583ddc12a008
-CurrentVersion: '1.2.0'
-CurrentVersionCode: 5
+CurrentVersion: '1.4.1'
+CurrentVersionCode: 9
