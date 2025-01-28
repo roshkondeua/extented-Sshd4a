@@ -22,6 +22,6 @@ ext {
 
     // https://developer.android.com/studio/projects/configure-agp-ndk
     ndk = "27.2.12479018"
-    cmakeVersion = "3.31.0"
-
+    // don't forget to update CMakeLists.txt cmake_minimum_required
+    cmakeVersion = "3.31.4"
 }
