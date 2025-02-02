@@ -12,6 +12,9 @@
     <string name="about_versions">Services provided by:\n\nDropbear %1$s\nRsync %2$s\nSftp-server from %3$s</string>
     <string name="info_listening_on_ip_port">Sshd4a is listening on %1$s:%2$s</string>
 
+    <string name="err_device_maybe_not_supported">Your device is either unsupported or you might need to set the permissions manually. Tap OK to go to the project help pages.</string>
+    <string name="err_unexpected_error">There was an unexpected error. You may wish to report this to the project developer.</string>
+
     <string name="err_service_failed_to_start">The service failed to start. Try again and check the log.</string>
     <string name="err_key_import">Something went wrong while importing your keys.</string>
     <string name="err_no_version">Unknown</string>

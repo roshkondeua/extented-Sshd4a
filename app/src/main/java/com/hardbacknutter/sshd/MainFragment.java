@@ -1,11 +1,13 @@
 package com.hardbacknutter.sshd;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
@@ -27,6 +29,7 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
@@ -109,34 +112,12 @@ public class MainFragment
 
         // This is quite essential, without this permission the user cannot really use rsync/sftp
         if (!Environment.isExternalStorageManager()) {
-            //noinspection ConstantConditions
-            new MaterialAlertDialogBuilder(getContext())
-                    .setIcon(R.drawable.security_24px)
-                    .setTitle(R.string.dialog_alert_title)
-                    .setMessage(R.string.msg_request_files_management)
-                    .setCancelable(false)
-                    .setNegativeButton(R.string.cancel, (d, which) -> d.dismiss())
-                    .setPositiveButton(R.string.ok, (d, which) -> {
-                        // TODO: the dialog does not dismiss first time??
-                        d.dismiss();
-                        startActivity(new Intent(
-                                Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION));
-                    })
-                    .create()
-                    .show();
+            requestFileAccessPermission();
         }
 
         // This is optional and only needed from Android 13 up
-        if (Build.VERSION.SDK_INT >= 33) {
-            //noinspection ConstantConditions
-            if (ContextCompat.checkSelfPermission(
-                    getContext(), Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-                if (isAskPermission()) {
-                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-                }
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermission();
         }
 
         //noinspection ConstantConditions
@@ -154,6 +135,93 @@ public class MainFragment
         } else if (isRunning) {
             vm.startUpdateThread(getContext());
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private void requestNotificationPermission() {
+        //noinspection ConstantConditions
+        if (ContextCompat.checkSelfPermission(
+                getContext(), Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            if (isAskPermission()) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private void requestFileAccessPermission() {
+        // github #12: ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION not available
+        // on Android TV. Tested in tv-emulator 11,12,13,14(google)
+        //noinspection DataFlowIssue
+        final List<ResolveInfo> resInfoList =
+                getContext().getPackageManager().queryIntentActivities(
+                        new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION),
+                        PackageManager.MATCH_ALL);
+
+        if (resInfoList.isEmpty()) {
+            potentiallyUnsupportedDevice();
+            return;
+        }
+
+        //noinspection ConstantConditions
+        new MaterialAlertDialogBuilder(getContext())
+                .setIcon(R.drawable.security_24px)
+                .setTitle(R.string.dialog_alert_title)
+                .setMessage(R.string.msg_request_files_management)
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel, (d, which) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d, which) -> {
+                    // TODO: the dialog does not dismiss first time??
+                    d.dismiss();
+                    try {
+                        startActivity(
+                                new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION));
+                    } catch (@NonNull final ActivityNotFoundException e) {
+                        unsupportedDevice();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    /**
+     * The intent to start {@link Settings#ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION} failed.
+     * The user is likely on an Android-TV or Android-Wear device.
+     * <p>
+     * It <strong>might</strong> be possible to manually grant permissions. Take them to
+     * the project help pages.
+     */
+    private void potentiallyUnsupportedDevice() {
+        //noinspection DataFlowIssue
+        new MaterialAlertDialogBuilder(getContext())
+                .setIcon(R.drawable.warning_24px)
+                .setMessage(R.string.err_device_maybe_not_supported)
+                .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d1, w) -> {
+                    d1.dismiss();
+                    gotoProjectHelp();
+                })
+                .create()
+                .show();
+    }
+
+    /**
+     * Fatal. The device claimed to support
+     * {@link Settings#ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION} but failed.
+     */
+    private void unsupportedDevice() {
+        //noinspection DataFlowIssue
+        new MaterialAlertDialogBuilder(getContext())
+                .setIcon(R.drawable.error_24px)
+                .setMessage(R.string.err_unexpected_error)
+                .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d1, w) -> {
+                    d1.dismiss();
+                    gotoProjectIssues();
+                })
+                .create()
+                .show();
     }
 
     @Override
@@ -220,6 +288,20 @@ public class MainFragment
                 .apply();
     }
 
+    private void showResetKeys() {
+        final Context context = getContext();
+        //noinspection ConstantConditions
+        new MaterialAlertDialogBuilder(context)
+                .setIcon(R.drawable.warning_24px)
+                .setTitle(R.string.lbl_reset_keys)
+                .setMessage(R.string.confirm_reset_keys)
+                .setCancelable(true)
+                .setNegativeButton(R.string.cancel, (d, which) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d, which) -> vm.deleteAuthKeys(context))
+                .create()
+                .show();
+    }
+
     private void showAbout() {
         final Context context = getContext();
         String version;
@@ -243,26 +325,25 @@ public class MainFragment
                 .setTitle(getString(R.string.about_title, version))
                 .setView(dvb.getRoot())
                 .setCancelable(true)
-                .setNeutralButton(R.string.lbl_github_project, (d, which) -> startActivity(
-                        new Intent(Intent.ACTION_VIEW,
-                                   Uri.parse(getString(R.string.github_project_url)))))
+                .setNeutralButton(R.string.lbl_github_project, (d, which) -> gotoProject())
                 .setPositiveButton(R.string.ok, (d, which) -> d.dismiss())
                 .create()
                 .show();
     }
 
-    private void showResetKeys() {
-        final Context context = getContext();
-        //noinspection ConstantConditions
-        new MaterialAlertDialogBuilder(context)
-                .setIcon(R.drawable.warning_24px)
-                .setTitle(R.string.lbl_reset_keys)
-                .setMessage(R.string.confirm_reset_keys)
-                .setCancelable(true)
-                .setNegativeButton(R.string.cancel, (d, which) -> d.dismiss())
-                .setPositiveButton(R.string.ok, (d, which) -> vm.deleteAuthKeys(context))
-                .create()
-                .show();
+    private void gotoProjectHelp() {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                getString(R.string.github_project_docs))));
+    }
+
+    private void gotoProjectIssues() {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                getString(R.string.github_project_issues))));
+    }
+
+    private void gotoProject() {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                getString(R.string.github_project_url))));
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -341,9 +422,7 @@ public class MainFragment
                 showResetKeys();
                 return true;
             } else if (itemId == R.id.menu_help) {
-                //noinspection DataFlowIssue
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getContext().getString(
-                        R.string.github_project_docs))));
+                gotoProjectHelp();
                 return true;
             } else if (itemId == R.id.about) {
                 showAbout();
