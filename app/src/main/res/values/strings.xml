@@ -112,4 +112,6 @@
     <string name="cancel">Cancel</string>
     <!-- [VERIFIED] -->
     <string name="dialog_alert_title">Attention</string>
+    <!-- [VERIFIED] -->
+    <string name="action_help">Help</string>
 </resources>

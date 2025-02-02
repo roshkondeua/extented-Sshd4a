@@ -340,6 +340,11 @@ public class MainFragment
             } else if (itemId == R.id.menu_reset_keys) {
                 showResetKeys();
                 return true;
+            } else if (itemId == R.id.menu_help) {
+                //noinspection DataFlowIssue
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getContext().getString(
+                        R.string.github_project_docs))));
+                return true;
             } else if (itemId == R.id.about) {
                 showAbout();
                 return true;

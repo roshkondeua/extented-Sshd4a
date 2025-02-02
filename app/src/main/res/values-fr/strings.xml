@@ -51,4 +51,5 @@
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
     <string name="dialog_alert_title">Attention</string>
+    <string name="action_help">Aide</string>
 </resources>

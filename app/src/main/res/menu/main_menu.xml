@@ -18,6 +18,9 @@
         android:id="@+id/menu_reset_keys"
         android:title="@string/lbl_reset_keys" />
     <item
+        android:id="@+id/menu_help"
+        android:title="@string/action_help" />
+    <item
         android:id="@+id/about"
         android:title="@string/lbl_about" />
 </menu>
