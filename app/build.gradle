@@ -40,10 +40,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(props["sign.storeFile"])
-            storePassword props["sign.storePassword"]
-            keyAlias props["sign.keyAlias"]
-            keyPassword props["sign.keyPassword"]
+            storeFile = file(props["sign.storeFile"])
+            storePassword = props["sign.storePassword"]
+            keyAlias = props["sign.keyAlias"]
+            keyPassword = props["sign.keyPassword"]
         }
     }
 
@@ -65,7 +65,7 @@ android {
             }
         }
 
-        signingConfig(signingConfigs.release)
+        signingConfig = signingConfigs.release
 
         resourceConfigurations +=  ["de", "en", "fr", "zh_CN"]
 
