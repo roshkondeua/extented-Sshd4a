@@ -47,7 +47,7 @@
     <string name="pt_public_key_login">பொது விசை உள்நுழைவு</string>
     <string name="pt_public_key_login_info">பொது விசையைப் பயன்படுத்தி உள்நுழைவுகளை அனுமதிக்கவும்.</string>
     <string name="lbl_github_project">அறிவிலிமையம் திட்டம்</string>
-    <string name="about_title">SSD4A %ப</string>
+    <string name="about_title">Sshd4a %s</string>
     <string name="ok">சரி</string>
     <string name="cancel">ரத்துசெய்</string>
     <string name="dialog_alert_title">கவனம்</string>
