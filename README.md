@@ -2,6 +2,9 @@ Provides an 'sshd' server with shell access, rsync and scp/sftp services.
 
 Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a/wiki)
 
+Please do **NOT** request implementing some sort of root access. 
+Such requests **will be closed** immediately.
+
 ### Download the latest release: 1.4.1
 
 <a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.4.1/Sshd4a-1.4.1.apk">
