@@ -21,6 +21,12 @@ if (project.hasProperty("Sshd4a.properties")) {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(rootProject.ext.toolChain)
+    }
+}
+
 kotlin {
     jvmToolchain rootProject.ext.toolChain
 }

@@ -12,10 +12,11 @@ ext {
     applicationVersionCode = 10
     applicationVersionName = "1.4.2"
 
+    toolChain = 21
+
     // Android 11 as minimum... there are far to many issues/differences dealing
     // with storage permissions if we try for Android 10 or lower
     // See https://developer.android.com/training/data-storage
-    toolChain = 17
     minSdkVersion = 30
     targetSdkVersion = 35
     compileSdkVersion = 35
