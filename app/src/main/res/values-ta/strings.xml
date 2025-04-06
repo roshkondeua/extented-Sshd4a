@@ -51,4 +51,5 @@
     <string name="ok">சரி</string>
     <string name="cancel">ரத்துசெய்</string>
     <string name="dialog_alert_title">கவனம்</string>
+    <string name="action_help">உதவி</string>
 </resources>
