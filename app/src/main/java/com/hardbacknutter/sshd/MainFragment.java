@@ -1,6 +1,7 @@
 package com.hardbacknutter.sshd;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -150,14 +151,46 @@ public class MainFragment
         }
     }
 
+    /**
+     * github #12: Android/Google TV: in short Android TV 11 & 12 does not work.
+     * <p>
+     * queryIntentActivities:
+     * <pre>
+     * Google TV api 30 rev 4:
+     * Google TV api 31 rev 4:
+     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: []
+     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: []
+     * <p>
+     * Google TV api 33 rev 5:
+     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: []
+     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{36a3bcb com.android.tv.settings/.device.apps.specialaccess.AllFilesAccessActivity p=1 m=0x208000}]
+     * <p>
+     * Google TV api 34 rev 3:
+     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: []
+     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{eba3c42 com.android.tv.settings/.device.apps.specialaccess.AllFilesAccessActivity p=1 m=0x208000 userHandle=UserHandle{0}}]
+     * </pre>
+     *
+     * <pre>
+     * Nexus S Google APIs 30 rev 16
+     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: [ResolveInfo{7aa6966 com.android.settings/.Settings$ManageExternalStorageActivity p=1 m=0x108000}]
+     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{a9024a7 com.android.settings/.Settings$AppManageExternalStorageActivity p=1 m=0x208000}]
+     * <p>
+     * Pixel 8 Pro Google APIs 35 rev 9
+     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: [ResolveInfo{6589f7 com.android.settings/.Settings$ManageExternalStorageActivity p=1 m=0x108000 userHandle=UserHandle{0}}]
+     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{74f3064 com.android.settings/.Settings$AppManageExternalStorageActivity p=1 m=0x208000 userHandle=UserHandle{0}}]
+     * </pre>
+     */
     private void requestFileAccessPermission() {
-        // github #12: ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION not available
-        // on Android TV. Tested in tv-emulator 11,12,13,14(google)
-        //noinspection DataFlowIssue
-        final List<ResolveInfo> resInfoList =
-                getContext().getPackageManager().queryIntentActivities(
-                        new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION),
-                        PackageManager.MATCH_ALL);
+
+        final Context context = requireContext();
+
+        final Intent intent = new Intent(
+                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                Uri.fromParts("package", context.getPackageName(), null));
+
+        @SuppressLint("QueryPermissionsNeeded")
+        final List<ResolveInfo> resInfoList = context
+                .getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_ALL);
 
         if (resInfoList.isEmpty()) {
             potentiallyUnsupportedDevice();
@@ -165,7 +198,7 @@ public class MainFragment
         }
 
         //noinspection ConstantConditions
-        new MaterialAlertDialogBuilder(getContext())
+        new MaterialAlertDialogBuilder(context)
                 .setIcon(R.drawable.security_24px)
                 .setTitle(R.string.dialog_alert_title)
                 .setMessage(R.string.msg_request_files_management)
@@ -175,8 +208,7 @@ public class MainFragment
                     // TODO: the dialog does not dismiss first time??
                     d.dismiss();
                     try {
-                        startActivity(
-                                new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION));
+                        startActivity(intent);
                     } catch (@NonNull final ActivityNotFoundException e) {
                         unsupportedDevice();
                     }
@@ -186,11 +218,12 @@ public class MainFragment
     }
 
     /**
-     * The intent to start {@link Settings#ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION} failed.
-     * The user is likely on an Android-TV or Android-Wear device.
+     * The intent to start {@link Settings#ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION} failed.
+     * The user is likely on an Android-TV 11 or 12,
+     * or on an Android-Wear device.
      * <p>
-     * It <strong>might</strong> be possible to manually grant permissions. Take them to
-     * the project help pages.
+     * It <strong>might</strong> be possible to manually grant permissions.
+     * Take the user to the project help pages.
      */
     private void potentiallyUnsupportedDevice() {
         //noinspection DataFlowIssue
@@ -208,7 +241,9 @@ public class MainFragment
 
     /**
      * Fatal. The device claimed to support
-     * {@link Settings#ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION} but failed.
+     * {@link Settings#ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION}
+     * but failed to start the Activity.
+     * We should never get here... flw
      */
     private void unsupportedDevice() {
         //noinspection DataFlowIssue
