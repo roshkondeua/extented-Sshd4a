@@ -455,7 +455,7 @@ public class SshdService
         }
         stopSshd();
         if (runInForeground) {
-            stopForeground(true);
+            stopForeground(STOP_FOREGROUND_REMOVE);
         }
 
         sInstance = null;
