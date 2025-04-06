@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--suppress LongLine -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name" translatable="false">Sshd4a</string>
     <string name="service_name" translatable="false">Sshd4a</string>
     <string name="service_description">Provides an sshd server with shell access, rsync and scp/sftp services.</string>
 
     <!-- Dialog message/question. -->
-    <string name="msg_request_files_management" tools:ignore="TypographyQuotes">This application needs special permission to access your files in order to be able to use \"rsync\". Without this permission the functionality of this app will be severely limited.\n\n After tapping ‘OK’ you will be asked to enable this permission.\n Scroll down in the list of applications and enable Sshd4a.</string>
+    <string name="msg_request_files_management">This application needs special permission to access your files in order to be able to use “rsync”. Without this permission the functionality of this app will be severely limited.\n\n After tapping “OK” you will be asked to enable this permission.\n Scroll down in the list of applications and enable Sshd4a.</string>
 
     <string name="lbl_about">About</string>
     <string name="about_versions">Services provided by:\n\nDropbear %1$s\nRsync %2$s\nSftp-server from %3$s</string>
     <string name="info_listening_on_ip_port">Sshd4a is listening on %1$s:%2$s</string>
 
-    <string name="err_device_maybe_not_supported">Your device is either unsupported or you might need to set the permissions manually. Tap OK to go to the project help pages.</string>
-    <string name="err_unexpected_error">There was an unexpected error. You may wish to report this to the project developer.</string>
-
+    <string name="err_device_maybe_not_supported">Your device is either unsupported or you might need to set the permissions manually. Tap “OK” to visit the documentation on Github.</string>
+    <string name="err_unexpected_error">There was an unexpected error. Tap “OK” to visit the project page on Github and log a new issue.</string>
     <string name="err_service_failed_to_start">The service failed to start. Try again and check the log.</string>
     <string name="err_key_import">Something went wrong while importing your keys.</string>
     <string name="err_no_version">Unknown</string>
@@ -40,7 +39,7 @@
     <!-- Menu option / screen title. -->
     <string name="lbl_settings">Settings</string>
     <!-- Menu option. -->
-    <string name="lbl_import_keys" tools:ignore="TypographyQuotes">Import an \"authorized_keys\" file</string>
+    <string name="lbl_import_keys">Import an “authorized_keys” file</string>
     <!-- Menu option. -->
     <string name="lbl_reset_keys">Delete all authorized keys</string>
     <!-- Dialog message/question. -->
@@ -69,7 +68,7 @@
     <!-- Preference option -->
     <string name="pt_cmdline_options">Extra Commandline options</string>
     <!-- Preference option -->
-    <string name="pt_env" tools:ignore="TypographyQuotes">Environment variables.\n(One \"name=value\" per line)</string>
+    <string name="pt_env">Environment variables.\n(One “name=value” per line)</string>
 
     <!-- Preference category title -->
     <string name="pc_paths">SSH Login</string>

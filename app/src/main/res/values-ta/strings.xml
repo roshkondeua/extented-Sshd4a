@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="pt_env" tools:ignore="TypographyQuotes">சுற்றுச்சூழல் மாறிகள்.\n (ஒரு வரிக்கு ஒரு \"பெயர் = மதிப்பு\")</string>
+<!--suppress LongLine -->
+<resources>
+    <string name="pt_env">சுற்றுச்சூழல் மாறிகள்.\n (ஒரு வரிக்கு ஒரு “பெயர் = மதிப்பு”)</string>
     <string name="service_description">செல் அணுகல், RSYNC மற்றும் SCP/SFTP சேவைகளுடன் SSHD சேவையகத்தை வழங்குகிறது.</string>
-    <string name="msg_request_files_management" tools:ignore="TypographyQuotes">\"RSYNC\" ஐப் பயன்படுத்த உங்கள் கோப்புகளை அணுக இந்த பயன்பாட்டிற்கு சிறப்பு இசைவு தேவை. இந்த அனுமதியின்றி இந்த பயன்பாட்டின் செயல்பாடு கடுமையாக மட்டுப்படுத்தப்படும்.\n\n ‘சரி’ என்பதைத் தட்டிய பிறகு இந்த அனுமதியை இயக்குமாறு கேட்கப்படுவீர்கள்.\n பயன்பாடுகளின் பட்டியலில் கீழே உருட்டி SSHD4A ஐ இயக்கவும்.</string>
+    <string name="msg_request_files_management">“RSYNC” ஐப் பயன்படுத்த உங்கள் கோப்புகளை அணுக இந்த பயன்பாட்டிற்கு சிறப்பு இசைவு தேவை. இந்த அனுமதியின்றி இந்த பயன்பாட்டின் செயல்பாடு கடுமையாக மட்டுப்படுத்தப்படும்.\n\n “சரி” என்பதைத் தட்டிய பிறகு இந்த அனுமதியை இயக்குமாறு கேட்கப்படுவீர்கள்.\n பயன்பாடுகளின் பட்டியலில் கீழே உருட்டி SSHD4A ஐ இயக்கவும்.</string>
     <string name="lbl_about">பற்றி</string>
     <string name="about_versions">வழங்கிய சேவைகள்:\n\n Dropbear %1$s\n Rsync %2$s\n %3$s இலிருந்து SFTP-Server</string>
     <string name="info_listening_on_ip_port">SSHD4A %1$s: %2$s இல் கேட்கிறது</string>
+    <string name="err_unexpected_error">எதிர்பாராத பிழை ஏற்பட்டது. Github இல் உள்ள திட்டப் பக்கத்தைப் பார்வையிட்டு புதிய சிக்கலைப் பதிவு செய்ய “சரி” என்பதைத் தட்டவும்.</string>
     <string name="err_service_failed_to_start">பணி தொடங்கத் தவறிவிட்டது. மீண்டும் முயற்சி செய்து பதிவைச் சரிபார்க்கவும்.</string>
     <string name="err_key_import">உங்கள் சாவியை இறக்குமதி செய்யும் போது ஏதோ தவறு ஏற்பட்டது.</string>
     <string name="err_no_version">தெரியவில்லை</string>
@@ -19,7 +21,7 @@
     <string name="lbl_start">தொடங்கு</string>
     <string name="lbl_stop">நிறுத்து</string>
     <string name="lbl_settings">அமைப்புகள்</string>
-    <string name="lbl_import_keys" tools:ignore="TypographyQuotes">\"அங்கீகரிக்கப்பட்ட_கீச்\" கோப்பை இறக்குமதி செய்யுங்கள்</string>
+    <string name="lbl_import_keys">“அங்கீகரிக்கப்பட்ட_கீச்” கோப்பை இறக்குமதி செய்யுங்கள்</string>
     <string name="lbl_reset_keys">அங்கீகரிக்கப்பட்ட அனைத்து விசைகளையும் நீக்கு</string>
     <string name="confirm_reset_keys">அனைத்து அங்கீகரிக்கப்பட்ட_கிகளையும் நீக்கவா?\n ஒற்றை பயன்பாட்டு கடவுச்சொற்களுடன் மட்டுமே நீங்கள் உள்நுழைய முடியும்.</string>
     <string name="pc_startup">தொடங்கு</string>
@@ -52,4 +54,5 @@
     <string name="cancel">ரத்துசெய்</string>
     <string name="dialog_alert_title">கவனம்</string>
     <string name="action_help">உதவி</string>
+    <string name="err_device_maybe_not_supported">உங்கள் சாதனம் ஆதரிக்கப்படவில்லை அல்லது நீங்கள் அனுமதிகளை கைமுறையாக அமைக்க வேண்டியிருக்கலாம். Github இல் உள்ள ஆவணங்களைப் பார்வையிட “சரி” என்பதைத் தட்டவும்.</string>
 </resources>
