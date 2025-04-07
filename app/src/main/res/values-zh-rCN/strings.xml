@@ -52,4 +52,7 @@
     <string name="cancel">取消</string>
     <string name="dialog_alert_title">注意</string>
     <string name="action_help">帮助</string>
+    <string name="err_device_maybe_not_supported">您的设备要么不支持，要么可能需要手动设置权限。点击 “确定 ”访问 Github 上的文档。</string>
+    <string name="err_unexpected_error">出现意外错误。点击 “确定 ”访问 Github 上的项目页面并记录新问题。</string>
+
 </resources>
