@@ -1,9 +1,13 @@
 BUILD INSTRUCTIONS:
 - Android SDK and NDK
 - bash shell
-- 7Zip command line tool '7z'
-- wget
-- awk
+  - 7Zip command line tool '7z'
+  - wget
+  - awk
+
+- RSYNC    - https://rsync.samba.org/
+- OPENSSH  - https://github.com/openssh/openssh-portable
+- DROPBEAR - https://matt.ucc.asn.au/dropbear/dropbear.html
 
 # ############################################################################
 # Environment as typically set in ~/.bashrc
@@ -16,10 +20,10 @@ export PATH=${JAVA_HOME}/bin:${PATH}
 SDK=/cygdrive/c/d/sdk
 
 # Android NDK location/version; upgrade as needed/wanted
-NDK=${SDK}/ndk/27.2.12479018
+NDK=${SDK}/ndk/28.0.13004108
 
-# Android minSdkVersion. The minimal version is 26, upgrade as needed/wanted
-export ANDROID_MIN_SDK=26
+# Android minSdkVersion. The minimal version, upgrade as needed/wanted
+export ANDROID_MIN_SDK=30
 
 # Only choose ONE of these, depending on your device...
 # the first, "aarch64", is most likely the one you want.
@@ -32,17 +36,18 @@ export ANDROID_TARGET=aarch64-linux-android
 export TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/windows-x86_64
 export PATH=${SDK}/platform-tools:${TOOLCHAIN}/bin:${PATH}
 
-# ############################################################################
-# Define the versions for the external project code
-#
-# https://download.samba.org/pub/rsync/src/rsync-3.3.0.tar.gz
-# https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/openssh-9.9p1.tar.gz
-# https://matt.ucc.asn.au/dropbear/dropbear-2024.86.tar.bz2
-# ############################################################################
+# #############################################################################
+# Define the versions for the external project code; update the urls if changed
+# #############################################################################
 
-export RSYNC_VERSION="rsync-3.3.0"
-export OPENSSH_VERSION="openssh-9.9p1"
-export DROPBEAR_VERSION="dropbear-2024.86"
+export RSYNC_VERSION="rsync-3.4.1"
+export OPENSSH_VERSION="openssh-9.9p2"
+export DROPBEAR_VERSION="dropbear-2025.87"
+
+export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
+export OPENSSH_DOWNLOAD="https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz"
+export DROPBEAR_DOWNLOAD="https://matt.ucc.asn.au/dropbear/releases/${DROPBEAR_VERSION}.tar.bz2"
+
 
 # ############################################################################
 # Setting up the toolchain
@@ -52,10 +57,8 @@ export DROPBEAR_VERSION="dropbear-2024.86"
 export PROJECT_ROOT=/cygdrive/c/Data/AndroidStudioProjects/Sshd4a/
 
 # The working directory where the tarballs will be downloaded and git remotes will be setup.
-# Defaults to current directory. Either make sure you are where you want to be,
-# or modify the next line with an absolute path.
 
-export SRC_ROOT=`pwd`
+export SRC_ROOT=/cygdrive/c/tmp/sshd4a-tarballs
 
 # Sanity checks for the .bashrc settings.
 # TOOLCHAIN is expected to point to your ndk environment toolchain.
@@ -82,11 +85,11 @@ export STRIP=${TOOLCHAIN}/bin/llvm-strip
 export GATRR="* text eol=lf\n*.txt text\n*.png binary\n"
 
 # ############################################################################
-# Step 2.1 - RSYNC - https://rsync.samba.org/
+# Step 2.1 - RSYNC
 # ############################################################################
 
 cd ${SRC_ROOT}
-wget -q https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz
+wget -q ${RSYNC_DOWNLOAD}
 7z x -so ${RSYNC_VERSION}* | tar xf -
 
 # remove broken and/or unneeded rsync symlink
@@ -113,13 +116,24 @@ cd ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/rsync
             --enable-largefile
 
 cd ${PROJECT_ROOT}
+
 # Add remote: "upstream-rsync" pointing to the location used above
+# DO THIS ONCE ONLY
 git remote add upstream-rsync ${SRC_ROOT}/${RSYNC}
+
+# pull the new code and merge
 git fetch upstream-rsync
 git merge --allow-unrelated-histories upstream-rsync/dev
 
-#    All changes are (should be) marked with SSHD4A_*
 #    Merge and solve conflicts as usual.
+#    Typically just "Accept theirs" for all files
+#    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
+#
+#    2025-04-07: files modified:
+#     cpp/rsync/clientserver.c
+#     cpp/rsync/config.h
+#     cpp/rsync/syscall.c
+
 
 cd ${PROJECT_ROOT}/app/src/main/cpp/
 ./prebuild-rsyn.sh
@@ -127,11 +141,11 @@ cd ${PROJECT_ROOT}/app/src/main/cpp/
 #    Commit and build...
 
 # ############################################################################
-#  Step 2.2 - OPENSSH - https://github.com/openssh/openssh-portable
+#  Step 2.2 - OPENSSH
 # ############################################################################
 
 cd ${SRC_ROOT}
-wget -q https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz
+wget -q ${OPENSSH_DOWNLOAD}
 7z x -so ${OPENSSH_VERSION}* | tar xf -
 
 # rename the directory so we don't need to change the git remote names
@@ -157,26 +171,28 @@ autoreconf
 
 cd ${PROJECT_ROOT}
 # Add remote: "upstream-openssh" pointing to the location used above
+# DO THIS ONCE ONLY
 git remote add upstream-openssh ${SRC_ROOT}/${OPENSSH}
-git fetch upstream-openssh
 
+# pull the new code and merge
+git fetch upstream-openssh
 git merge --allow-unrelated-histories upstream-openssh/dev
 
 #    Merge and solve conflicts as usual.
 #    Typically just "Accept theirs" for all files
 #    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
 #
-#    2024-11-29: files modified:
+#    2025-04-07: files modified:
 #      cpp/openssh/openbsd-compat/explicit_bzero.c
 #
 #    Commit and build...
 
 # ############################################################################
-# Step 2.3 - DROPBEAR - https://matt.ucc.asn.au/dropbear/dropbear.html
+# Step 2.3 - DROPBEAR
 # ############################################################################
 
 cd ${SRC_ROOT}
-wget -q https://matt.ucc.asn.au/dropbear/${DROPBEAR_VERSION}.tar.bz2
+wget -q ${DROPBEAR_DOWNLOAD}
 7z x -so ${DROPBEAR_VERSION}* | tar xf -
 
 # rename the directory so we don't need to change the git remote names
@@ -202,9 +218,11 @@ cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp/dropbear
 
 cd ${PROJECT_ROOT}
 # Add remote: "upstream-dropbear" pointing to the location used above
+# DO THIS ONCE ONLY
 git remote add upstream-dropbear ${SRC_ROOT}/${DROPBEAR}
-git fetch upstream-dropbear
 
+# pull the new code and merge
+git fetch upstream-dropbear
 git merge --allow-unrelated-histories upstream-dropbear/dev
 
 #    Merge and solve conflicts as usual.
