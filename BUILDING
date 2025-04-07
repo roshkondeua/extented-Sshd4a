@@ -207,6 +207,7 @@ git merge --allow-unrelated-histories upstream-openssh/dev
 #      cpp/openssh/openbsd-compat/explicit_bzero.c
 #
 #    Commit and build...
+# Typically there are no issues whatsoever
 
 # ############################################################################
 # Step 2.3 - DROPBEAR
@@ -239,7 +240,6 @@ cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp/dropbear
 
 cd ${PROJECT_ROOT}
 # Add remote: "upstream-dropbear" pointing to the location used above
-# DO THIS ONCE ONLY
 git remote add upstream-dropbear ${SRC_ROOT}/${DROPBEAR}
 
 # pull the new code and merge
@@ -270,3 +270,7 @@ cd ${PROJECT_ROOT}/app/src/main/cpp
 ./prebuild-dropbear.sh
 
 #    Commit and build...
+# Typical issues:
+# - new .c files which need to be added to CMakeLists.txt
+# - compare/edit config.h in OUR source with the NEW one.
+#   Do not simply overwrite ours, as it contains tweaks at the end of the file!
