@@ -658,6 +658,11 @@ set(SRC_DROPBEAR
         ${BASE_SRC_DROPBEAR}/gened25519.c
         ${BASE_SRC_DROPBEAR}/genrsa.c
         ${BASE_SRC_DROPBEAR}/gensignkey.c
+        ${BASE_SRC_DROPBEAR}/kex-dh.c
+        ${BASE_SRC_DROPBEAR}/kex-ecdh.c
+        ${BASE_SRC_DROPBEAR}/kex-pqhybrid.c
+        ${BASE_SRC_DROPBEAR}/kex-x25519.c
+        ${BASE_SRC_DROPBEAR}/mlkem768.c
         ${BASE_SRC_DROPBEAR}/keyimport.c
         ${BASE_SRC_DROPBEAR}/list.c
         ${BASE_SRC_DROPBEAR}/listener.c
@@ -672,6 +677,7 @@ set(SRC_DROPBEAR
         ${BASE_SRC_DROPBEAR}/signkey_ossh.c
         ${BASE_SRC_DROPBEAR}/sk-ecdsa.c
         ${BASE_SRC_DROPBEAR}/sk-ed25519.c
+        ${BASE_SRC_DROPBEAR}/sntrup761.c
         ${BASE_SRC_DROPBEAR}/sshpty.c
         ${BASE_SRC_DROPBEAR}/svr-auth.c
         ${BASE_SRC_DROPBEAR}/svr-authpasswd.c

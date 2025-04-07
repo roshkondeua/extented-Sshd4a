@@ -17,13 +17,16 @@
 #define HAVE_CLOCK_GETTIME 1
 #define HAVE_CONST_GAI_STRERROR_PROTO 1
 #define HAVE_DAEMON 1
+#define HAVE_ENDIAN_H 1
 #define HAVE_ENDUTENT 1
+#define HAVE_FEXECVE 1
 #define HAVE_FORK 1
 #define HAVE_FREEADDRINFO 1
 #define HAVE_GAI_STRERROR 1
 #define HAVE_GETADDRINFO 1
 #define HAVE_GETGROUPLIST 1
 #define HAVE_GETNAMEINFO 1
+#define HAVE_GETRANDOM 1
 #define HAVE_GETUTENT 1
 #define HAVE_INTTYPES_H 1
 #define HAVE_LASTLOG_H 1
@@ -42,6 +45,7 @@
 #define HAVE_PUTUTLINE 1
 #define HAVE_SETUTENT 1
 #define HAVE_STDINT_H 1
+#define HAVE_STDIO_H 1
 #define HAVE_STDLIB_H 1
 #define HAVE_STRINGS_H 1
 #define HAVE_STRING_H 1
@@ -61,6 +65,7 @@
 #define HAVE_STRUCT_UTMP_UT_TIME 1
 #define HAVE_STRUCT_UTMP_UT_TV 1
 #define HAVE_STRUCT_UTMP_UT_TYPE 1
+#define HAVE_SYS_ENDIAN_H 1
 #define HAVE_SYS_PRCTL_H 1
 #define HAVE_SYS_RANDOM_H 1
 #define HAVE_SYS_SELECT_H 1
@@ -74,6 +79,7 @@
 #define HAVE_UINT8_T 1
 #define HAVE_UNISTD_H 1
 #define HAVE_UTMPNAME 1
+#define HAVE_UTMPX_H 1
 #define HAVE_UTMP_H 1
 #define HAVE_U_INT16_T 1
 #define HAVE_U_INT32_T 1
@@ -89,10 +95,10 @@
 #define SELECT_TYPE_ARG234 (fd_set *)
 #define SELECT_TYPE_ARG5 (struct timeval *)
 #define STDC_HEADERS 1
-#ifndef _DARWIN_USE_64_BIT_INODE
-# define _DARWIN_USE_64_BIT_INODE 1
-#endif
-#define _FILE_OFFSET_BITS 64
 #define _GNU_SOURCE
+
+
+/* SSHD4A_REQUIRED_CHANGE: configure bug: fails to detect that we have the macro. */
+#define HAVE_DECL_HTOLE64 1
 
 #endif /* __DROPBEAR_CONFIG_H__ */
