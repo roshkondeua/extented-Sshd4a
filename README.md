@@ -5,9 +5,9 @@ Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a
 Please do **NOT** request implementing some sort of root access. 
 Such requests **will be closed** immediately.
 
-### Download the latest release: 1.4.1
+### Download the latest release: 1.5.0
 
-<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.4.1/Sshd4a-1.4.1.apk">
+<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.5.0/Sshd4a-1.5.0.apk">
 <img src="metadata/en-US/images/get-it-on-github.png" alt="Get it on GitHub" style="width:150px;"/></a>
 
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.hardbacknutter.sshd/">
@@ -21,9 +21,9 @@ Services are provided by:
 - https://github.com/openssh/openssh-portable
 
 The latest release contains:
-- Dropbear 2024.86
-- rsync 3.3.0
-- sftp-server from OpenSSH 9.9p1
+- Dropbear 2025.87
+- rsync 3.4.1
+- sftp-server from OpenSSH 9.9p2
 
 ## Rsync support:
 
@@ -42,7 +42,7 @@ To be **explicitly** clear: there is **no rsync daemon** started!
 
 ## User Interface languages:
 
-Available in Chinese, English, French and German.
+Available in Chinese, English, French, German and Tamil.
 
 Translations are editable on [Weblate](https://hosted.weblate.org/engage/sshd4a/)
 
@@ -59,8 +59,13 @@ Translations are editable on [Weblate](https://hosted.weblate.org/engage/sshd4a/
 
 ## Device support:
 
-- Requires minimal Android 11 (API 30)
-- Supported/tested up to Android 15 (API 35).
+- Standard Android:
+  - Requires minimal Android 11 (API 30)
+  - Supported/tested up to Android 15 (API 35).
+- Android/Google TV
+  - Not supported on versions 11/12 
+  - Supported/tested on the Google TV emulator version 13/14.
+  - Not tested on actual TV's; all feedback with brand/models welcome!
 
 ## Android Permissions:
 
@@ -103,7 +108,8 @@ in the section "All Files Access Permission"
 
 ## Thanks
 
-- Chinese translation provided by [yzqzss](https://github.com/yzqzss)
+- Tamil translation: [தமிழ்நேரம்](https://hosted.weblate.org/user/TamilNeram/)
+- Chinese translation: [yzqzss](https://github.com/yzqzss)
 
 - Inspired by, and uses parts of the native C code from
 http://www.galexander.org/software/simplesshd/
