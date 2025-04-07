@@ -35,6 +35,7 @@
 #define HAVE_GETXATTR 1
 #define HAVE_GRP_H 1
 #define HAVE_ICONV_H 1
+#define HAVE_ICONV_OPEN 1
 #define HAVE_ID_T 1
 #define HAVE_INET_NTOP 1
 #define HAVE_INET_PTON 1
@@ -85,6 +86,7 @@
 #define HAVE_STDINT_H 1
 #define HAVE_STDIO_H 1
 #define HAVE_STDLIB_H 1
+#define HAVE_STPCPY 1
 #define HAVE_STRCASECMP 1
 #define HAVE_STRCHR 1
 #define HAVE_STRERROR 1
@@ -130,35 +132,41 @@
 #define HAVE_WAIT4 1
 #define HAVE_WAITPID 1
 #define HAVE_ZLIB_H 1
-#define ICONV_CONST 
+#define ICONV_CONST
+#define ICONV_OPTION NULL
 #define MAJOR_IN_SYSMACROS 1
 #define NOBODY_GROUP "nobody"
 #define NOBODY_USER "nobody"
 #define NO_SYMLINK_USER_XATTRS 1
 #define PACKAGE_BUGREPORT "https://rsync.samba.org/bug-tracking.html"
+#define PACKAGE "rsync"
 #define PACKAGE_NAME "rsync"
 #define PACKAGE_STRING "rsync"
 #define PACKAGE_TARNAME "rsync"
 #define PACKAGE_URL ""
 #define PACKAGE_VERSION ""
+#define POPT_SYSCONFDIR "/etc"
 #define RSYNCD_SYSCONF "/etc/rsyncd.conf"
 #define RSYNC_PATH "rsync"
 #define RSYNC_RSH "ssh"
 #define SIGNED_CHAR_OK 1
+#define SIZEOF_CHARP 8
 #define SIZEOF_INT 4
 #define SIZEOF_INT16_T 2
 #define SIZEOF_INT32_T 4
 #define SIZEOF_INT64_T 8
+#define SIZEOF_LONG 8
 #define SIZEOF_LONG_LONG 8
 #define SIZEOF_OFF64_T 8
 #define SIZEOF_OFF_T 8
 #define SIZEOF_SHORT 2
+#define SIZEOF_TIME_T 8
 #define SIZEOF_UINT16_T 2
 #define SIZEOF_UINT32_T 4
 #define STDC_HEADERS 1
 #define SUPPORT_XATTRS 1
-#define TIME_WITH_SYS_TIME 1
-#define _FILE_OFFSET_BITS 64
+#define USE_ICONV_OPEN 1
+#define UTF8_CHARSET "UTF-8"
 #define _GNU_SOURCE 1
 
 /* SSHD4A_REQUIRED_CHANGE: 64 versus 32 bit differences. */
@@ -176,5 +184,12 @@
 
 /* SSHD4A_REQUIRED_CHANGE: configure bug (it did find MKSTEMP64)? We have mkstemp(). */
 #define HAVE_SECURE_MKSTEMP 1
+
+/* SSHD4A_REQUIRED_CHANGE: impl. in "syscall.c" but absent from header file(s).
+ * ISO C99 and later do not support implicit function declarations
+ */
+#include <sys/types.h>
+int do_open_checklinks(const char *pathname);
+int secure_relative_open(const char *basedir, const char *relpath, int flags, mode_t mode);
 
 #endif /* __RSYNC_CONFIG_H */

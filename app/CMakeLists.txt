@@ -743,9 +743,11 @@ set(SRC_RSYNC
         ${BASE_SRC_RSYNC}/lib/wildmatch.c
 
         ${BASE_SRC_RSYNC}/popt/findme.c
+        ${BASE_SRC_RSYNC}/popt/lookup3.c
         ${BASE_SRC_RSYNC}/popt/popt.c
         ${BASE_SRC_RSYNC}/popt/poptconfig.c
         ${BASE_SRC_RSYNC}/popt/popthelp.c
+        ${BASE_SRC_RSYNC}/popt/poptint.c
         ${BASE_SRC_RSYNC}/popt/poptparse.c
 
         ${BASE_SRC_RSYNC}/zlib/adler32.c
