@@ -137,7 +137,6 @@ cd ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/rsync
 cd ${PROJECT_ROOT}
 
 # Add remote: "upstream-rsync" pointing to the location used above
-# DO THIS ONCE ONLY
 git remote add upstream-rsync ${SRC_ROOT}/${RSYNC}
 
 # pull the new code and merge
@@ -146,7 +145,7 @@ git merge --allow-unrelated-histories upstream-rsync/dev
 
 #    Merge and solve conflicts as usual.
 #    Typically just "Accept theirs" for all files
-#    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
+#    EXCEPT for our mandatory changes which are annotated with SSHD4A_*
 #
 #    2025-04-07: files modified:
 #     cpp/rsync/clientserver.c
@@ -194,7 +193,6 @@ autoreconf
 
 cd ${PROJECT_ROOT}
 # Add remote: "upstream-openssh" pointing to the location used above
-# DO THIS ONCE ONLY
 git remote add upstream-openssh ${SRC_ROOT}/${OPENSSH}
 
 # pull the new code and merge
@@ -203,7 +201,7 @@ git merge --allow-unrelated-histories upstream-openssh/dev
 
 #    Merge and solve conflicts as usual.
 #    Typically just "Accept theirs" for all files
-#    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
+#    EXCEPT for our mandatory changes which are annotated with SSHD4A_*
 #
 #    2025-04-07: files modified:
 #      cpp/openssh/openbsd-compat/explicit_bzero.c
