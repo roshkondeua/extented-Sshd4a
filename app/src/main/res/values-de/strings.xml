@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--suppress LongLine -->
-<resources>
+<!--suppress LongLine --><resources>
     <string name="about_title">Sshd4a %s</string>
     <string name="about_versions">Dienste bereitgestellt von:\n\nDropbear %1$s\nRsync %2$s\nSftp-server von %3$s</string>
     <string name="confirm_reset_keys">Alle authorized_keys löschen?\nSie können sich dann nur noch mit Einmalpasswörtern anmelden.</string>
