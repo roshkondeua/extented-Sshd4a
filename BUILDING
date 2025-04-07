@@ -153,11 +153,15 @@ git merge --allow-unrelated-histories upstream-rsync/dev
 #     cpp/rsync/config.h
 #     cpp/rsync/syscall.c
 
-
 cd ${PROJECT_ROOT}/app/src/main/cpp/
 ./prebuild-rsyn.sh
 
 #    Commit and build...
+#
+# Typical issues:
+# - new .c files which need to be added to CMakeLists.txt
+# - compare/edit config.h in OUR source with the NEW one.
+#   Do not simply overwrite ours, as it contains tweaks at the end of the file!
 
 # ############################################################################
 #  Step 2.2 - OPENSSH
