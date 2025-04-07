@@ -20,7 +20,7 @@ export PATH=${JAVA_HOME}/bin:${PATH}
 SDK=/cygdrive/c/d/sdk
 
 # Android NDK location/version; upgrade as needed/wanted
-NDK=${SDK}/ndk/28.0.13004108
+NDK=${SDK}/ndk/27.2.12479018
 
 # Android minSdkVersion. The minimal version, upgrade as needed/wanted
 export ANDROID_MIN_SDK=30
@@ -32,33 +32,12 @@ export ANDROID_TARGET=aarch64-linux-android
 # export ANDROID_TARGET=i686-linux-android
 # export ANDROID_TARGET=x86_64-linux-android
 
-
 export TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/windows-x86_64
 export PATH=${SDK}/platform-tools:${TOOLCHAIN}/bin:${PATH}
 
-# #############################################################################
-# Define the versions for the external project code; update the urls if changed
-# #############################################################################
-
-export RSYNC_VERSION="rsync-3.4.1"
-export OPENSSH_VERSION="openssh-9.9p2"
-export DROPBEAR_VERSION="dropbear-2025.87"
-
-export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
-export OPENSSH_DOWNLOAD="https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz"
-export DROPBEAR_DOWNLOAD="https://matt.ucc.asn.au/dropbear/releases/${DROPBEAR_VERSION}.tar.bz2"
-
-
 # ############################################################################
-# Setting up the toolchain
+# Setting up the toolchain; add to bashrc, or run manually
 # ############################################################################
-
-# The root directory of th Ssh4d project (i.e. where the projects .git is)
-export PROJECT_ROOT=/cygdrive/c/Data/AndroidStudioProjects/Sshd4a/
-
-# The working directory where the tarballs will be downloaded and git remotes will be setup.
-
-export SRC_ROOT=/cygdrive/c/tmp/sshd4a-tarballs
 
 # Sanity checks for the .bashrc settings.
 # TOOLCHAIN is expected to point to your ndk environment toolchain.
@@ -83,6 +62,46 @@ export STRIP=${TOOLCHAIN}/bin/llvm-strip
 
 # content for ".gitattributes"
 export GATRR="* text eol=lf\n*.txt text\n*.png binary\n"
+
+
+# #############################################################################
+# Define the project root
+# #############################################################################
+
+# The root directory of the Ssh4d project (i.e. where the projects .git is)
+export PROJECT_ROOT=/cygdrive/c/Data/AndroidStudioProjects/Sshd4a/
+
+# #############################################################################
+# Building as-is, after cloning the git repo
+# #############################################################################
+
+cd ${PROJECT_ROOT}/app/src/main/cpp/
+./prebuild-rsyn.sh
+./prebuild-dropbear.sh
+
+# Now use gradle or Android Studio to do the actual build.
+
+
+# #############################################################################
+# #############################################################################
+# THE REMAINDER OF THIS DOCUMENT DESCRIBES HOW TO UPGRADE THE EXTERNAL PACKAGES
+# It's a living doc, and might contain errors!
+# #############################################################################
+# #############################################################################
+
+# Define the versions for the external project code; update the urls if changed
+
+export RSYNC_VERSION="rsync-3.4.1"
+export OPENSSH_VERSION="openssh-9.9p2"
+export DROPBEAR_VERSION="dropbear-2025.87"
+
+export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
+export OPENSSH_DOWNLOAD="https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz"
+export DROPBEAR_DOWNLOAD="https://matt.ucc.asn.au/dropbear/releases/${DROPBEAR_VERSION}.tar.bz2"
+
+
+# The working directory where the tarballs will be downloaded and git remotes will be setup.
+export SRC_ROOT=/cygdrive/c/tmp/sshd4a-tarballs
 
 # ############################################################################
 # Step 2.1 - RSYNC
