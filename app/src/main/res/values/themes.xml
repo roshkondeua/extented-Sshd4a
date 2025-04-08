@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.App" parent="Base.Theme.App">
+    <style name="Theme.App"
+           parent="Base.Theme.App">
         <item name="colorPrimary">@color/m3blue_grey_40</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/m3blue_grey_90</item>
@@ -34,7 +35,72 @@
         <item name="stopButtonTextColor">@color/m3red_20</item>
     </style>
 
-    <style name="Base.Theme.App" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Base theme - used by both Day and Night themes. -->
+    <style name="Base.Theme.App"
+           parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Material3 style attributes -->
+        <item name="tabStyle">@style/Widget.App.TabLayout</item>
+        <item name="checkboxStyle">@style/Widget.App.CheckBox</item>
+        <item name="radioButtonStyle">@style/Widget.App.RadioButton</item>
+        <item name="materialSwitchStyle">@style/Widget.App.Switch</item>
+        <item name="switchPreferenceStyle">@style/Widget.App.SwitchPreference</item>
+
+        <!-- We MUST set these separately! Just setting the common buttonBarButtonStyle is NOT enough -->
+        <item name="buttonBarButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.DialogButtonBarButtons.Flush
+        </item>
+
+        <!-- Material3 theme OVERLAYS! -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
 
     </style>
+
+    <!-- *************************************************************************************** -->
+
+
+    <style name="ThemeOverlay.App.Toolbar"
+           parent="ThemeOverlay.Material3.Toolbar.Surface">
+        <!-- Force the icons to be visible... as by default Android seems to
+             give them such a [bleeping] bad contrast you can barely see them. -->
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="ThemeOverlay.App.TabLayout"
+           parent="">
+        <!-- selected -->
+        <item name="colorPrimary">?attr/colorSecondary</item>
+    </style>
+
+    <style name="ThemeOverlay.App.CheckBox"
+           parent="">
+        <!-- Container: checked -->
+        <item name="colorPrimary">?attr/colorSecondary</item>
+    </style>
+
+    <style name="ThemeOverlay.App.RadioButton"
+           parent="">
+        <!-- checked -->
+        <item name="colorPrimary">?attr/colorSecondary</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Switch"
+           parent="">
+        <!-- track checked state. -->
+        <item name="colorPrimary">?attr/colorSecondary</item>
+        <!-- thumb unchecked state. -->
+        <item name="colorOutline">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog"
+           parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="buttonBarButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
+        <item name="buttonBarNeutralButtonStyle">
+            @style/Widget.App.DialogButtonBarButtons.Flush
+        </item>
+    </style>
+
 </resources>
