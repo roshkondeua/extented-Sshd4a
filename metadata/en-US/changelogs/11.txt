@@ -1,0 +1,16 @@
+Updated services:
+- Dropbear 2025.87
+- rsync 3.4.1
+- sftp-server from OpenSSH 9.9p2
+
+Added support for Android/Google TV:
+- Not supported on versions 11/12
+- Supported/tested on the Google TV emulator version 13/14.
+- Not tested on actual TV's
+
+Tamil translation kindly provided by: தமிழ்நேரம்
+
+FIXES:
+- #8,#14: poor colour contrast issue in dark-mode
+- #16: correct feedback on the system-password presence/absence in the settings
+- don't show the permissions dialog twice in some circumstances

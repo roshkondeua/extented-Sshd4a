@@ -1,0 +1,11 @@
+Updated services:
+- Dropbear 2025.87
+- rsync 3.4.1
+- sftp-server from OpenSSH 9.9p2
+
+Added support for Android/Google TV:
+- Not supported on versions 11/12
+- Supported/tested on the Google TV emulator version 13/14.
+- Not tested on actual TV's; all feedback with brand/models welcome!
+
+Tamil translation kindly provided by: [தமிழ்நேரம்](https://hosted.weblate.org/user/TamilNeram/)

@@ -5,9 +5,9 @@ Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a
 Please do **NOT** request implementing some sort of root access. 
 Such requests **will be closed** immediately.
 
-### Download the latest release: 1.5.0
+### Download the latest release: 1.5.1
 
-<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.5.0/Sshd4a-1.5.0.apk">
+<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.5.1/Sshd4a-1.5.1.apk">
 <img src="metadata/en-US/images/get-it-on-github.png" alt="Get it on GitHub" style="width:150px;"/></a>
 
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.hardbacknutter.sshd/">
