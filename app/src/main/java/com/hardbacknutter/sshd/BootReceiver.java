@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
+import com.hardbacknutter.sshd.settings.Prefs;
+
 public class BootReceiver
         extends BroadcastReceiver {
 

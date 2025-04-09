@@ -38,7 +38,8 @@ public class UserPasswordTest {
             "==";
 
     /**
-     * Not an actual test, we're just creating the base64 and dumping it to the log.
+     * Not an actual test, we're just creating the base64 and dumping it to the log
+     * in order to add it to the above constants.
      */
     @Test
     public void dumpPassword()
@@ -70,12 +71,12 @@ public class UserPasswordTest {
         assertTrue(dropbearDirectory.exists());
 
         // Remove any existing
-        SshdSettings.writePasswordFile(context, null, null);
+        SshdSettings.writePasswordFile(context, null, false, null);
         file = new File(dropbearDirectory, SshdSettings.AUTHORIZED_USERS);
         assertFalse(file.exists());
 
         // Create first time
-        SshdSettings.writePasswordFile(context, MY_USER, MY_PASSWORD);
+        SshdSettings.writePasswordFile(context, MY_USER, true, MY_PASSWORD);
 
         userAndPassword = SshdSettings.readPasswordFile(context);
         assertNotNull(userAndPassword);
@@ -84,7 +85,7 @@ public class UserPasswordTest {
         assertEquals(BASE64_MY_PASSWORD, userAndPassword[1]);
 
         // Replace the user
-        SshdSettings.writePasswordFile(context, MY_USER2, null);
+        SshdSettings.writePasswordFile(context, MY_USER2, false, null);
         userAndPassword = SshdSettings.readPasswordFile(context);
         assertNotNull(userAndPassword);
         assertEquals(2, userAndPassword.length);
@@ -92,7 +93,7 @@ public class UserPasswordTest {
         assertEquals(BASE64_MY_PASSWORD, userAndPassword[1]);
 
         // Replace the password
-        SshdSettings.writePasswordFile(context, MY_USER2, MY_PASSWORD2);
+        SshdSettings.writePasswordFile(context, MY_USER2, true, MY_PASSWORD2);
         userAndPassword = SshdSettings.readPasswordFile(context);
         assertNotNull(userAndPassword);
         assertEquals(2, userAndPassword.length);
@@ -100,7 +101,7 @@ public class UserPasswordTest {
         assertEquals(BASE64_MY_PASSWORD2, userAndPassword[1]);
 
         // Remove known existing
-        SshdSettings.writePasswordFile(context, null, null);
+        SshdSettings.writePasswordFile(context, null, true, null);
         file = new File(dropbearDirectory, SshdSettings.AUTHORIZED_USERS);
         assertFalse(file.exists());
     }

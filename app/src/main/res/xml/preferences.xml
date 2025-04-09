@@ -23,7 +23,9 @@
             android:summaryOn="@string/ps_foreground_on"
             android:title="@string/pt_foreground" />
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pc_dropbear">
+        <!-- Prefs.DEFAULT_PORT -->
         <EditTextPreference
             android:defaultValue="2222"
             android:key="sshd.port"
@@ -38,12 +40,15 @@
             android:title="@string/pt_env"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pc_paths">
+        <!-- default is set from code. -->
         <EditTextPreference
             android:icon="@drawable/home_24px"
             android:key="sshd.home"
             android:title="@string/pt_home"
             app:useSimpleSummaryProvider="true" />
+        <!-- Prefs.DEFAULT_SHELL -->
         <EditTextPreference
             android:defaultValue="/system/bin/sh"
             android:icon="@drawable/terminal_24px"
@@ -68,7 +73,6 @@
             android:defaultValue=""
             android:icon="@drawable/supervisor_account_24px"
             android:key="sshd.authorized.username"
-            android:persistent="false"
             android:title="@string/pt_authorized_username"
             app:useSimpleSummaryProvider="true" />
         <!-- Not saved to preferences. Handled in code. -->
@@ -77,7 +81,6 @@
             android:dependency="sshd.authorized.username"
             android:icon="@drawable/password_24px"
             android:key="sshd.authorized.password"
-            android:persistent="false"
             android:title="@string/pt_authorized_password" />
     </PreferenceCategory>
 

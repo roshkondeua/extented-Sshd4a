@@ -12,6 +12,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.hardbacknutter.sshd.settings.Prefs;
+
 public class MainActivity
         extends AppCompatActivity {
 

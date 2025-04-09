@@ -1,6 +1,7 @@
 package com.hardbacknutter.sshd;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
+ * Provides read/write methods for the dropbear master password.
+ * Lookup the dropbear (hidden) configuration directory.
+ * Enumerate the device host addresses.
+ * <p>
  * The file names for keys and passwords are also defined in:
  * <ul>
  *     <li>"cpp/jni-dropbear.h"</li>
@@ -29,7 +34,11 @@ import java.util.stream.Collectors;
  *     <li>"res/xml/data_extraction_rules.xml"</li>
  * </ul>
  */
-final class SshdSettings {
+@SuppressWarnings({
+        "BlockingMethodInNonBlockingContext",
+        "ResultOfMethodCallIgnored",
+        "ImplicitDefaultCharsetUsage"})
+public final class SshdSettings {
 
     /**
      * File with the fixed user/password.
@@ -50,13 +59,15 @@ final class SshdSettings {
      */
     static final String DROPBEAR_ERR = "dropbear.err";
 
+    private static final String TAG = "SshdSettings";
+
     private SshdSettings() {
     }
 
     /**
      * Typically only returns a single address, but there could be a list/mix of IPv4 and IPv6.
      * <p>
-     * See <a href="https://developer.android.com/studio/run/emulator-networking>emulator</a>.
+     * See <a href="https://developer.android.com/studio/run/emulator-networking">emulator</a>.
      *
      * @return a list of all IP addresses used by the device.
      */
@@ -92,7 +103,6 @@ final class SshdSettings {
     static File getDropbearDirectory(@NonNull final Context context) {
         final File path = new File(context.getFilesDir(), ".dropbear");
         if (!path.exists()) {
-            //noinspection ResultOfMethodCallIgnored
             path.mkdir();
         }
         return path;
@@ -106,75 +116,136 @@ final class SshdSettings {
      * @return a String array with [0] the username, and [1] the hashed/base64 password.
      */
     @Nullable
-    static String[] readPasswordFile(@NonNull final Context context) {
+    public static String[] readPasswordFile(@NonNull final Context context) {
         final File path = getDropbearDirectory(context);
         final File file = new File(path, AUTHORIZED_USERS);
         final List<String> lines;
         try {
             lines = Files.readAllLines(file.toPath());
             if (!lines.isEmpty()) {
-                return lines.get(0).split(":");
+                final String[] up = lines.get(0).split(":");
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "readPasswordFile"
+                               + "|username: " + up[0]
+                               + "|password: " + up[1]);
+                }
+                return up;
             }
         } catch (@NonNull final IOException ignore) {
             // ignore
         }
+
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "readPasswordFile|null");
+        }
         return null;
     }
 
-    static void writePasswordFile(@NonNull final Context context,
-                                  @Nullable final String username,
-                                  @Nullable final String password)
+    /**
+     * Write credentials to the dropbear file.
+     *
+     * <pre>
+     * username pwUpdated   password      file
+     * Not-set  IGNORE      IGNORE        IGNORE      nop/DELETE
+     *
+     * set      FALSE       Not-set       absent      nop
+     * set      FALSE       set           absent      nop
+     * set      FALSE       Not-set       present     upd user
+     * set      FALSE       set           present     upd user
+     *
+     * set      TRUE        Not-set       absent      nop
+     * set      TRUE        set           absent      write both
+     * set      TRUE        Not-set       present     DELETE
+     * set      TRUE        set           present     write both
+     * </pre>
+     *
+     * @param context         Current context
+     * @param username        (optional)
+     * @param passwordUpdated flag
+     * @param password        (optional)
+     *
+     * @throws IOException              if reading or writing the file failed
+     * @throws NoSuchAlgorithmException if we couldn't hash the password (should never happen)
+     */
+    public static void writePasswordFile(@NonNull final Context context,
+                                         @Nullable final String username,
+                                         final boolean passwordUpdated,
+                                         @Nullable final String password)
             throws IOException,
                    NoSuchAlgorithmException {
 
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "writePasswordFile"
+                       + "|username: " + username
+                       + "|passwordUpdated: " + passwordUpdated
+                       + "|password: " + password);
+        }
+
         final File path = getDropbearDirectory(context);
         final File file = new File(path, AUTHORIZED_USERS);
+        final boolean fileExists = file.exists();
 
-        // No username ?
+        // below code is on purpose NOT simplified/combined for readability.
+
+        // If we have no username,
+        // Remove the credentials file.
         if (username == null || username.isBlank()) {
-            // Remove any existing file, and we're done.
-            if (file.exists()) {
-                //noinspection ResultOfMethodCallIgnored
+            if (fileExists) {
                 file.delete();
             }
             return;
         }
 
-        // Do we have a username but no password?
-        if (password == null || password.isBlank()) {
-            // If the file does NOT exist, we're done.
-            if (!file.exists()) {
-                return;
-            }
+        // At this point, we always have a non-blank username.
 
-            // We have a username, no password, the file exist.
-            // Retrieve the previously encrypted password,
+        // If the user explicitly removed the password,
+        // Silently drop the username.
+        // Remove the credentials file.
+        //
+        //
+        if (passwordUpdated && (password == null || password.isBlank())) {
+            if (fileExists) {
+                file.delete();
+            }
+            return;
+        }
+
+        // If the file does NOT exist, we silently drop the username, and we're done.
+        if (!passwordUpdated && !fileExists) {
+            return;
+        }
+
+        // If the user did NOT change the password
+        if (!passwordUpdated) {
+            // The file exists; we must update the username, but keep the previous password.
+            // Retrieve the previously hashed password,
             final String[] previous = readPasswordFile(context);
             // and rewrite the file using the new username
-            // and the retrieved password.
+            // and the retrieved hashed password.
+            // i.e. REPLACE username, KEEP previous password
             if (previous != null && previous.length == 2) {
-                //noinspection ImplicitDefaultCharsetUsage
-                try (FileWriter fw = new FileWriter(file)) {
-                    // Rewrite the file with the new username
-                    // and the previous (already hashed) password
-                    fw.write((username + ":" + previous[1]).toCharArray());
-                }
+                writeFile(file, username, previous[1]);
                 return;
             } else {
-                // We failed to get the previous? This should not be happening
+                // We failed to read from the existing file? This should not be happening
+                // unless for example the user manually fiddled with the file/permissions.
                 throw new IOException("Could not read previous user/password");
             }
         }
 
-        // We have a user and password.
+        // We have a new user and an updated non-blank password.
         // Create the file if it does not exist yet.
-        //noinspection ResultOfMethodCallIgnored
         file.createNewFile();
+        // and write the user and hashed password to the file.
+        writeFile(file, username, hash(password));
+    }
 
-        // Finally write the user and hashed password to the file.
-        //noinspection ImplicitDefaultCharsetUsage
+    private static void writeFile(@NonNull final File file,
+                                  @NonNull final String username,
+                                  @NonNull final String hash)
+            throws IOException {
         try (FileWriter fw = new FileWriter(file)) {
-            fw.write((username + ":" + hash(password)).toCharArray());
+            fw.write((username + ":" + hash).toCharArray());
         }
     }
 

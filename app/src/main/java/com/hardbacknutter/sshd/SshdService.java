@@ -29,14 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.hardbacknutter.sshd.settings.Prefs;
 
 /**
  * <a href="https://developer.android.com/guide/components/services.html#Lifecycle">
  * https://developer.android.com/guide/components/services.html#Lifecycle</a>
- * <p>
  * <p>
  * Windows OS port forwarding from the external listenaddress to the localhost:
  * - 2222 being the port the sshd service on the emulator is listening on
@@ -68,7 +67,7 @@ import java.util.stream.Collectors;
  * <pre>
  *     netsh interface portproxy delete v4tov4 listenport=2223 listenaddress=192.168.0.56
  * </pre>
- *
+ * <p>
  * Close the firewall:
  * <pre>
  *     netsh advfirewall firewall delete rule name="ALLOW TCP PORT 2223"
@@ -111,13 +110,6 @@ public class SshdService
     /** Log tag. */
     private static final String TAG = "SshdService";
     private static final String[] Z_STRING = new String[0];
-
-    /**
-     * Extra command line options to pass to the dropbear executable.
-     * Splits on spaces, but respects " and \
-     */
-    private static final Pattern CMD_OPTIONS_PATTERN = Pattern.compile(
-            "\\S*\"([^\"]*)\"\\S*|(\\S+)");
 
     private static final Object lock = new Object();
     /**
@@ -181,7 +173,7 @@ public class SshdService
         switch (startMode) {
             case ByUser: {
                 final Intent intent = new Intent(context, SshdService.class);
-                if (Prefs.isUserForeground(context)) {
+                if (Prefs.isRunInForeground(context)) {
                     return context.getApplicationContext().startForegroundService(intent);
                 } else {
                     return context.getApplicationContext().startService(intent);
@@ -208,15 +200,6 @@ public class SshdService
     public static native String getOpensshVersion();
 
     public static native String getRsyncVersion();
-
-    @NonNull
-    private String getHomePath(@NonNull final SharedPreferences pref) {
-        String homePath = pref.getString(Prefs.HOME, null);
-        if (homePath == null || !new File(homePath).exists()) {
-            homePath = getFilesDir().getPath();
-        }
-        return homePath;
-    }
 
     private native int start_sshd(@NonNull String lib,
                                   @NonNull String[] dropbearArgs,
@@ -255,6 +238,7 @@ public class SshdService
 
         // See all options: cpp/dropbear/svr-runopts.c
         final List<String> argList = new ArrayList<>();
+        // the command to run; i.e. args[0]
         argList.add("sshd");
         // Pass on the android system environment to the child process which allows
         // utilities like am (activity manager) and pm (package manager) to run,
@@ -270,30 +254,20 @@ public class SshdService
         // before enabling the next line
 //        args.add("-v");
 
-        final Matcher matcher = CMD_OPTIONS_PATTERN.matcher(
-                pref.getString(Prefs.DROPBEAR_CMDLINE_OPTIONS, ""));
-        while (matcher.find()) {
-            argList.add(matcher.group());
-        }
+        // add custom user defined options
+        argList.addAll(Prefs.getCmdLineOptions(pref));
+
         final String[] args = argList.toArray(Z_STRING);
-
         final String confPath = SshdSettings.getDropbearDirectory(this).getPath();
-        final String homePath = getHomePath(pref);
+        final String homePath = Prefs.getHomePath(this, pref);
+        final String shellCmd = Prefs.getShellCmd(pref);
+        final String env = Prefs.getEnv(pref);
 
-        String shellCmd = pref.getString(Prefs.SHELL, null);
-        if (shellCmd == null || !new File(shellCmd).exists()) {
-            shellCmd = Prefs.DEFAULT_SHELL;
-        }
+        final boolean enablePublickeyLogin = Prefs.isEnablePublicKeyAuth(pref);
+        final boolean enableSingleUsePasswords = Prefs.isEnableSingleUsePasswordAuth(pref);
 
-        final String env = pref.getString(Prefs.ENV_VARS, "");
-
-        final boolean enablePublickeyLogin =
-                pref.getBoolean(Prefs.ENABLE_PUBLIC_KEY_LOGIN, true);
-        final boolean enableSingleUsePasswords =
-                pref.getBoolean(Prefs.ENABLE_SINGLE_USE_PASSWORDS, true);
-
-        final int pid = start_sshd(getApplicationInfo().nativeLibraryDir,
-                                   args, confPath, homePath, shellCmd, env,
+        final int pid = start_sshd(getApplicationInfo().nativeLibraryDir, args,
+                                   confPath, homePath, shellCmd, env,
                                    enablePublickeyLogin,
                                    enableSingleUsePasswords);
         if (BuildConfig.DEBUG) {
@@ -421,14 +395,16 @@ public class SshdService
         }
 
         runInForeground = pref.getBoolean(Prefs.RUN_IN_FOREGROUND, true);
-        sshdPort = pref.getString(Prefs.SSHD_PORT, Prefs.DEFAULT_PORT).strip();
+        sshdPort = pref.getString(Prefs.SSHD_PORT,
+                                  String.valueOf(Prefs.DEFAULT_PORT))
+                       .strip();
 
         startSshd();
 
         if (runInForeground) {
             final List<String> ipList = SshdSettings.getHostAddresses(3);
             if (ipList.isEmpty()) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("No host address");
             }
 
             final String s;

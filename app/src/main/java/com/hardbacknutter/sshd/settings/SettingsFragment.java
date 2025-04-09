@@ -1,4 +1,4 @@
-package com.hardbacknutter.sshd;
+package com.hardbacknutter.sshd.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,19 +10,19 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import com.hardbacknutter.sshd.R;
 import com.hardbacknutter.util.theme.NightMode;
 
 public class SettingsFragment
@@ -30,16 +30,17 @@ public class SettingsFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = "SettingsFragment";
-    /** Not persisted, written directly to the dropbear directory. */
-    private static final String PK_SSHD_AUTH_USERNAME = "sshd.authorized.username";
-    /** Not persisted, written directly to the dropbear directory. */
-    private static final String PK_SSHD_AUTH_PASSWORD = "sshd.authorized.password";
+
+    private static final int PORT_MIN = 1024;
+    private static final int PORT_MAX = 32768;
 
     private SwitchPreference pRunOnBoot;
     private SwitchPreference pRunInForeground;
     private EditTextPreference pPort;
-    private EditTextPreference pAuthUsername;
-    private EditTextPreference pAuthPassword;
+    private EditTextPreference pUsername;
+    private EditTextPreference pPassword;
+
+    private SettingsViewModel vm;
 
     private final OnBackPressedCallback backPressedCallback =
             new OnBackPressedCallback(true) {
@@ -47,9 +48,8 @@ public class SettingsFragment
                 public void handleOnBackPressed() {
                     try {
                         //noinspection DataFlowIssue
-                        SshdSettings.writePasswordFile(getContext(),
-                                                       pAuthUsername.getText(),
-                                                       pAuthPassword.getText());
+                        vm.getDsUP().storeCredentials(getContext());
+
                     } catch (@NonNull final IOException | NoSuchAlgorithmException ignore) {
                         // we should never get here... flw
                         //noinspection DataFlowIssue
@@ -59,7 +59,7 @@ public class SettingsFragment
                                               2_000);
                     }
 
-                    if (hasAtLeastOneAuthMethod()) {
+                    if (vm.hasAtLeastOneAuthMethod(getContext())) {
                         getParentFragmentManager().popBackStack();
                     } else {
                         new MaterialAlertDialogBuilder(getContext())
@@ -76,38 +76,21 @@ public class SettingsFragment
                     }
                 }
             };
-    private boolean hasPreviousPassword;
-
-    private boolean hasAtLeastOneAuthMethod() {
-        final Context context = getContext();
-        //noinspection DataFlowIssue
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String[] userAndPassword = SshdSettings.readPasswordFile(context);
-
-        return prefs.getBoolean(Prefs.ENABLE_SINGLE_USE_PASSWORDS, true)
-               || prefs.getBoolean(Prefs.ENABLE_PUBLIC_KEY_LOGIN, true)
-               || (userAndPassword != null && userAndPassword.length == 2
-                   && userAndPassword[0] != null && !userAndPassword[0].isBlank()
-                   && userAndPassword[1] != null && !userAndPassword[1].isBlank());
-    }
 
     @SuppressWarnings("DataFlowIssue")
     @Override
     public void onCreatePreferences(@Nullable final Bundle savedInstanceState,
                                     @Nullable final String rootKey) {
         final Context context = getContext();
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        final String homePath = prefs.getString(Prefs.HOME, null);
-        if (homePath == null || !new File(homePath).exists()) {
-            prefs.edit().putString(Prefs.HOME, context.getFilesDir().getPath()).apply();
-        }
+        vm = new ViewModelProvider(this).get(SettingsViewModel.class);
+        vm.init(context);
 
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         final Preference pUiTheme = findPreference(NightMode.PK_UI_THEME_MODE);
         //noinspection ConstantConditions
-        pUiTheme.setOnPreferenceChangeListener((preference, newValue) -> {
+        pUiTheme.setOnPreferenceChangeListener((p, newValue) -> {
             // we should never have an invalid setting in the prefs... flw
             try {
                 final int mode = Integer.parseInt(String.valueOf(newValue));
@@ -129,22 +112,15 @@ public class SettingsFragment
             editText.selectAll();
         });
 
-        pAuthUsername = findPreference(PK_SSHD_AUTH_USERNAME);
+        pUsername = findPreference(UserPassStorage.PK_SSHD_AUTH_USERNAME);
+        pUsername.setPreferenceDataStore(vm.getDsUP());
 
-        pAuthPassword = findPreference(PK_SSHD_AUTH_PASSWORD);
-        pAuthPassword.setOnBindEditTextListener(editText -> {
+        pPassword = findPreference(UserPassStorage.PK_SSHD_AUTH_PASSWORD);
+        pPassword.setPreferenceDataStore(vm.getDsUP());
+        pPassword.setOnBindEditTextListener(editText -> {
             editText.setInputType(InputType.TYPE_CLASS_TEXT
                                   | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             editText.selectAll();
-        });
-        pAuthPassword.setSummaryProvider(preference -> {
-            if (!hasPreviousPassword) {
-                final String value = ((EditTextPreference) preference).getText();
-                if (value == null || value.isEmpty()) {
-                    return getString(R.string.pref_not_set);
-                }
-            }
-            return "********";
         });
     }
 
@@ -162,14 +138,13 @@ public class SettingsFragment
             toolbar.setNavigationIcon(R.drawable.arrow_back_24px);
         }
 
-        //noinspection DataFlowIssue
-        final String[] previous = SshdSettings.readPasswordFile(getContext());
-        if (previous != null && previous.length == 2) {
-            pAuthUsername.setText(previous[0]);
-            // do NOT set the text, we only have the hashed password.
-            pAuthPassword.setText("");
-            hasPreviousPassword = true;
-        }
+        vm.onPasswordSummaryUpdate().observe(getViewLifecycleOwner(), s ->
+                pPassword.setSummary(s));
+
+        pUsername.setText(vm.getDsUP().getCurrentUsername());
+        // initially ALWAYS null, but will contain the current unencrypted
+        // password after the user has entered it once during this settings-session
+        pPassword.setText(vm.getDsUP().getCurrentPassword());
     }
 
     @Override
@@ -192,9 +167,11 @@ public class SettingsFragment
     @Override
     public void onSharedPreferenceChanged(@NonNull final SharedPreferences prefs,
                                           @Nullable final String key) {
+        // Sanity check
         if (key == null) {
             return;
         }
+
         switch (key) {
             case Prefs.RUN_ON_BOOT:
             case Prefs.RUN_IN_FOREGROUND: {
@@ -204,27 +181,26 @@ public class SettingsFragment
                 break;
             }
             case Prefs.SSHD_PORT: {
-                final int port = getPort(prefs);
-                if (port < 1024 || port > 32768) {
-                    pPort.setText(Prefs.DEFAULT_PORT);
+                int port = Prefs.DEFAULT_PORT;
+                final String ps = prefs.getString(Prefs.SSHD_PORT, null);
+                if (ps != null && !ps.isEmpty()) {
+                    try {
+                        port = Integer.parseInt(ps);
+                    } catch (@NonNull final Exception ignore) {
+                        // ignore
+                    }
+                }
+                if (port < PORT_MIN || port > PORT_MAX) {
+                    pPort.setText(String.valueOf(Prefs.DEFAULT_PORT));
                     //noinspection ConstantConditions
-                    Snackbar.make(getView(), R.string.err_port_number, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getView(), R.string.err_port_number,
+                                  Snackbar.LENGTH_LONG)
+                            .show();
                 }
                 break;
             }
             default:
                 break;
-
         }
-    }
-
-    private int getPort(@NonNull final SharedPreferences pref) {
-        final String s = pref.getString(Prefs.SSHD_PORT, Prefs.DEFAULT_PORT);
-        try {
-            return Integer.parseInt(s);
-        } catch (@NonNull final Exception ignore) {
-            // ignore
-        }
-        return 2222;
     }
 }
