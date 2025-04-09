@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Holds access to the service.
  */
+@SuppressWarnings("WeakerAccess")
 public class ServiceViewModel
         extends ViewModel {
 
@@ -42,6 +43,7 @@ public class ServiceViewModel
 
     @Nullable
     private SshdService.StartMode startMode;
+    private boolean specialPermDialogShowing;
 
     @NonNull
     MutableLiveData<List<String>> onLogUpdate() {
@@ -59,7 +61,7 @@ public class ServiceViewModel
     }
 
     @Nullable
-    public SshdService.StartMode getStartMode() {
+    SshdService.StartMode getStartMode() {
         return startMode;
     }
 
@@ -215,5 +217,13 @@ public class ServiceViewModel
     void deleteAuthKeys(@NonNull final Context context) {
         //noinspection ResultOfMethodCallIgnored
         new File(SshdSettings.getDropbearDirectory(context), SshdSettings.AUTHORIZED_KEYS).delete();
+    }
+
+    public void setSpecialPermDialogShowing(final boolean specialPermDialogShowing) {
+        this.specialPermDialogShowing = specialPermDialogShowing;
+    }
+
+    public boolean isSpecialPermDialogShowing() {
+        return specialPermDialogShowing;
     }
 }

@@ -47,19 +47,31 @@ import java.util.List;
 
 import com.hardbacknutter.sshd.databinding.DialogAboutBinding;
 import com.hardbacknutter.sshd.databinding.FragmentMainBinding;
+import com.hardbacknutter.sshd.settings.Prefs;
+import com.hardbacknutter.sshd.settings.SettingsFragment;
 
 public class MainFragment
         extends Fragment {
 
-    public static final String TAG = "MainFragment";
+    static final String TAG = "MainFragment";
+    /** boolean. */
+    private static final String UI_NOTIFICATION_ASK_PERMISSION = "ui.notification.ask_permission";
+
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(), isGranted -> {
                         if (!isGranted) {
-                            setAskPermission(false);
+                            //noinspection DataFlowIssue
+                            PreferenceManager
+                                    .getDefaultSharedPreferences(getContext())
+                                    .edit()
+                                    .putBoolean(UI_NOTIFICATION_ASK_PERMISSION, false)
+                                    .apply();
                         }
                     });
+
     private ServiceViewModel vm;
+
     /**
      * Listen for broadcasts from the service informing us about any changes.
      * We simply react by updating the UI.
@@ -112,7 +124,8 @@ public class MainFragment
         super.onResume();
 
         // This is quite essential, without this permission the user cannot really use rsync/sftp
-        if (!Environment.isExternalStorageManager()) {
+        if (!Environment.isExternalStorageManager()
+            && !vm.isSpecialPermDialogShowing()) {
             requestFileAccessPermission();
         }
 
@@ -145,7 +158,8 @@ public class MainFragment
                 getContext(), Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED) {
 
-            if (isAskPermission()) {
+            if (PreferenceManager.getDefaultSharedPreferences(getContext())
+                                 .getBoolean(UI_NOTIFICATION_ASK_PERMISSION, true)) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
@@ -203,10 +217,13 @@ public class MainFragment
                 .setTitle(R.string.dialog_alert_title)
                 .setMessage(R.string.msg_request_files_management)
                 .setCancelable(false)
-                .setNegativeButton(R.string.cancel, (d, which) -> d.dismiss())
-                .setPositiveButton(R.string.ok, (d, which) -> {
-                    // TODO: the dialog does not dismiss first time??
+                .setNegativeButton(R.string.cancel, (d, which) -> {
                     d.dismiss();
+                    vm.setSpecialPermDialogShowing(false);
+                })
+                .setPositiveButton(R.string.ok, (d, which) -> {
+                    d.dismiss();
+                    vm.setSpecialPermDialogShowing(false);
                     try {
                         startActivity(intent);
                     } catch (@NonNull final ActivityNotFoundException e) {
@@ -215,6 +232,8 @@ public class MainFragment
                 })
                 .create()
                 .show();
+
+        vm.setSpecialPermDialogShowing(true);
     }
 
     /**
@@ -305,22 +324,6 @@ public class MainFragment
                         .show();
             }
         }
-    }
-
-    private boolean isAskPermission() {
-        //noinspection DataFlowIssue
-        return PreferenceManager.getDefaultSharedPreferences(getContext())
-                                .getBoolean(Prefs.UI_NOTIFICATION_ASK_PERMISSION, true);
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private void setAskPermission(final boolean flag) {
-        //noinspection DataFlowIssue
-        PreferenceManager
-                .getDefaultSharedPreferences(getContext())
-                .edit()
-                .putBoolean(Prefs.UI_NOTIFICATION_ASK_PERMISSION, flag)
-                .apply();
     }
 
     private void showResetKeys() {
