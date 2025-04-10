@@ -6,7 +6,7 @@
     <string name="msg_request_files_management">“RSYNC” ஐப் பயன்படுத்த உங்கள் கோப்புகளை அணுக இந்த பயன்பாட்டிற்கு சிறப்பு இசைவு தேவை. இந்த அனுமதியின்றி இந்த பயன்பாட்டின் செயல்பாடு கடுமையாக மட்டுப்படுத்தப்படும்.\n\n “சரி” என்பதைத் தட்டிய பிறகு இந்த அனுமதியை இயக்குமாறு கேட்கப்படுவீர்கள்.\n பயன்பாடுகளின் பட்டியலில் கீழே உருட்டி SSHD4A ஐ இயக்கவும்.</string>
     <string name="lbl_about">பற்றி</string>
     <string name="about_versions">வழங்கிய சேவைகள்:\n\n Dropbear %1$s\n Rsync %2$s\n %3$s இலிருந்து SFTP-Server</string>
-    <string name="info_listening_on_ip_port">SSHD4A %1$s: %2$s இல் கேட்கிறது</string>
+    <string name="info_listening_on_bindings">Sshd4a %1$s இல் கேட்கிறது</string>
     <string name="err_unexpected_error">எதிர்பாராத பிழை ஏற்பட்டது. Github இல் உள்ள திட்டப் பக்கத்தைப் பார்வையிட்டு புதிய சிக்கலைப் பதிவு செய்ய “சரி” என்பதைத் தட்டவும்.</string>
     <string name="err_service_failed_to_start">பணி தொடங்கத் தவறிவிட்டது. மீண்டும் முயற்சி செய்து பதிவைச் சரிபார்க்கவும்.</string>
     <string name="err_key_import">உங்கள் சாவியை இறக்குமதி செய்யும் போது ஏதோ தவறு ஏற்பட்டது.</string>

@@ -10,7 +10,7 @@
     <string name="err_port_number">Le port doit être compris entre 1024 et 32768.</string>
     <string name="err_unexpected_error">Une erreur inattendue s’est produite. Touchez « OK » pour visiter la page du projet sur Github et enregistrer un nouveau problème.</string>
     <string name="err_service_failed_to_start">Le service n’a pas réussi à démarrer. Réessayez et vérifiez le journal.</string>
-    <string name="info_listening_on_ip_port">Sshd4a écoute sur %1$s:%2$s</string>
+    <string name="info_listening_on_bindings">Sshd4a écoute sur %1$s</string>
     <string name="lbl_about">À propos de cette application</string>
     <string name="lbl_github_project">Projet Github</string>
     <string name="lbl_import_keys">Importer un fichier « authorized_keys »</string>

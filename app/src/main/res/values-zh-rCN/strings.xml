@@ -13,7 +13,7 @@
     <string name="warning">警告</string>
     <string name="pref_not_set">未设置</string>
     <string name="about_versions">服务组件由以下提供：\n\nDropbear %1$s\nRsync %2$s\nSftp-server %3$s</string>
-    <string name="info_listening_on_ip_port">Sshd4a 正在监听 %1$s:%2$s</string>
+    <string name="info_listening_on_bindings">Sshd4a 正在监听 %1$s</string>
     <string name="err_service_failed_to_start">服务无法启动。请重试并检查日志。</string>
     <string name="err_key_import">导入密钥时出现问题。</string>
     <string name="err_no_ip">啊咧，找不到网络接口？</string>

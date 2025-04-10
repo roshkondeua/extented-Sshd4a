@@ -408,21 +408,26 @@ public class SshdService
         startSshd();
 
         if (runInForeground) {
-            final List<String> ipList = SshdSettings.getHostAddresses(3);
-            if (ipList.isEmpty()) {
-                throw new IllegalStateException("No host address");
-            }
+            final String text;
 
-            final String s;
-            if (ipList.size() > 1) {
-                s = ipList.stream()
-                          .collect(Collectors.joining(",", "[", "]"));
+            final List<String> bindings = SshdService.getCurrentBindings();
+            if (bindings.isEmpty()) {
+                // We should only get here if the user options are invalid.
+                // We're assuming (rightly or wrongly) that the user knows
+                // how to use correct "-p" options
+                text = getString(R.string.err_no_ip);
             } else {
-                s = ipList.get(0);
-            }
+                final String s;
+                if (bindings.size() > 1) {
+                    s = bindings.stream()
+                                .collect(Collectors.joining(",", "[", "]"));
+                } else {
+                    s = bindings.get(0);
+                }
 
-            startForeground(ONGOING_NOTIFICATION_ID, createNotification(
-                    getString(R.string.info_listening_on_ip_port, s, sshdPort)));
+                text = getString(R.string.info_listening_on_bindings, s);
+            }
+            startForeground(ONGOING_NOTIFICATION_ID, createNotification(text));
         }
 
         // If we (i.e. this service, which is != this sshd process) get killed,
