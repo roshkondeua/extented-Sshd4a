@@ -8,54 +8,45 @@
     >
 
     <TextView
-        android:id="@+id/lbl_ip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/field_margin_start"
-        android:text="@string/lbl_interface"
+        android:id="@+id/lbl_all_interfaces"
+        style="@style/Label"
+        android:text="@string/lbl_all_interfaces"
+        app:layout_constraintEnd_toStartOf="@+id/lbl_listeners"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/all_interfaces"
+        style="@style/Info"
+        app:layout_constraintStart_toStartOf="@id/lbl_all_interfaces"
+        app:layout_constraintTop_toBottomOf="@id/lbl_all_interfaces"
+        tools:text="10.0.2.15\n10.0.2.16\nfec0::30db:80c7:e5f4:230a"
         />
 
     <TextView
-        android:id="@+id/ip"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/field_margin_start"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textIsSelectable="true"
-        app:layout_constraintStart_toEndOf="@id/lbl_ip"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="10.0.2.15\n10.0.2.16"
-        />
+        android:id="@+id/lbl_listeners"
+        style="@style/Label"
+        android:text="@string/lbl_listeners"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/lbl_all_interfaces"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/lbl_port"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/lbl_port"
-        app:layout_constraintStart_toEndOf="@id/ip"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <TextView
-        android:id="@+id/port"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/field_margin_start"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textIsSelectable="true"
-        app:layout_constraintStart_toEndOf="@id/lbl_port"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text=":2222"
+        android:id="@+id/listeners"
+        style="@style/Info"
+        app:layout_constraintStart_toStartOf="@id/lbl_listeners"
+        app:layout_constraintTop_toBottomOf="@id/lbl_listeners"
+        tools:text="*:2222"
         />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/div"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ip"
+        app:layout_constraintTop_toBottomOf="@id/all_interfaces"
         />
 
     <androidx.core.widget.NestedScrollView

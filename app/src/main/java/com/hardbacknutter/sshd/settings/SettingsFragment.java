@@ -64,7 +64,7 @@ public class SettingsFragment
                     } else {
                         new MaterialAlertDialogBuilder(getContext())
                                 .setIcon(R.drawable.warning_24px)
-                                .setTitle(R.string.warning)
+                                .setTitle(R.string.dialog_title_warning)
                                 .setMessage(R.string.warning_no_auth_methods)
                                 .setCancelable(true)
                                 .setNegativeButton(R.string.cancel, (d, which) ->

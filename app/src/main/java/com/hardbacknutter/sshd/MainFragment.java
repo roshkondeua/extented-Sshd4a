@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -99,6 +100,10 @@ public class MainFragment
     @Override
     public void onViewCreated(@NonNull final View view,
                               @Nullable final Bundle savedInstanceState) {
+        //noinspection DataFlowIssue
+        final boolean isTelevision = getContext()
+                .getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+
 
         final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(null);
@@ -112,8 +117,7 @@ public class MainFragment
             vb.log.setText(String.join("\n", output));
             vb.logScroller.post(() -> vb.logScroller.fullScroll(ScrollView.FOCUS_DOWN));
         });
-        vm.onServiceStateChanged().observe(getViewLifecycleOwner(), isRunning ->
-                toolbarMenuProvider.updateStartButton(isRunning));
+        vm.onServiceStateChanged().observe(getViewLifecycleOwner(), this::onServiceStateChanged);
 
         authKeysImportLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(), this::onImportAuthKeys);
@@ -138,8 +142,6 @@ public class MainFragment
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(
                 messageReceiver, new IntentFilter(SshdService.SERVICE_UI_REQUEST));
 
-        populateNetworkAddressList();
-
         final boolean isRunning = SshdService.isRunning();
 
         if (Prefs.isRunOnAppStart(getContext())
@@ -149,6 +151,8 @@ public class MainFragment
         } else if (isRunning) {
             vm.startUpdateThread(getContext());
         }
+
+        populateNetworkAddressList();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -166,33 +170,12 @@ public class MainFragment
     }
 
     /**
-     * github #12: Android/Google TV: in short Android TV 11 & 12 does not work.
+     * github #12:
+     * Android/Google TV 11 & 12:
+     * The standard Google image does not provide the needed Dialog.
+     * Some vendors <strong>might</strong> add them.
      * <p>
-     * queryIntentActivities:
-     * <pre>
-     * Google TV api 30 rev 4:
-     * Google TV api 31 rev 4:
-     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: []
-     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: []
-     * <p>
-     * Google TV api 33 rev 5:
-     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: []
-     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{36a3bcb com.android.tv.settings/.device.apps.specialaccess.AllFilesAccessActivity p=1 m=0x208000}]
-     * <p>
-     * Google TV api 34 rev 3:
-     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: []
-     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{eba3c42 com.android.tv.settings/.device.apps.specialaccess.AllFilesAccessActivity p=1 m=0x208000 userHandle=UserHandle{0}}]
-     * </pre>
-     *
-     * <pre>
-     * Nexus S Google APIs 30 rev 16
-     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: [ResolveInfo{7aa6966 com.android.settings/.Settings$ManageExternalStorageActivity p=1 m=0x108000}]
-     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{a9024a7 com.android.settings/.Settings$AppManageExternalStorageActivity p=1 m=0x208000}]
-     * <p>
-     * Pixel 8 Pro Google APIs 35 rev 9
-     * ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION: [ResolveInfo{6589f7 com.android.settings/.Settings$ManageExternalStorageActivity p=1 m=0x108000 userHandle=UserHandle{0}}]
-     * ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION/uri: [ResolveInfo{74f3064 com.android.settings/.Settings$AppManageExternalStorageActivity p=1 m=0x208000 userHandle=UserHandle{0}}]
-     * </pre>
+     * Android/Google TV 13 & 14: the dialog is always available.
      */
     private void requestFileAccessPermission() {
 
@@ -214,7 +197,7 @@ public class MainFragment
         //noinspection ConstantConditions
         new MaterialAlertDialogBuilder(context)
                 .setIcon(R.drawable.security_24px)
-                .setTitle(R.string.dialog_alert_title)
+                .setTitle(R.string.dialog_title_attention)
                 .setMessage(R.string.msg_request_files_management)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel, (d, which) -> {
@@ -295,16 +278,30 @@ public class MainFragment
         super.onDestroy();
     }
 
+    private void onServiceStateChanged(final boolean isRunning) {
+        toolbarMenuProvider.updateStartButton(isRunning);
+        populateNetworkAddressList();
+    }
+
     private void populateNetworkAddressList() {
-        // limit 3... assuming a max of 1 mobile + 1 wifi + 1 eth
-        final List<String> ipList = SshdSettings.getHostAddresses(3);
-        if (ipList.isEmpty()) {
+        // Show all interfaces, limited to 6...
+        final List<String> iList = SshdSettings.getHostAddresses(6);
+        if (iList.isEmpty()) {
             // should never happen... flw
-            vb.ip.setText(R.string.err_no_ip);
+            vb.allInterfaces.setText(R.string.err_no_ip);
         } else {
-            vb.ip.setText(String.join("\n", ipList));
-            //noinspection ConstantConditions
-            vb.port.setText(Prefs.getPort(getContext()));
+            vb.allInterfaces.setText(String.join("\n", iList));
+        }
+
+        // The configured interface listener(s)
+        //noinspection ConstantConditions
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getContext());
+        final List<String> bindings = Prefs.getBindings(prefs);
+        if (bindings.isEmpty()) {
+            vb.listeners.setText(R.string.err_no_ip);
+        } else {
+            vb.listeners.setText(String.join("\n", bindings));
         }
     }
 
@@ -316,7 +313,7 @@ public class MainFragment
                 // note that the state of the current key file is unknown at this point
                 new MaterialAlertDialogBuilder(getContext())
                         .setIcon(R.drawable.error_24px)
-                        .setTitle(R.string.dialog_alert_title)
+                        .setTitle(R.string.dialog_title_attention)
                         .setMessage(error)
                         .setCancelable(true)
                         .setPositiveButton(R.string.ok, (d, which) -> d.dismiss())

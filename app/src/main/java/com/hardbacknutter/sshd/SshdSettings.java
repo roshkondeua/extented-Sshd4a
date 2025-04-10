@@ -82,12 +82,6 @@ public final class SshdSettings {
                     .filter(ina -> !ina.isLoopbackAddress() && !ina.isLinkLocalAddress())
                     .map(InetAddress::getHostAddress)
                     .filter(Objects::nonNull)
-//                    .map(ip -> {
-//                        // strip of the scope id for IPv6 if present
-//                        //noinspection ConstantConditions
-//                        int i = ip.indexOf('%');
-//                        return i != -1 ? ip.substring(0, i) : ip;
-//                    })
                     // sorting will move IPv6 to the end of the list
                     .sorted()
                     .limit(limit)

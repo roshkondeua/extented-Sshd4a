@@ -10,16 +10,18 @@
     <string name="err_port_number">Der Port muss zwischen 1024 und 32768 liegen.</string>
     <string name="err_unexpected_error">Es ist ein unerwarteter Fehler aufgetreten. Tippen Sie auf „OK“, um die Projektseite auf Github zu besuchen und einen neuen Fehler zu melden.</string>
     <string name="err_service_failed_to_start">Der Dienst konnte nicht gestartet werden. Versuchen Sie es erneut und überprüfen Sie das Protokoll.</string>
-    <string name="info_listening_on_bindings">Sshd4a hört auf %1$s</string>
+    <string name="lbl_listeners">Abhören am:</string>
+    <string name="notification_listeners_list">Sshd4a hört auf %1$s</string>
     <string name="lbl_about">Über diese App</string>
     <string name="lbl_github_project">Github-Projekt</string>
     <string name="lbl_import_keys">Importieren einer „authorized_keys“-Datei</string>
+    <string name="lbl_all_interfaces">Alle Schnittstellen:</string>
     <string name="lbl_interface">Schnittstelle:</string>
     <string name="lbl_port">Port-Nummer:</string>
     <string name="lbl_reset_keys">Alle autorisierten Schlüssel löschen</string>
     <string name="lbl_settings">Einstellungen</string>
     <string name="lbl_start">Starten</string>
-    <string name="lbl_stop">Stoppen</string>
+    <string name="lbl_stop">Beenden</string>
     <string name="msg_request_files_management">Diese Anwendung benötigt eine spezielle Berechtigung für den Zugriff auf Ihre Dateien, um „rsync“ verwenden zu können. Ohne diese Erlaubnis ist die Funktionalität dieser Anwendung stark eingeschränkt.\n\n Nachdem Sie auf „OK“ getippt haben, werden Sie aufgefordert, diese Berechtigung zu aktivieren.\nScrollen Sie in der Liste der Anwendungen nach unten und aktivieren Sie Sshd4a.</string>
     <string name="pc_paths">SSH-Anmeldung</string>
     <string name="pc_startup">Starten</string>
@@ -47,11 +49,11 @@
     <string name="pt_single_use_passwords">Einmalige Passwörter</string>
     <string name="pt_ui_theme">Farbschema</string>
     <string name="service_description">Bietet einen sshd-Server mit Shell-Zugang, rsync- und scp/sftp-Diensten.</string>
-    <string name="warning">Warnung</string>
+    <string name="dialog_title_warning">Warnung</string>
     <string name="warning_no_auth_methods">Sie haben alle Authentifizierungsmethoden deaktiviert. Sind Sie sicher, dass Sie dies tun wollen?</string>
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
-    <string name="dialog_alert_title">Achtung</string>
+    <string name="dialog_title_attention">Achtung</string>
     <string name="action_help">Hilfe</string>
     <string name="err_device_maybe_not_supported">Ihr Gerät wird entweder nicht unterstützt oder Sie müssen die Berechtigungen manuell festlegen. Tippen Sie auf „OK“, um die Dokumentation auf Github zu besuchen.</string>
 </resources>

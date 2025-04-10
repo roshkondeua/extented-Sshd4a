@@ -17,7 +17,6 @@ import android.util.Log;
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -27,7 +26,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -86,8 +84,6 @@ public class SshdService
         System.loadLibrary("jni-dropbear");
     }
 
-    /** The binding when the service is running. */
-    private final List<String> actualBindings = new ArrayList<>();
     @GuardedBy("lock")
     private int sshdPid;
     @GuardedBy("lock")
@@ -99,7 +95,7 @@ public class SshdService
      * Running in foreground is presumed to be always true UNLESS deliberately switched off.
      */
     private boolean runInForeground = true;
-    private SharedPreferences pref;
+    private SharedPreferences prefs;
     private boolean notificationChannelCreated;
     /** The UI configured port, which will be used with all interfaces. */
     private String sshdPort;
@@ -115,16 +111,6 @@ public class SshdService
                 return false;
             }
             return sInstance.sshdPid > 0;
-        }
-    }
-
-    @NonNull
-    static List<String> getCurrentBindings() {
-        synchronized (lock) {
-            if (sInstance == null) {
-                return List.of();
-            }
-            return sInstance.actualBindings;
         }
     }
 
@@ -176,29 +162,6 @@ public class SshdService
     public static native String getOpensshVersion();
 
     public static native String getRsyncVersion();
-
-    /**
-     * Collect all user configured bindings, we're NOT checking validity.
-     * 1. we're assuming the user knows what they are doing... flw
-     * 2. broken options will be detected in dropbear
-     *
-     * @param userOptions to parse
-     *
-     * @return list of "-p" arguments, i.e. the "addr:port" settings
-     */
-    @VisibleForTesting
-    @NonNull
-    static List<String> collectBindings(@NonNull final List<String> userOptions) {
-        final List<String> bindings = new ArrayList<>();
-        final Iterator<String> it = userOptions.iterator();
-        while (it.hasNext()) {
-            final String s = it.next();
-            if ("-p".equals(s) && it.hasNext()) {
-                bindings.add(it.next());
-            }
-        }
-        return bindings;
-    }
 
     private native int start_sshd(@NonNull String lib,
                                   @NonNull String[] dropbearArgs,
@@ -252,26 +215,23 @@ public class SshdService
         // before enabling the next line
 //        args.add("-v");
 
-        final List<String> userOptions = Prefs.getCmdLineOptions(pref);
-        if (userOptions.contains("-p")) {
-            actualBindings.addAll(collectBindings(userOptions));
-        } else {
+        final List<String> userOptions = Prefs.getCmdLineOptions(prefs);
+        if (!userOptions.contains("-p")) {
             // Bind to the [address:]port, which defaults to all interfaces
             argList.add("-p");
             argList.add(sshdPort);
-            actualBindings.add("*:" + sshdPort);
         }
 
         argList.addAll(userOptions);
 
         final String[] args = argList.toArray(Z_STRING);
         final String confPath = SshdSettings.getDropbearDirectory(this).getPath();
-        final String homePath = Prefs.getHomePath(this, pref);
-        final String shellCmd = Prefs.getShellCmd(pref);
-        final String env = Prefs.getEnv(pref);
+        final String homePath = Prefs.getHomePath(this, prefs);
+        final String shellCmd = Prefs.getShellCmd(prefs);
+        final String env = Prefs.getEnv(prefs);
 
-        final boolean enablePublickeyLogin = Prefs.isEnablePublicKeyAuth(pref);
-        final boolean enableSingleUsePasswords = Prefs.isEnableSingleUsePasswordAuth(pref);
+        final boolean enablePublickeyLogin = Prefs.isEnablePublicKeyAuth(prefs);
+        final boolean enableSingleUsePasswords = Prefs.isEnableSingleUsePasswordAuth(prefs);
 
         final int pid = start_sshd(getApplicationInfo().nativeLibraryDir, args,
                                    confPath, homePath, shellCmd, env,
@@ -356,7 +316,6 @@ public class SshdService
                 kill(pid);
             }
         }
-        actualBindings.clear();
         updateUI();
     }
 
@@ -367,7 +326,7 @@ public class SshdService
         if (BuildConfig.DEBUG) {
             Log.d(TAG + "|onCreate", "ENTER");
         }
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // check for, and kill any potentially stale ssh process
         synchronized (lock) {
@@ -402,15 +361,15 @@ public class SshdService
             Log.d(TAG + "|onStartCommand", "ENTER");
         }
 
-        runInForeground = pref.getBoolean(Prefs.RUN_IN_FOREGROUND, true);
-        sshdPort = String.valueOf(Prefs.getPort(pref));
+        runInForeground = prefs.getBoolean(Prefs.RUN_IN_FOREGROUND, true);
+        sshdPort = String.valueOf(Prefs.getPort(prefs));
 
         startSshd();
 
         if (runInForeground) {
             final String text;
 
-            final List<String> bindings = SshdService.getCurrentBindings();
+            final List<String> bindings = Prefs.getBindings(prefs);
             if (bindings.isEmpty()) {
                 // We should only get here if the user options are invalid.
                 // We're assuming (rightly or wrongly) that the user knows
@@ -419,13 +378,12 @@ public class SshdService
             } else {
                 final String s;
                 if (bindings.size() > 1) {
-                    s = bindings.stream()
-                                .collect(Collectors.joining(",", "[", "]"));
+                    s = bindings.stream().collect(Collectors.joining(",", "[", "]"));
                 } else {
                     s = bindings.get(0);
                 }
 
-                text = getString(R.string.info_listening_on_bindings, s);
+                text = getString(R.string.notification_listeners_list, s);
             }
             startForeground(ONGOING_NOTIFICATION_ID, createNotification(text));
         }

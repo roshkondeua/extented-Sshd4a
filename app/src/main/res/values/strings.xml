@@ -1,43 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--suppress LongLine -->
 <resources>
-    <string name="app_name" translatable="false">Sshd4a</string>
-    <string name="service_name" translatable="false">Sshd4a</string>
+    <string name="app_name"
+            translatable="false">Sshd4a</string>
+    <string name="service_name"
+            translatable="false">Sshd4a</string>
+
+    <!-- Service description needed for Android OS. -->
     <string name="service_description">Provides an sshd server with shell access, rsync and scp/sftp services.</string>
 
     <!-- Dialog message/question. -->
     <string name="msg_request_files_management">This application needs special permission to access your files in order to be able to use “rsync”. Without this permission the functionality of this app will be severely limited.\n\n After tapping “OK” you will be asked to enable this permission.\n Scroll down in the list of applications and enable Sshd4a.</string>
 
+    <!-- About dialog title:
+         Param1: version string -->
+    <string name="about_title">Sshd4a %s</string>
+    <!-- Menu option -->
     <string name="lbl_about">About</string>
+    <!-- Message text with component versions on the the about Dialog.
+         Params 1,2,3: version numbers.
+    -->
     <string name="about_versions">Services provided by:\n\nDropbear %1$s\nRsync %2$s\nSftp-server from %3$s</string>
-    <string name="info_listening_on_bindings">Sshd4a is listening on %1$s</string>
+    <!-- Button text on the about Dialog.-->
+    <string name="lbl_github_project">Github project</string>
 
     <string name="err_device_maybe_not_supported">Your device is either unsupported or you might need to set the permissions manually. Tap “OK” to visit the documentation on Github.</string>
-    <string name="err_unexpected_error">There was an unexpected error. Tap “OK” to visit the project page on Github and log a new issue.</string>
-    <string name="err_service_failed_to_start">The service failed to start. Try again and check the log.</string>
-    <string name="err_key_import">Something went wrong while importing your keys.</string>
-    <string name="err_no_version">Unknown</string>
-    <string name="err_no_ip">No network interfaces found?</string>
-    <string name="err_port_number">The port must be between 1024 and 32768.</string>
     <string name="err_failed_to_save">Failed to save the password</string>
+    <string name="err_key_import">Something went wrong while importing your keys.</string>
+    <string name="err_no_ip">No network interfaces found?</string>
+    <string name="err_no_version">Unknown</string>
+    <string name="err_port_number">The port must be between 1024 and 32768.</string>
+    <string name="err_service_failed_to_start">The service failed to start. Try again and check the log.</string>
+    <string name="err_unexpected_error">There was an unexpected error. Tap “OK” to visit the project page on Github and log a new issue.</string>
 
-    <!-- Dialog title. -->
-    <string name="warning">Warning</string>
     <!-- Dialog message/question. -->
     <string name="warning_no_auth_methods">You have disabled all authentication methods. Are you sure you want to do this?</string>
 
+    <!-- shown as a notification in the device notification area -->
+    <string name="notification_listeners_list">Sshd4a is listening on %1$s</string>
     <!-- Shown at the top of the screen followed by the list of interfaces (IP numbers) -->
+    <string name="lbl_all_interfaces">All interfaces:</string>
+    <!-- Shown at the top of the screen followed by the list of active interfaces (IP numbers) -->
+    <string name="lbl_listeners">Listening on:</string>
+
+    <!-- Label for the interface/address field.  -->
     <string name="lbl_interface">Interface:</string>
-    <!-- Shown at the top of the screen followed by the port number -->
+    <!-- Label for the port number field.  -->
     <string name="lbl_port">Port:</string>
 
-    <!-- Button label. -->
-    <string name="lbl_start">Start</string>
-    <!-- Button label. -->
-    <string name="lbl_stop">Stop</string>
 
-    <!-- Menu option / screen title. -->
-    <string name="lbl_settings">Settings</string>
     <!-- Menu option. -->
     <string name="lbl_import_keys">Import an “authorized_keys” file</string>
     <!-- Menu option. -->
@@ -62,7 +73,8 @@
     <string name="ps_foreground_off">The service will only run while this app is in the foreground.</string>
 
     <!-- Preference category title -->
-    <string name="pc_dropbear" translatable="false">Dropbear SSH</string>
+    <string name="pc_dropbear"
+            translatable="false">Dropbear SSH</string>
     <!-- Preference option -->
     <string name="pt_port">Port Number (1024 &lt; port &lt; 32768)</string>
     <!-- Preference option -->
@@ -88,9 +100,6 @@
     <!-- Preference value for "pt_ui_theme" -->
     <string name="pe_ui_theme_light">Light</string>
 
-    <!-- [VERIFIED] -->
-    <string name="pref_not_set">Not set</string>
-
     <!-- Preference option -->
     <string name="pt_authorized_username">System username</string>
     <!-- Preference option -->
@@ -104,16 +113,24 @@
     <string name="pt_public_key_login">Public key login</string>
     <!-- Preference option -->
     <string name="pt_public_key_login_info">Allow logins using a public key.</string>
-    <!-- About dialog button -->
-    <string name="lbl_github_project">Github project</string>
-    <!-- About dialog title: param1: version string -->
-    <string name="about_title">Sshd4a %s</string>
-    <!-- [VERIFIED] -->
+
+    <!-- [VERIFIED] - Menu option / screen title. -->
+    <string name="lbl_settings">Settings</string>
+    <!-- [VERIFIED] - Button label. -->
+    <string name="lbl_start">Start</string>
+    <!-- [VERIFIED] - Button label. -->
+    <string name="lbl_stop">Stop</string>
+    <!-- [VERIFIED] - Button label. -->
     <string name="ok">OK</string>
-    <!-- [VERIFIED] -->
+    <!-- [VERIFIED] - Button label. -->
     <string name="cancel">Cancel</string>
     <!-- [VERIFIED] -->
-    <string name="dialog_alert_title">Attention</string>
+    <string name="dialog_title_attention">Attention</string>
+    <!-- [VERIFIED] -->
+    <string name="dialog_title_warning">Warning</string>
     <!-- [VERIFIED] -->
     <string name="action_help">Help</string>
+    <!-- [VERIFIED] -->
+    <string name="pref_not_set">Not set</string>
+
 </resources>

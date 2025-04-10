@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -108,16 +109,43 @@ public final class Prefs {
     }
 
     /**
-     * The user configured port to listen on.
+     * Get the bindings as configured.
      *
-     * @param context Current context
+     * @param prefs to read from
      *
-     * @return port as a {@code String}
+     * @return list of "[address:]port" strings
      */
     @NonNull
-    public static String getPort(@NonNull final Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return String.valueOf(getPort(prefs));
+    public static List<String> getBindings(@NonNull final SharedPreferences prefs) {
+        final List<String> userOptions = getCmdLineOptions(prefs);
+        if (userOptions.contains("-p")) {
+            return collectBindings(userOptions);
+        } else {
+            return List.of("*:" + getPort(prefs));
+        }
+    }
+
+    /**
+     * Collect all user configured bindings, we're NOT checking validity.
+     * 1. we're assuming the user knows what they are doing... flw
+     * 2. broken options will be detected in dropbear
+     *
+     * @param userOptions to parse
+     *
+     * @return list of "-p" arguments, i.e. the "addr:port" settings
+     */
+    @VisibleForTesting
+    @NonNull
+    public static List<String> collectBindings(@NonNull final List<String> userOptions) {
+        final List<String> bindings = new ArrayList<>();
+        final Iterator<String> it = userOptions.iterator();
+        while (it.hasNext()) {
+            final String s = it.next();
+            if ("-p".equals(s) && it.hasNext()) {
+                bindings.add(it.next());
+            }
+        }
+        return bindings;
     }
 
     /**
