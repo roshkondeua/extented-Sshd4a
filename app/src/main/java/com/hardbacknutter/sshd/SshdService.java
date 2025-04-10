@@ -118,6 +118,16 @@ public class SshdService
         }
     }
 
+    @NonNull
+    static List<String> getCurrentBindings() {
+        synchronized (lock) {
+            if (sInstance == null) {
+                return List.of();
+            }
+            return sInstance.actualBindings;
+        }
+    }
+
     /**
      * Start the service.
      *
