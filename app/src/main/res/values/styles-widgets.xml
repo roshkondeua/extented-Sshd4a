@@ -34,6 +34,7 @@
     <style name="Widget.App.DialogButtonBarButtons"
            parent="Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="backgroundTint">@color/dialog_button_background_color</item>
     </style>
 
     <style name="Widget.App.DialogButtonBarButtons.Flush"
