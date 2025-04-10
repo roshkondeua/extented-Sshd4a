@@ -39,46 +39,6 @@ import com.hardbacknutter.sshd.settings.Prefs;
  * <a href="https://developer.android.com/guide/components/services.html#Lifecycle">
  * https://developer.android.com/guide/components/services.html#Lifecycle</a>
  * <p>
- * Windows OS port forwarding from the external listenaddress to the localhost:
- * - 2222 being the port the sshd service on the emulator is listening on
- * - 2223 the port on the windows-localhost we'll forward to the emulators 2222 port.
- * <p>
- * Use "ipconfig" on the windows box to get your current address; for example: 192.168.0.56
- * <p>
- * Proxy the host interface 192.168.0.56:2223 to the localhost:2222
- * <pre>
- *     netsh interface portproxy add v4tov4 listenaddress=192.168.0.56 listenport=2223 connectaddress=127.0.0.1 connectport=2222
- * </pre>
- * <p>
- * Open the firewall for port 2223 (i.e. the windows host)
- * <pre>
- *     netsh advfirewall firewall add rule name="ALLOW TCP PORT 2223" dir=in action=allow protocol=TCP localport=2223
- * </pre>
- * <p>
- * To access the emulator from a shell on the emulator hosting machine, run:
- * <pre>
- *    # optional / might be needed!
- *    adb root
- *    # enable a forward from the local port (i.e. 127.0.0.1) 2223 to the emulator port 2222
- *    adb forward tcp:2223 tcp:2222
- *    # you can now connect to the sshd server on the emulator with:
- *    ssh -p 2223 localhost
- * </pre>
- * <p>
- * Delete the proxy rule:
- * <pre>
- *     netsh interface portproxy delete v4tov4 listenport=2223 listenaddress=192.168.0.56
- * </pre>
- * <p>
- * Close the firewall:
- * <pre>
- *     netsh advfirewall firewall delete rule name="ALLOW TCP PORT 2223"
- * </pre>
- * Remove forwards:
- * <pre>
- *     adb forward --remove-all
- * </pre>
- *
  * <a href="https://developer.android.com/about/versions/oreo/background#services">
  * Background Service Limitations</a>
  * <pre>
@@ -88,7 +48,8 @@ import com.hardbacknutter.sshd.settings.Prefs;
  *     and use services. At the end of that window, the app is considered to be idle.
  *     At this time, the system stops the app's background services
  * </pre>
- * ==> A manual start (i.e. user clicks the button or 'startOnOpn') should always use "foreground".
+ * i.o.w. if the user clicks the "start" button or {@link Prefs#isRunOnAppStart}) is used,
+ * the service MUST use "foreground".
  */
 public class SshdService
         extends Service {
@@ -125,7 +86,8 @@ public class SshdService
         System.loadLibrary("jni-dropbear");
     }
 
-    private final ArrayList<String> actualBindings = new ArrayList<>();
+    /** The binding when the service is running. */
+    private final List<String> actualBindings = new ArrayList<>();
     @GuardedBy("lock")
     private int sshdPid;
     @GuardedBy("lock")
@@ -205,6 +167,29 @@ public class SshdService
 
     public static native String getRsyncVersion();
 
+    /**
+     * Collect all user configured bindings, we're NOT checking validity.
+     * 1. we're assuming the user knows what they are doing... flw
+     * 2. broken options will be detected in dropbear
+     *
+     * @param userOptions to parse
+     *
+     * @return list of "-p" arguments, i.e. the "addr:port" settings
+     */
+    @VisibleForTesting
+    @NonNull
+    static List<String> collectBindings(@NonNull final List<String> userOptions) {
+        final List<String> bindings = new ArrayList<>();
+        final Iterator<String> it = userOptions.iterator();
+        while (it.hasNext()) {
+            final String s = it.next();
+            if ("-p".equals(s) && it.hasNext()) {
+                bindings.add(it.next());
+            }
+        }
+        return bindings;
+    }
+
     private native int start_sshd(@NonNull String lib,
                                   @NonNull String[] dropbearArgs,
                                   @NonNull String confPath,
@@ -224,6 +209,7 @@ public class SshdService
         if (pidFile.exists()) {
             //noinspection ImplicitDefaultCharsetUsage
             try (BufferedReader r = new BufferedReader(new FileReader(pidFile))) {
+                //noinspection BlockingMethodInNonBlockingContext
                 pid = Integer.parseInt(r.readLine());
             } catch (@NonNull final IOException ignore) {
                 // ignore
@@ -347,29 +333,6 @@ public class SshdService
         }
 
         updateUI();
-    }
-
-    /**
-     * Collect all user configured bindings, we're NOT checking validity.
-     * 1. we're assuming the user knows what they are doing... flw
-     * 2. broken options will be detected in dropbear
-     *
-     * @param userOptions to parse
-     *
-     * @return list of "-p" arguments, i.e. the "addr:port" settings
-     */
-    @VisibleForTesting
-    @NonNull
-    static List<String> collectBindings(@NonNull final List<String> userOptions) {
-        final List<String> bindings = new ArrayList<>();
-        final Iterator<String> it = userOptions.iterator();
-        while (it.hasNext()) {
-            final String s = it.next();
-            if ("-p".equals(s) && it.hasNext()) {
-                bindings.add(it.next());
-            }
-        }
-        return bindings;
     }
 
     private void stopSshd() {
@@ -512,9 +475,12 @@ public class SshdService
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-    public enum StartMode {
+    enum StartMode {
+        /** User started, or started when the app starts. */
         ByUser,
+        /** An external (to this app) start request. */
         ByIntent,
+        /** We're starting the service when the device is bootong. */
         OnBoot
     }
 }
