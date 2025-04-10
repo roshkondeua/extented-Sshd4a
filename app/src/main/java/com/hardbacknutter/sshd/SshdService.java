@@ -17,6 +17,7 @@ import android.util.Log;
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -123,6 +125,7 @@ public class SshdService
         System.loadLibrary("jni-dropbear");
     }
 
+    private final ArrayList<String> actualBindings = new ArrayList<>();
     @GuardedBy("lock")
     private int sshdPid;
     @GuardedBy("lock")
@@ -136,6 +139,7 @@ public class SshdService
     private boolean runInForeground = true;
     private SharedPreferences pref;
     private boolean notificationChannelCreated;
+    /** The UI configured port, which will be used with all interfaces. */
     private String sshdPort;
 
     /**
@@ -247,15 +251,22 @@ public class SshdService
         argList.add("-R");
         // Don't fork into background
         argList.add("-F");
-        // Bind to [address:]port
-        argList.add("-p");
-        argList.add(sshdPort);
+
         // edit dropbear/config.h, add:  #define DEBUG_TRACE 1
         // before enabling the next line
 //        args.add("-v");
 
-        // add custom user defined options
-        argList.addAll(Prefs.getCmdLineOptions(pref));
+        final List<String> userOptions = Prefs.getCmdLineOptions(pref);
+        if (userOptions.contains("-p")) {
+            actualBindings.addAll(collectBindings(userOptions));
+        } else {
+            // Bind to the [address:]port, which defaults to all interfaces
+            argList.add("-p");
+            argList.add(sshdPort);
+            actualBindings.add("*:" + sshdPort);
+        }
+
+        argList.addAll(userOptions);
 
         final String[] args = argList.toArray(Z_STRING);
         final String confPath = SshdSettings.getDropbearDirectory(this).getPath();
@@ -338,6 +349,29 @@ public class SshdService
         updateUI();
     }
 
+    /**
+     * Collect all user configured bindings, we're NOT checking validity.
+     * 1. we're assuming the user knows what they are doing... flw
+     * 2. broken options will be detected in dropbear
+     *
+     * @param userOptions to parse
+     *
+     * @return list of "-p" arguments, i.e. the "addr:port" settings
+     */
+    @VisibleForTesting
+    @NonNull
+    static List<String> collectBindings(@NonNull final List<String> userOptions) {
+        final List<String> bindings = new ArrayList<>();
+        final Iterator<String> it = userOptions.iterator();
+        while (it.hasNext()) {
+            final String s = it.next();
+            if ("-p".equals(s) && it.hasNext()) {
+                bindings.add(it.next());
+            }
+        }
+        return bindings;
+    }
+
     private void stopSshd() {
         synchronized (lock) {
             final int pid = sshdPid;
@@ -349,6 +383,7 @@ public class SshdService
                 kill(pid);
             }
         }
+        actualBindings.clear();
         updateUI();
     }
 

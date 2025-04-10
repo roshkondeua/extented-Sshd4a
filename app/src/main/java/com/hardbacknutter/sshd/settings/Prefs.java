@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.preference.PreferenceManager;
 
 import java.io.File;
@@ -146,11 +147,14 @@ public final class Prefs {
      */
     @NonNull
     public static List<String> getCmdLineOptions(@NonNull final SharedPreferences prefs) {
-        final List<String> argList = new ArrayList<>();
+        return splitOptions(prefs.getString(DROPBEAR_CMDLINE_OPTIONS, ""));
+    }
 
-        // add custom user defined options
-        final Matcher matcher = CMD_OPTIONS_PATTERN.matcher(
-                prefs.getString(DROPBEAR_CMDLINE_OPTIONS, ""));
+    @VisibleForTesting
+    @NonNull
+    public static List<String> splitOptions(@NonNull final CharSequence options) {
+        final List<String> argList = new ArrayList<>();
+        final Matcher matcher = CMD_OPTIONS_PATTERN.matcher(options);
         while (matcher.find()) {
             argList.add(matcher.group());
         }
