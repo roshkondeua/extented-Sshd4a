@@ -181,16 +181,10 @@ public class SettingsFragment
                 break;
             }
             case Prefs.SSHD_PORT: {
-                int port = Prefs.DEFAULT_PORT;
-                final String ps = prefs.getString(Prefs.SSHD_PORT, null);
-                if (ps != null && !ps.isEmpty()) {
-                    try {
-                        port = Integer.parseInt(ps);
-                    } catch (@NonNull final Exception ignore) {
-                        // ignore
-                    }
-                }
+                final int port = Prefs.getPort(prefs);
                 if (port < PORT_MIN || port > PORT_MAX) {
+                    // Setting this will trigger another onSharedPreferenceChanged
+                    // but that's fine.
                     pPort.setText(String.valueOf(Prefs.DEFAULT_PORT));
                     //noinspection ConstantConditions
                     Snackbar.make(getView(), R.string.err_port_number,

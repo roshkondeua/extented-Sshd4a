@@ -115,10 +115,28 @@ public final class Prefs {
      */
     @NonNull
     public static String getPort(@NonNull final Context context) {
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(SSHD_PORT, String.valueOf(DEFAULT_PORT))
-                .strip();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return String.valueOf(getPort(prefs));
+    }
+
+    /**
+     * The user configured port to listen on.
+     *
+     * @param prefs to read from
+     *
+     * @return port as a {@code String}
+     */
+    public static int getPort(@NonNull final SharedPreferences prefs) {
+        final String ps = prefs.getString(Prefs.SSHD_PORT, null);
+        if (ps != null && !ps.isBlank()) {
+            try {
+                return Integer.parseInt(ps);
+            } catch (@NonNull final Exception ignore) {
+                // ignore
+            }
+        }
+
+        return DEFAULT_PORT;
     }
 
     /**

@@ -395,9 +395,7 @@ public class SshdService
         }
 
         runInForeground = pref.getBoolean(Prefs.RUN_IN_FOREGROUND, true);
-        sshdPort = pref.getString(Prefs.SSHD_PORT,
-                                  String.valueOf(Prefs.DEFAULT_PORT))
-                       .strip();
+        sshdPort = String.valueOf(Prefs.getPort(pref));
 
         startSshd();
 
