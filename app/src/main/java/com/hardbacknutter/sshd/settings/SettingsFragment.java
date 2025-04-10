@@ -199,6 +199,11 @@ public class SettingsFragment
                 }
                 break;
             }
+            case Prefs.DROPBEAR_CMDLINE_OPTIONS: {
+                final String s = prefs.getString(key, null);
+                pPort.setEnabled(s == null || !s.contains("-p"));
+                break;
+            }
             default:
                 break;
         }

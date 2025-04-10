@@ -19,20 +19,20 @@ public final class Prefs {
 
     /** boolean. */
     public static final String RUN_IN_FOREGROUND = "service.start.foreground";
-    /** String. */
-    public static final String SSHD_PORT = "sshd.port";
-    /** String. */
-    public static final int DEFAULT_PORT = 2222;
     /** boolean. */
     static final String RUN_ON_BOOT = "service.start.onboot";
+
+    /** String. */
+    static final String SSHD_PORT = "sshd.port";
+    /** String. */
+    static final int DEFAULT_PORT = 2222;
+    /** String. */
+    static final String DROPBEAR_CMDLINE_OPTIONS = "dropbear.options";
 
     /** boolean. */
     private static final String ENABLE_SINGLE_USE_PASSWORDS = "sshd.enable.single.use.password";
     /** boolean. */
     private static final String ENABLE_PUBLIC_KEY_LOGIN = "sshd.enable.publickey.login";
-
-    private static final String DROPBEAR_CMDLINE_OPTIONS = "dropbear.options";
-
     private static final String ENV_VARS = "sshd.env";
     private static final String HOME = "sshd.home";
     private static final String SHELL = "sshd.shell";
