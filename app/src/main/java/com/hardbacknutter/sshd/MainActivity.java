@@ -14,6 +14,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.hardbacknutter.sshd.settings.Prefs;
 
+/**
+ * Handles start/stop by Intent.
+ *
+ * Setup and delegate the UI to the {@link MainFragment}.
+ */
 public class MainActivity
         extends AppCompatActivity {
 

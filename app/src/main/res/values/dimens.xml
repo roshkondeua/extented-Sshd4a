@@ -6,4 +6,5 @@
     <dimen name="section_margin_top">4dp</dimen>
     <dimen name="container_margin">4dp</dimen>
 
+    <dimen name="tv_prefs_padding_bottom">100dp</dimen>
 </resources>

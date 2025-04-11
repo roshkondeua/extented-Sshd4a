@@ -8,6 +8,9 @@ import androidx.annotation.NonNull;
 
 import com.hardbacknutter.sshd.settings.Prefs;
 
+/**
+ * Handle start-on-boot.
+ */
 public class BootReceiver
         extends BroadcastReceiver {
 

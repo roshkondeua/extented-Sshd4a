@@ -14,18 +14,18 @@ import com.hardbacknutter.sshd.SshdSettings;
 public class SettingsViewModel
         extends ViewModel {
 
+    /** Updates the password summary. */
+    private final MutableLiveData<String> pwSummaryUpdate = new MutableLiveData<>();
+    /** PreferenceDataStore for user/password fields. */
     private UserPassStorage dsUP;
 
-    private final MutableLiveData<String> pwSummaryUpdate = new MutableLiveData<>();
-
     void init(@NonNull final Context context) {
-        if ( dsUP == null) {
+        if (dsUP == null) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             // Force init if never set before
             Prefs.getHomePath(context, prefs);
 
             dsUP = new UserPassStorage(context, this);
-            updatePasswordSummary(dsUP.getPasswordSummaryText());
         }
     }
 

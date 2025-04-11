@@ -48,11 +48,14 @@
     <!-- Label for the port number field.  -->
     <string name="lbl_port">Port:</string>
 
+    <!-- Menu option. Used on TV's. -->
+    <string name="lbl_import_keys">Import keys</string>
+    <!-- Menu option. -->
+    <string name="lbl_import_keys_long">Import an “authorized_keys” file</string>
+    <!-- Menu option. Used on TV's. -->
+    <string name="lbl_reset_keys">Delete all keys</string>
+    <string name="lbl_reset_keys_long">Delete all authorized keys</string>
 
-    <!-- Menu option. -->
-    <string name="lbl_import_keys">Import an “authorized_keys” file</string>
-    <!-- Menu option. -->
-    <string name="lbl_reset_keys">Delete all authorized keys</string>
     <!-- Dialog message/question. -->
     <string name="confirm_reset_keys">Delete all authorized_keys?\nYou will only be able to login with single-use passwords.</string>
 

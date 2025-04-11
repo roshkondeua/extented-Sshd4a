@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public final class Prefs {
 
     /** boolean. */
-    public static final String RUN_IN_FOREGROUND = "service.start.foreground";
+    static final String RUN_IN_FOREGROUND = "service.start.foreground";
     /** boolean. */
     static final String RUN_ON_BOOT = "service.start.onboot";
 
@@ -103,9 +103,19 @@ public final class Prefs {
      *         {@code false}: the system can kill the service
      */
     public static boolean isRunInForeground(@NonNull final Context context) {
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getBoolean(RUN_IN_FOREGROUND, true);
+        return isRunInForeground(PreferenceManager.getDefaultSharedPreferences(context));
+    }
+
+    /**
+     * How the service should be handled by the system when the App goes to the background.
+     *
+     * @param prefs to read from
+     *
+     * @return {@code true}: the service should keep running
+     *         {@code false}: the system can kill the service
+     */
+    public static boolean isRunInForeground(@NonNull final SharedPreferences prefs) {
+        return prefs.getBoolean(RUN_IN_FOREGROUND, true);
     }
 
     /**
@@ -158,6 +168,7 @@ public final class Prefs {
     public static int getPort(@NonNull final SharedPreferences prefs) {
         final String ps = prefs.getString(Prefs.SSHD_PORT, null);
         if (ps != null && !ps.isBlank()) {
+            //noinspection OverlyBroadCatchBlock
             try {
                 return Integer.parseInt(ps);
             } catch (@NonNull final Exception ignore) {
@@ -172,12 +183,21 @@ public final class Prefs {
      * {@code SshdService#start_sshd} parameter.
      *
      * @param prefs to read from
+     *
+     * @return options
      */
     @NonNull
     public static List<String> getCmdLineOptions(@NonNull final SharedPreferences prefs) {
         return splitOptions(prefs.getString(DROPBEAR_CMDLINE_OPTIONS, ""));
     }
 
+    /**
+     * Split the single String with options in a list.
+     *
+     * @param options to split
+     *
+     * @return list
+     */
     @VisibleForTesting
     @NonNull
     public static List<String> splitOptions(@NonNull final CharSequence options) {
@@ -192,7 +212,10 @@ public final class Prefs {
     /**
      * {@code SshdService#start_sshd} parameter.
      *
-     * @param prefs to read from
+     * @param context Current context
+     * @param prefs   to read from
+     *
+     * @return path
      */
     @NonNull
     public static String getHomePath(@NonNull final Context context,
@@ -210,6 +233,8 @@ public final class Prefs {
      * {@code SshdService#start_sshd} parameter.
      *
      * @param prefs to read from
+     *
+     * @return path
      */
     @NonNull
     public static String getShellCmd(@NonNull final SharedPreferences prefs) {
@@ -224,6 +249,8 @@ public final class Prefs {
      * {@code SshdService#start_sshd} parameter.
      *
      * @param prefs to read from
+     *
+     * @return env vars
      */
     @NonNull
     public static String getEnv(@NonNull final SharedPreferences prefs) {

@@ -86,7 +86,18 @@ public class MainFragment
     };
     private FragmentMainBinding vb;
     private ActivityResultLauncher<String> authKeysImportLauncher;
+    @Nullable
     private ToolbarMenuProvider toolbarMenuProvider;
+    private boolean isTelevision;
+
+    @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //noinspection DataFlowIssue
+        isTelevision = getContext().getPackageManager()
+                                   .hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+    }
 
     @Nullable
     @Override
@@ -100,15 +111,35 @@ public class MainFragment
     @Override
     public void onViewCreated(@NonNull final View view,
                               @Nullable final Bundle savedInstanceState) {
-        //noinspection DataFlowIssue
-        final boolean isTelevision = getContext()
-                .getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK);
-
 
         final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(null);
-        toolbarMenuProvider = new ToolbarMenuProvider();
-        toolbar.addMenuProvider(toolbarMenuProvider, getViewLifecycleOwner());
+
+        if (isTelevision) {
+            vb.tvButtons.setVisibility(View.VISIBLE);
+
+            vb.tvBtnStartAction.setOnClickListener(v -> onMenu(R.id.start_action));
+            vb.tvBtnSettings.setOnClickListener(v -> onMenu(R.id.settings));
+            vb.tvBtnImportKeys.setOnClickListener(v -> onMenu(R.id.menu_import_keys));
+            vb.tvBtnResetKeys.setOnClickListener(v -> onMenu(R.id.menu_reset_keys));
+            vb.tvBtnHelp.setOnClickListener(v -> onMenu(R.id.menu_help));
+            vb.tvBtnAbout.setOnClickListener(v -> onMenu(R.id.about));
+
+            vb.log.setSelectAllOnFocus(true);
+            vb.logScroller.setFocusable(false);
+
+            // up/down loops through the log view and all buttons.
+            // left/right not defined
+            vb.log.setNextFocusDownId(vb.tvBtnStartAction.getId());
+            vb.log.setNextFocusUpId(vb.tvBtnAbout.getId());
+            vb.tvBtnStartAction.setNextFocusUpId(vb.log.getId());
+            vb.tvBtnAbout.setNextFocusDownId(vb.log.getId());
+
+        } else {
+            vb.tvButtons.setVisibility(View.GONE);
+            toolbarMenuProvider = new ToolbarMenuProvider();
+            toolbar.addMenuProvider(toolbarMenuProvider, getViewLifecycleOwner());
+        }
 
         //noinspection DataFlowIssue
         vm = new ViewModelProvider(getActivity()).get(ServiceViewModel.class);
@@ -153,6 +184,10 @@ public class MainFragment
         }
 
         populateNetworkAddressList();
+
+        if (isTelevision) {
+            vb.tvBtnStartAction.requestFocus();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -279,7 +314,12 @@ public class MainFragment
     }
 
     private void onServiceStateChanged(final boolean isRunning) {
-        toolbarMenuProvider.updateStartButton(isRunning);
+        if (toolbarMenuProvider != null) {
+            updateStartButton(toolbarMenuProvider.startButton, isRunning);
+        } else if (isTelevision) {
+            updateStartButton(vb.tvBtnStartAction, isRunning);
+        }
+
         populateNetworkAddressList();
     }
 
@@ -328,7 +368,7 @@ public class MainFragment
         //noinspection ConstantConditions
         new MaterialAlertDialogBuilder(context)
                 .setIcon(R.drawable.warning_24px)
-                .setTitle(R.string.lbl_reset_keys)
+                .setTitle(R.string.lbl_reset_keys_long)
                 .setMessage(R.string.confirm_reset_keys)
                 .setCancelable(true)
                 .setNegativeButton(R.string.cancel, (d, which) -> d.dismiss())
@@ -340,6 +380,7 @@ public class MainFragment
     private void showAbout() {
         final Context context = getContext();
         String version;
+        //noinspection OverlyBroadCatchBlock
         try {
             //noinspection ConstantConditions
             version = context.getPackageManager().getPackageInfo(
@@ -394,6 +435,74 @@ public class MainFragment
         }
     }
 
+    /**
+     * React to both the options-menu and television button-menu.
+     *
+     * @param itemId selected
+     *
+     * @return {@code true} if handled
+     */
+    private boolean onMenu(final int itemId) {
+        if (itemId == R.id.start_action) {
+            if (SshdService.isRunning()) {
+                //noinspection ConstantConditions
+                vm.stopService(getContext());
+            } else {
+                //noinspection ConstantConditions
+                if (!vm.startService(getContext(), SshdService.StartMode.ByUser)) {
+                    //noinspection ConstantConditions
+                    Snackbar.make(getView(), R.string.err_service_failed_to_start,
+                                  Snackbar.LENGTH_LONG).show();
+                }
+            }
+        } else if (itemId == R.id.settings) {
+            replaceFragment(SettingsFragment.class, SettingsFragment.TAG);
+            return true;
+        } else if (itemId == R.id.menu_import_keys) {
+            authKeysImportLauncher.launch("*/*");
+            return true;
+        } else if (itemId == R.id.menu_reset_keys) {
+            showResetKeys();
+            return true;
+        } else if (itemId == R.id.menu_help) {
+            gotoProjectHelp();
+            return true;
+        } else if (itemId == R.id.about) {
+            showAbout();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Update text/color of the "start" button.
+     *
+     * @param startButton either the toolbar or the TV button.
+     * @param isRunning   flag
+     */
+    private void updateStartButton(@NonNull final Button startButton,
+                                   final boolean isRunning) {
+        if (isRunning) {
+            startButton.setText(R.string.lbl_stop);
+            startButton.setTextColor(getColor(R.attr.stopButtonTextColor));
+        } else {
+            startButton.setText(R.string.lbl_start);
+            startButton.setTextColor(getColor(R.attr.startButtonTextColor));
+        }
+    }
+
+    @ColorInt
+    private int getColor(@AttrRes final int colorAttrId) {
+        //noinspection DataFlowIssue
+        final TypedArray a = getContext()
+                .obtainStyledAttributes(new int[]{colorAttrId});
+        try {
+            return a.getColor(0, 0);
+        } finally {
+            a.recycle();
+        }
+    }
+
     private class ToolbarMenuProvider
             implements MenuProvider {
 
@@ -407,63 +516,12 @@ public class MainFragment
             final MenuItem menuItem = menu.findItem(R.id.start_action);
             //noinspection DataFlowIssue
             startButton = menuItem.getActionView().findViewById(R.id.btn_start);
-            startButton.setOnClickListener(v -> onMenuItemSelected(menuItem));
-        }
-
-        void updateStartButton(final boolean isRunning) {
-            if (isRunning) {
-                startButton.setText(R.string.lbl_stop);
-                startButton.setTextColor(getTextColor(R.attr.stopButtonTextColor));
-            } else {
-                startButton.setText(R.string.lbl_start);
-                startButton.setTextColor(getTextColor(R.attr.startButtonTextColor));
-            }
-        }
-
-        @ColorInt
-        private int getTextColor(@AttrRes final int colorAttrId) {
-            //noinspection DataFlowIssue
-            final TypedArray a = getContext()
-                    .obtainStyledAttributes(new int[]{colorAttrId});
-            try {
-                return a.getColor(0, 0);
-            } finally {
-                a.recycle();
-            }
+            startButton.setOnClickListener(v -> onMenu(R.id.start_action));
         }
 
         @Override
         public boolean onMenuItemSelected(@NonNull final MenuItem menuItem) {
-            final int itemId = menuItem.getItemId();
-            if (itemId == R.id.start_action) {
-                if (SshdService.isRunning()) {
-                    //noinspection ConstantConditions
-                    vm.stopService(getContext());
-                } else {
-                    //noinspection ConstantConditions
-                    if (!vm.startService(getContext(), SshdService.StartMode.ByUser)) {
-                        //noinspection ConstantConditions
-                        Snackbar.make(getView(), R.string.err_service_failed_to_start,
-                                      Snackbar.LENGTH_LONG).show();
-                    }
-                }
-            } else if (itemId == R.id.settings) {
-                replaceFragment(SettingsFragment.class, SettingsFragment.TAG);
-                return true;
-            } else if (itemId == R.id.menu_import_keys) {
-                authKeysImportLauncher.launch("*/*");
-                return true;
-            } else if (itemId == R.id.menu_reset_keys) {
-                showResetKeys();
-                return true;
-            } else if (itemId == R.id.menu_help) {
-                gotoProjectHelp();
-                return true;
-            } else if (itemId == R.id.about) {
-                showAbout();
-                return true;
-            }
-            return false;
+            return onMenu(menuItem.getItemId());
         }
     }
 }

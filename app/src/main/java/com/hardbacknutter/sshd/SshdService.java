@@ -97,8 +97,6 @@ public class SshdService
     private boolean runInForeground = true;
     private SharedPreferences prefs;
     private boolean notificationChannelCreated;
-    /** The UI configured port, which will be used with all interfaces. */
-    private String sshdPort;
 
     /**
      * Check if the native process is running.
@@ -126,6 +124,7 @@ public class SshdService
      *                               On API31+ this would actually be one of:
      *                               {@link ForegroundServiceStartNotAllowedException}
      *                               {@link BackgroundServiceStartNotAllowedException}
+     * @see #stopService(Context)
      */
     @Nullable
     static ComponentName startService(@NonNull final StartMode startMode,
@@ -152,6 +151,14 @@ public class SshdService
         throw new IllegalStateException("started=" + startMode);
     }
 
+    /**
+     * Stop the service.
+     *
+     * @param context Current context
+     *
+     * @return If the service is running, then it is stopped and {@code true} is returned;
+     *         else {@code false} is returned.
+     */
     static boolean stopService(@NonNull final Context context) {
         final Intent intent = new Intent(context, SshdService.class);
         return context.stopService(intent);
@@ -176,13 +183,12 @@ public class SshdService
 
     private native int waitpid(int pid);
 
+    @SuppressWarnings({"ImplicitDefaultCharsetUsage", "BlockingMethodInNonBlockingContext"})
     private int readPidFile() {
         final File pidFile = new File(SshdSettings.getDropbearDirectory(this), DROPBEAR_PID);
         int pid = 0;
         if (pidFile.exists()) {
-            //noinspection ImplicitDefaultCharsetUsage
             try (BufferedReader r = new BufferedReader(new FileReader(pidFile))) {
-                //noinspection BlockingMethodInNonBlockingContext
                 pid = Integer.parseInt(r.readLine());
             } catch (@NonNull final IOException ignore) {
                 // ignore
@@ -191,6 +197,9 @@ public class SshdService
         return pid;
     }
 
+    /**
+     * Gather arguments, start the native code and setup a watchdog.
+     */
     private void startSshd() {
         if (BuildConfig.DEBUG) {
             Log.d(TAG + "|startSshd", "ENTER");
@@ -216,10 +225,11 @@ public class SshdService
 //        args.add("-v");
 
         final List<String> userOptions = Prefs.getCmdLineOptions(prefs);
+        // If the user has not set a manual bind
         if (!userOptions.contains("-p")) {
-            // Bind to the [address:]port, which defaults to all interfaces
+            // then bind to [address:]port, which defaults to all interfaces
             argList.add("-p");
-            argList.add(sshdPort);
+            argList.add(String.valueOf(Prefs.getPort(prefs)));
         }
 
         argList.addAll(userOptions);
@@ -233,7 +243,8 @@ public class SshdService
         final boolean enablePublickeyLogin = Prefs.isEnablePublicKeyAuth(prefs);
         final boolean enableSingleUsePasswords = Prefs.isEnableSingleUsePasswordAuth(prefs);
 
-        final int pid = start_sshd(getApplicationInfo().nativeLibraryDir, args,
+        final int pid = start_sshd(getApplicationInfo().nativeLibraryDir,
+                                   args,
                                    confPath, homePath, shellCmd, env,
                                    enablePublickeyLogin,
                                    enableSingleUsePasswords);
@@ -305,6 +316,9 @@ public class SshdService
         updateUI();
     }
 
+    /**
+     * Stop/kill the native code.
+     */
     private void stopSshd() {
         synchronized (lock) {
             final int pid = sshdPid;
@@ -361,8 +375,9 @@ public class SshdService
             Log.d(TAG + "|onStartCommand", "ENTER");
         }
 
-        runInForeground = prefs.getBoolean(Prefs.RUN_IN_FOREGROUND, true);
-        sshdPort = String.valueOf(Prefs.getPort(prefs));
+        // STORE the value, we need it in onDestroy
+        // and the user might change it in prefs while we're running
+        runInForeground = Prefs.isRunInForeground(prefs);
 
         startSshd();
 

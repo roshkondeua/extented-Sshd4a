@@ -40,5 +40,6 @@
     <style name="Widget.App.DialogButtonBarButtons.Flush"
            parent="Widget.Material3.Button.TextButton.Dialog.Flush">
         <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="backgroundTint">@color/dialog_button_background_color</item>
     </style>
 </resources>

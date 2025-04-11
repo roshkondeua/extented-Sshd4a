@@ -18,4 +18,11 @@
         <item name="android:textIsSelectable">true</item>
         <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
     </style>
+
+    <style name="TVButton.Menu"
+        parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/dialog_button_background_color</item>
+    </style>
 </resources>

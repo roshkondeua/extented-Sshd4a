@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
  *     <li>"res/xml/backup_rules.xml"</li>
  *     <li>"res/xml/data_extraction_rules.xml"</li>
  * </ul>
+ *
+ * Dev note: we could just merge this into the SshdService class.
  */
 @SuppressWarnings({
         "BlockingMethodInNonBlockingContext",

@@ -2,9 +2,11 @@ package com.hardbacknutter.sshd.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -39,7 +42,7 @@ public class SettingsFragment
     private EditTextPreference pPort;
     private EditTextPreference pUsername;
     private EditTextPreference pPassword;
-
+    private boolean isTelevision;
     private SettingsViewModel vm;
 
     private final OnBackPressedCallback backPressedCallback =
@@ -76,6 +79,15 @@ public class SettingsFragment
                     }
                 }
             };
+
+    @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //noinspection DataFlowIssue
+        isTelevision = getContext().getPackageManager()
+                                   .hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+    }
 
     @SuppressWarnings("DataFlowIssue")
     @Override
@@ -129,6 +141,15 @@ public class SettingsFragment
                               @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (isTelevision) {
+            // Needed as a workaround to be able to get to the last option
+            // when using the d-pad 'down' key.
+            final RecyclerView recyclerView = getListView();
+            recyclerView.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+            final int p = getResources().getDimensionPixelSize(R.dimen.tv_prefs_padding_bottom);
+            recyclerView.setPadding(0, 0, 0, p);
+        }
+
         //noinspection ConstantConditions
         getActivity().getOnBackPressedDispatcher()
                      .addCallback(getViewLifecycleOwner(), backPressedCallback);
@@ -138,6 +159,7 @@ public class SettingsFragment
             toolbar.setNavigationIcon(R.drawable.arrow_back_24px);
         }
 
+        // init before setting the field text
         vm.onPasswordSummaryUpdate().observe(getViewLifecycleOwner(), s ->
                 pPassword.setSummary(s));
 
@@ -194,6 +216,8 @@ public class SettingsFragment
                 break;
             }
             case Prefs.DROPBEAR_CMDLINE_OPTIONS: {
+                // Disable the port field to clarify it will be ignored
+                // when there is an explicit "-p" option.
                 final String s = prefs.getString(key, null);
                 pPort.setEnabled(s == null || !s.contains("-p"));
                 break;
