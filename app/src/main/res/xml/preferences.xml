@@ -26,7 +26,9 @@
             android:title="@string/pt_foreground" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pc_dropbear">
+    <com.hardbacknutter.sshd.settings.ExtPreferenceCategory
+        android:key="psk_dropbear_ssh"
+        android:title="@string/pc_dropbear">
         <!-- Prefs.DEFAULT_PORT -->
         <EditTextPreference
             android:defaultValue="2222"
@@ -41,7 +43,7 @@
             android:key="sshd.env"
             android:title="@string/pt_env"
             app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+    </com.hardbacknutter.sshd.settings.ExtPreferenceCategory>
 
     <PreferenceCategory android:title="@string/pc_paths">
         <!-- default is set from code. -->

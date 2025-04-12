@@ -75,7 +75,7 @@ public final class SshdSettings {
      */
     @SuppressWarnings("SameParameterValue")
     @NonNull
-    static List<String> getHostAddresses(final int limit) {
+    public static List<String> getHostAddresses(final int limit) {
         try {
             return Collections
                     .list(NetworkInterface.getNetworkInterfaces())

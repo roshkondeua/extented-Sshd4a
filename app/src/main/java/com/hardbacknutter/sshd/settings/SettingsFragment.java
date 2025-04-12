@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import com.hardbacknutter.sshd.R;
+import com.hardbacknutter.sshd.SshdSettings;
 import com.hardbacknutter.util.theme.NightMode;
 
 public class SettingsFragment
@@ -33,7 +34,7 @@ public class SettingsFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = "SettingsFragment";
-
+    private static final String PSK_DROPBEAR_SSH = "psk_dropbear_ssh";
     private static final int PORT_MIN = 1024;
     private static final int PORT_MAX = 32768;
 
@@ -117,6 +118,12 @@ public class SettingsFragment
 
         pRunOnBoot = findPreference(Prefs.RUN_ON_BOOT);
         pRunInForeground = findPreference(Prefs.RUN_IN_FOREGROUND);
+
+        final String interfaces =
+                getString(R.string.lbl_all_interfaces)
+                + '\n'
+                + String.join("\n", SshdSettings.getHostAddresses(6));
+        findPreference(PSK_DROPBEAR_SSH).setSummary(interfaces);
 
         pPort = findPreference(Prefs.SSHD_PORT);
         pPort.setOnBindEditTextListener(editText -> {
