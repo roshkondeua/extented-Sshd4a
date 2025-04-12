@@ -143,12 +143,14 @@ public class MainFragment
 
         //noinspection DataFlowIssue
         vm = new ViewModelProvider(getActivity()).get(ServiceViewModel.class);
+        vm.forceLogUpdate();
+
         vm.onLogUpdate().observe(getViewLifecycleOwner(), output -> {
-            // We always replace the WHOLE content. TODO: receive and append updates only
+            // We always replace the WHOLE content.
             vb.log.setText(String.join("\n", output));
             vb.logScroller.post(() -> vb.logScroller.fullScroll(ScrollView.FOCUS_DOWN));
         });
-        vm.onServiceStateChanged().observe(getViewLifecycleOwner(), this::onServiceStateChanged);
+        vm.onUpdateUi().observe(getViewLifecycleOwner(), aVoid -> onUpdateUi());
 
         authKeysImportLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(), this::onImportAuthKeys);
@@ -173,16 +175,25 @@ public class MainFragment
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(
                 messageReceiver, new IntentFilter(SshdService.SERVICE_UI_REQUEST));
 
-        final boolean isRunning = SshdService.isRunning();
-
-        if (Prefs.isRunOnAppStart(getContext())
-            && !isRunning) {
-            vm.startService(getContext(), SshdService.StartMode.ByUser);
-
-        } else if (isRunning) {
+        // Race situation if the service does not stop fast enough....
+        // 1. device in portrait; start-on-app-start
+        // 2. running==false
+        // 3. starts
+        // 4. ROTATE, the service is triggered to top running
+        // 5. onResume... service still running
+        // 6. so we don't start it.
+        // 7. the service is finally stopped
+        //    and we have NOT (re)started it.
+        // 2025-04-12: won't fix... unless some user complains very hard..
+        // .. and that might result in locking the rotation of the device for this app.
+        if (SshdService.isRunning()) {
             vm.startUpdateThread(getContext());
+
+        } else if (Prefs.isRunOnAppStart(getContext())) {
+            vm.startService(getContext(), SshdService.StartMode.ByUser);
         }
 
+        onUpdateUi();
         populateNetworkAddressList();
 
         if (isTelevision) {
@@ -306,6 +317,11 @@ public class MainFragment
 
     @Override
     public void onDestroy() {
+        // This is annoying...
+        // We SHOULD stop the service when the App/Activity quits
+        // but we should NOT stop it when the device is rotated..
+        // Unfortunately we cannot distinguish here.
+        // Only solution (?) would be to lock the orientation at start.
         if (vm != null) {
             //noinspection ConstantConditions
             vm.stopService(getContext());
@@ -313,11 +329,11 @@ public class MainFragment
         super.onDestroy();
     }
 
-    private void onServiceStateChanged(final boolean isRunning) {
+    private void onUpdateUi() {
         if (toolbarMenuProvider != null) {
-            updateStartButton(toolbarMenuProvider.startButton, isRunning);
+            updateStartButton(toolbarMenuProvider.startButton);
         } else if (isTelevision) {
-            updateStartButton(vb.tvBtnStartAction, isRunning);
+            updateStartButton(vb.tvBtnStartAction);
         }
 
         populateNetworkAddressList();
@@ -478,11 +494,9 @@ public class MainFragment
      * Update text/color of the "start" button.
      *
      * @param startButton either the toolbar or the TV button.
-     * @param isRunning   flag
      */
-    private void updateStartButton(@NonNull final Button startButton,
-                                   final boolean isRunning) {
-        if (isRunning) {
+    private void updateStartButton(@NonNull final Button startButton) {
+        if (SshdService.isRunning()) {
             startButton.setText(R.string.lbl_stop);
             startButton.setTextColor(getColor(R.attr.stopButtonTextColor));
         } else {

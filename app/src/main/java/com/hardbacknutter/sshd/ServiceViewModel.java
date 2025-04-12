@@ -37,9 +37,10 @@ public class ServiceViewModel
     private static final int THREAD_SLEEP_MILLIS = 2000;
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
+    private final AtomicBoolean forceLogUpdate = new AtomicBoolean();
     private final AtomicBoolean cancelRequested = new AtomicBoolean();
     private final MutableLiveData<List<String>> logData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> serviceStateChanged = new MutableLiveData<>();
+    private final MutableLiveData<Void> updateUi = new MutableLiveData<>();
 
     @Nullable
     private SshdService.StartMode startMode;
@@ -50,14 +51,13 @@ public class ServiceViewModel
         return logData;
     }
 
-    /**
-     * Returns the current status of the service.
-     *
-     * @return {@code true} if the service is running
-     */
+    void forceLogUpdate() {
+        forceLogUpdate.set(true);
+    }
+
     @NonNull
-    MutableLiveData<Boolean> onServiceStateChanged() {
-        return serviceStateChanged;
+    MutableLiveData<Void> onUpdateUi() {
+        return updateUi;
     }
 
     @Nullable
@@ -69,7 +69,7 @@ public class ServiceViewModel
      * Centralized code to trigger a UI update.
      */
     void updateUI() {
-        serviceStateChanged.setValue(SshdService.isRunning());
+        updateUi.setValue(null);
     }
 
 
@@ -125,7 +125,9 @@ public class ServiceViewModel
             while (!cancelRequested.get()) {
                 final long mod = file.lastModified();
                 final long len = file.length();
-                if ((mod != lastModified) || (len != lastLength)) {
+                if (forceLogUpdate.getAndSet(false)
+                    || (mod != lastModified)
+                    || (len != lastLength)) {
                     logData.postValue(collectLogLines(file));
 
                     lastModified = mod;
@@ -219,11 +221,11 @@ public class ServiceViewModel
         new File(SshdSettings.getDropbearDirectory(context), SshdSettings.AUTHORIZED_KEYS).delete();
     }
 
-    public void setSpecialPermDialogShowing(final boolean specialPermDialogShowing) {
-        this.specialPermDialogShowing = specialPermDialogShowing;
-    }
-
     public boolean isSpecialPermDialogShowing() {
         return specialPermDialogShowing;
+    }
+
+    public void setSpecialPermDialogShowing(final boolean specialPermDialogShowing) {
+        this.specialPermDialogShowing = specialPermDialogShowing;
     }
 }
