@@ -235,11 +235,11 @@ public class MainFragment
                 .setTitle(R.string.dialog_title_attention)
                 .setMessage(R.string.msg_request_files_management)
                 .setCancelable(false)
-                .setNegativeButton(R.string.cancel, (d, which) -> {
+                .setNegativeButton(R.string.cancel, (d, w) -> {
                     d.dismiss();
                     vm.setSpecialPermDialogShowing(false);
                 })
-                .setPositiveButton(R.string.ok, (d, which) -> {
+                .setPositiveButton(R.string.ok, (d, w) -> {
                     d.dismiss();
                     vm.setSpecialPermDialogShowing(false);
                     try {
@@ -268,8 +268,8 @@ public class MainFragment
                 .setIcon(R.drawable.warning_24px)
                 .setMessage(R.string.err_device_maybe_not_supported)
                 .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
-                .setPositiveButton(R.string.ok, (d1, w) -> {
-                    d1.dismiss();
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    d.dismiss();
                     gotoProjectHelp();
                 })
                 .create()
@@ -288,8 +288,8 @@ public class MainFragment
                 .setIcon(R.drawable.error_24px)
                 .setMessage(R.string.err_unexpected_error)
                 .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
-                .setPositiveButton(R.string.ok, (d1, w) -> {
-                    d1.dismiss();
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    d.dismiss();
                     gotoProjectIssues();
                 })
                 .create()
@@ -356,7 +356,7 @@ public class MainFragment
                         .setTitle(R.string.dialog_title_attention)
                         .setMessage(error)
                         .setCancelable(true)
-                        .setPositiveButton(R.string.ok, (d, which) -> d.dismiss())
+                        .setPositiveButton(R.string.ok, (d, w) -> d.dismiss())
                         .create()
                         .show();
             }
@@ -371,8 +371,8 @@ public class MainFragment
                 .setTitle(R.string.lbl_reset_keys_long)
                 .setMessage(R.string.confirm_reset_keys)
                 .setCancelable(true)
-                .setNegativeButton(R.string.cancel, (d, which) -> d.dismiss())
-                .setPositiveButton(R.string.ok, (d, which) -> vm.deleteAuthKeys(context))
+                .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d, w) -> vm.deleteAuthKeys(context))
                 .create()
                 .show();
     }
@@ -401,8 +401,8 @@ public class MainFragment
                 .setTitle(getString(R.string.about_title, version))
                 .setView(dvb.getRoot())
                 .setCancelable(true)
-                .setNeutralButton(R.string.lbl_github_project, (d, which) -> gotoProject())
-                .setPositiveButton(R.string.ok, (d, which) -> d.dismiss())
+                .setNeutralButton(R.string.lbl_github_project, (d, w) -> gotoProject())
+                .setPositiveButton(R.string.ok, (d, w) -> d.dismiss())
                 .create()
                 .show();
     }
