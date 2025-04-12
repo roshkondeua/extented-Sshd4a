@@ -1,0 +1,8 @@
+NEW
+
+- #15, #19 Google TV improvements: buttons instead of the menu, more contrast improvements
+- show "all interfaces" and "configured listeners"
+- adding "-p" custom options for listeners now disables the default "*:port" listener.
+
+FIXES
+- prevent setting the port to "not set"
