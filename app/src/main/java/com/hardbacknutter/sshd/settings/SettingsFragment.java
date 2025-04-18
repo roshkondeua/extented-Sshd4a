@@ -130,6 +130,7 @@ public class SettingsFragment
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             editText.selectAll();
         });
+        setPortPrefEnabled(getPreferenceManager().getSharedPreferences());
 
         pUsername = findPreference(UserPassStorage.PK_SSHD_AUTH_USERNAME);
         pUsername.setPreferenceDataStore(vm.getDsUP());
@@ -223,14 +224,23 @@ public class SettingsFragment
                 break;
             }
             case Prefs.DROPBEAR_CMDLINE_OPTIONS: {
-                // Disable the port field to clarify it will be ignored
-                // when there is an explicit "-p" option.
-                final String s = prefs.getString(key, null);
-                pPort.setEnabled(s == null || !s.contains("-p"));
+                setPortPrefEnabled(prefs);
                 break;
             }
             default:
                 break;
         }
+    }
+
+    /**
+     * Enable/Disable the port field to clarify it will be ignored
+     * when there is an explicit "-p" option.
+     *
+     * @param prefs to use
+     */
+    private void setPortPrefEnabled(@NonNull final SharedPreferences prefs) {
+        //
+        final String s = prefs.getString(Prefs.DROPBEAR_CMDLINE_OPTIONS, null);
+        pPort.setEnabled(s == null || !s.contains("-p"));
     }
 }
