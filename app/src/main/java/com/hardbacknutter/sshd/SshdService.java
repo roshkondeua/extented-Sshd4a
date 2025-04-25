@@ -468,7 +468,7 @@ public class SshdService
         ByUser,
         /** An external (to this app) start request. */
         ByIntent,
-        /** We're starting the service when the device is bootong. */
+        /** We're starting the service when the device is booting. */
         OnBoot
     }
 }

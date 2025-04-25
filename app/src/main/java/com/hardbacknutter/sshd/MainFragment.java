@@ -179,7 +179,7 @@ public class MainFragment
         // 1. device in portrait; start-on-app-start
         // 2. running==false
         // 3. starts
-        // 4. ROTATE, the service is triggered to top running
+        // 4. ROTATE, the service is triggered to stop running
         // 5. onResume... service still running
         // 6. so we don't start it.
         // 7. the service is finally stopped
