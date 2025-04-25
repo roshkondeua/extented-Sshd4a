@@ -190,7 +190,7 @@ public class MainFragment
             vm.startUpdateThread(getContext());
 
         } else if (Prefs.isRunOnAppStart(getContext())) {
-            vm.startService(getContext(), SshdService.StartMode.ByUser);
+            vm.startService(getContext(), StartMode.ByUser);
         }
 
         onUpdateUi();
@@ -465,7 +465,7 @@ public class MainFragment
                 vm.stopService(getContext());
             } else {
                 //noinspection ConstantConditions
-                if (!vm.startService(getContext(), SshdService.StartMode.ByUser)) {
+                if (!vm.startService(getContext(), StartMode.ByUser)) {
                     //noinspection ConstantConditions
                     Snackbar.make(getView(), R.string.err_service_failed_to_start,
                                   Snackbar.LENGTH_LONG).show();

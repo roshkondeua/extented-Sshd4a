@@ -21,7 +21,7 @@ public class BootReceiver
         if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)
             || Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             if (Prefs.isStartOnBoot(context)) {
-                SshdService.startService(SshdService.StartMode.OnBoot, context);
+                SshdService.startService(context, StartMode.OnBoot);
             }
         }
     }

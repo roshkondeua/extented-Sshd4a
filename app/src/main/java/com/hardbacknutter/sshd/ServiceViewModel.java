@@ -43,7 +43,7 @@ public class ServiceViewModel
     private final MutableLiveData<Void> updateUi = new MutableLiveData<>();
 
     @Nullable
-    private SshdService.StartMode startMode;
+    private StartMode startMode;
     private boolean specialPermDialogShowing;
 
     @NonNull
@@ -61,7 +61,7 @@ public class ServiceViewModel
     }
 
     @Nullable
-    SshdService.StartMode getStartMode() {
+    StartMode getStartMode() {
         return startMode;
     }
 
@@ -74,11 +74,11 @@ public class ServiceViewModel
 
 
     boolean startService(@NonNull final Context context,
-                         @NonNull final SshdService.StartMode startMode) {
+                         @NonNull final StartMode startMode) {
         cancelUpdateThread();
         ComponentName componentName = null;
         try {
-            componentName = SshdService.startService(startMode, context);
+            componentName = SshdService.startService(context, startMode);
 
             startUpdateThread(context);
 

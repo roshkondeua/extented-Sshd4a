@@ -115,8 +115,8 @@ public class SshdService
     /**
      * Start the service.
      *
-     * @param startMode identifier for the caller
      * @param context   Current context
+     * @param startMode identifier for the caller
      *
      * @return the ComponentName, or {@code null} if it failed to start but did not throw.
      *
@@ -127,8 +127,8 @@ public class SshdService
      * @see #stopService(Context)
      */
     @Nullable
-    static ComponentName startService(@NonNull final StartMode startMode,
-                                      @NonNull final Context context)
+    static ComponentName startService(@NonNull final Context context,
+                                      @NonNull final StartMode startMode)
             throws IllegalStateException {
 
         switch (startMode) {
@@ -461,14 +461,5 @@ public class SshdService
     private void updateUI() {
         final Intent intent = new Intent(SERVICE_UI_REQUEST);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    enum StartMode {
-        /** User started, or started when the app starts. */
-        ByUser,
-        /** An external (to this app) start request. */
-        ByIntent,
-        /** We're starting the service when the device is booting. */
-        OnBoot
     }
 }
