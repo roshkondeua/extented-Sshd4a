@@ -315,16 +315,23 @@ public class MainFragment
         super.onPause();
     }
 
+    /**
+     * When started {@link StartMode#ByUser} stop it.
+     * If we were started at app-start, then onResume will restart us.
+     * <p>
+     * <strong>NEVER STOP</strong> the service if started
+     * <ul>
+     *     <li>{@link StartMode#ByIntent}</li>
+     *     <li>{@link StartMode#OnBoot}</li>
+     * </ul>
+     */
     @Override
     public void onDestroy() {
-        // This is annoying...
-        // We SHOULD stop the service when the App/Activity quits
-        // but we should NOT stop it when the device is rotated..
-        // Unfortunately we cannot distinguish here.
-        // Only solution (?) would be to lock the orientation at start.
         if (vm != null) {
-            //noinspection ConstantConditions
-            vm.stopService(getContext());
+            if (vm.getStartMode() == StartMode.ByUser) {
+                //noinspection ConstantConditions
+                vm.stopService(getContext());
+            }
         }
         super.onDestroy();
     }
