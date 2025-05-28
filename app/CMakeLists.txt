@@ -823,8 +823,9 @@ add_compile_definitions(
         # - locally stored user/password
         SSHD4A_EXTEND_AUTHENTICATION
         # Enable the code that allows mismatches between key and signatures in some bad clients.
-        # TODO: review if we really want this?
-        SSHD4A_ALLOW_RSA_KEY_SIGNATURE_MISMATCH
+        # disabled due to github #22 + having had doubts about this anyhow.
+        # TODO: Will be removing SSHD4A_ALLOW_RSA_KEY_SIGNATURE_MISMATCH completely soon.
+        # SSHD4A_ALLOW_RSA_KEY_SIGNATURE_MISMATCH
 )
 
 # compile tommath as an object library; to be statically linked later.
