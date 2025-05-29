@@ -1,0 +1,8 @@
+NEW
+- openssh 10.0p2
+- dropbear 2025.88
+
+FIXES:
+- only stop service if user/on-app-start started the service when quitting the app.
+- #22  disabled build-flag SSHD4A_ALLOW_RSA_KEY_SIGNATURE_MISMATCH which was related to https://github.com/mkj/dropbear/pull/106
+          This flag/code will be totally removed soon.
