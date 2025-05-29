@@ -813,7 +813,6 @@ set(SRC_RSYNC
 # Used in comments to indicate code changes which are unconditional.
 # and the below
 #   SSHD4A_EXTEND_AUTHENTICATION
-#   SSHD4A_ALLOW_RSA_KEY_SIGNATURE_MISMATCH
 add_compile_definitions(
         # Indicate that "options.h" MUST read the "localoptions.h"
         LOCALOPTIONS_H_EXISTS
@@ -822,10 +821,6 @@ add_compile_definitions(
         # - single-use passwords
         # - locally stored user/password
         SSHD4A_EXTEND_AUTHENTICATION
-        # Enable the code that allows mismatches between key and signatures in some bad clients.
-        # disabled due to github #22 + having had doubts about this anyhow.
-        # TODO: Will be removing SSHD4A_ALLOW_RSA_KEY_SIGNATURE_MISMATCH completely soon.
-        # SSHD4A_ALLOW_RSA_KEY_SIGNATURE_MISMATCH
 )
 
 # compile tommath as an object library; to be statically linked later.
