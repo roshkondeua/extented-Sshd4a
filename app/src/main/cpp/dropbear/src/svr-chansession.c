@@ -846,6 +846,7 @@ static int ptycommand(struct Channel *channel, struct ChanSess *chansess) {
 			TRACE(("leave ptycommand: error redirecting filedesc"))
 			return DROPBEAR_FAILURE;
 			}
+
 #ifndef SSHD4A_EXTEND_AUTHENTICATION
 		/* write the utmp/wtmp login record - must be after changing the
 		 * terminal used for stdout with the dup2 above, otherwise

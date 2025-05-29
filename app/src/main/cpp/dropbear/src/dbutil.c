@@ -397,6 +397,12 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
         argv[1] = NULL;
 	}
 
+	run_command(usershell, argv, maxfd);
+}
+
+void run_command(const char* argv0, char** args, unsigned int maxfd) {
+	unsigned int i;
+
 	/* Re-enable SIGPIPE for the executed process */
 	if (signal(SIGPIPE, SIG_DFL) == SIG_ERR) {
 		dropbear_exit("signal() error");
@@ -411,7 +417,7 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
     /* SSHD4A_REQUIRED_CHANGE: add/set environment */
     sshd4a_set_env();
 
-	execv(usershell, argv);
+    execv(argv0, args);
 }
 
 #if DEBUG_TRACE

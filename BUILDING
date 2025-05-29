@@ -93,7 +93,7 @@ cd ${PROJECT_ROOT}/app/src/main/cpp/
 
 export RSYNC_VERSION="rsync-3.4.1"
 export OPENSSH_VERSION="openssh-10.0p2"
-export DROPBEAR_VERSION="dropbear-2025.87"
+export DROPBEAR_VERSION="dropbear-2025.88"
 
 export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
 export OPENSSH_DOWNLOAD="https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz"
@@ -250,7 +250,7 @@ git merge --allow-unrelated-histories upstream-dropbear/dev
 #    Typically just "Accept theirs" for all files
 #    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
 #
-#    2024-11-29: files modified:
+#    2025-05-29: files modified:
 #      cpp/dropbear/src/
 #         common-session.c
 #         dbrandom.c
