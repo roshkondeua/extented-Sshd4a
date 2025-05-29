@@ -9,8 +9,8 @@ tasks.register("clean", Delete) {
 
 ext {
     applicationId = "com.hardbacknutter.sshd"
-    applicationVersionCode = 13
-    applicationVersionName = "1.7.0"
+    applicationVersionCode = 14
+    applicationVersionName = "1.7.1"
 
     toolChain = 21
 
