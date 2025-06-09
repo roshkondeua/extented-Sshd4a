@@ -371,30 +371,28 @@ int spawn_command(void(*exec_fn)(const void *user_data), const void *exec_data,
 void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
 	char * argv[4];
 	char * baseshell = NULL;
-	unsigned int i;
 
 	baseshell = basename(usershell);
 
-    /* SSHD4A_REQUIRED_CHANGE: restructure/extend the if/else/else */
 	if (cmd != NULL) {
-		cmd = sshd4a_exe_to_lib(cmd);
-
 		argv[0] = baseshell;
-		argv[1] = "-c";
-		argv[2] = (char*)cmd;
-		argv[3] = NULL;
-	} else if (strstr(usershell, "su")) {
-		/* busybox requires "su" in argv[0], so don't treat it like a
-		 * command shell */
-		argv[0] = baseshell;
-		argv[1] = "-";
-		argv[2] = NULL;
 	} else {
 		/* a login shell should be "-bash" for "/bin/bash" etc */
 		int len = strlen(baseshell) + 2; /* 2 for "-" */
 		argv[0] = (char*)m_malloc(len);
 		snprintf(argv[0], len, "-%s", baseshell);
-        argv[1] = NULL;
+	}
+
+	if (cmd != NULL) {
+        /* SSHD4A_REQUIRED_CHANGE: transform cmd to custom/fake cmd name as needed/allowed. */
+        cmd = sshd4a_exe_to_lib(cmd);
+
+		argv[1] = "-c";
+		argv[2] = (char*)cmd;
+		argv[3] = NULL;
+	} else {
+		/* construct a shell of the form "-bash" etc */
+		argv[1] = NULL;
 	}
 
 	run_command(usershell, argv, maxfd);
@@ -417,7 +415,7 @@ void run_command(const char* argv0, char** args, unsigned int maxfd) {
     /* SSHD4A_REQUIRED_CHANGE: add/set environment */
     sshd4a_set_env();
 
-    execv(argv0, args);
+	execv(argv0, args);
 }
 
 #if DEBUG_TRACE
