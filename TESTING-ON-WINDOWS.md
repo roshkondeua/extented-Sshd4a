@@ -15,7 +15,7 @@ Open the firewall for port 2223 (i.e. the windows host)
 
 To access the emulator from a shell on the emulator hosting machine, run:
 
-    # optional / might be needed!
+    # optional / might be needed (won't work when the emulator runs google-play services)
     adb root
     # enable a forward from the local port (i.e. 127.0.0.1) 2223 to the emulator port 2222
     adb forward tcp:2223 tcp:2222
