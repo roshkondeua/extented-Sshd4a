@@ -1,0 +1,3 @@
+NEW:
+
+- github #23: Settings option to disables shell access.
