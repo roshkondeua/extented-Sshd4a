@@ -58,4 +58,7 @@
     <string name="err_device_maybe_not_supported">Ihr Gerät wird entweder nicht unterstützt oder Sie müssen die Berechtigungen manuell festlegen. Tippen Sie auf „OK“, um die Dokumentation auf Github zu besuchen.</string>
     <string name="lbl_import_keys">Schlüssel importieren</string>
     <string name="lbl_reset_keys">Alle Schlüssel löschen</string>
+    <string name="disabled">Deaktiviert</string>
+    <string name="enabled">Aktiviert</string>
+    <string name="pt_enable_shell_access">Shell-Zugriff</string>
 </resources>

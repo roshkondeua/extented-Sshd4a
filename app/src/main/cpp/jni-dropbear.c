@@ -30,6 +30,7 @@ const char *conf_path = "";
 /* name/value pairs with environment variables */
 const char *env_var_list = "";
 
+int enable_service_shell_access = JNI_TRUE;
 int enable_public_key_auth = JNI_TRUE;
 int enable_single_use_passwords = JNI_TRUE;
 
@@ -126,6 +127,10 @@ void sshd4a_set_env() {
 
     /* make available to rsync */
     setenv(SSHD4A_CONF_DIR, conf_path, /*overwrite=*/ 1);
+}
+
+int sshd4a_enable_service_shell_access() {
+    return enable_service_shell_access;
 }
 
 int sshd4a_enable_public_key_auth() {
@@ -234,6 +239,7 @@ const char *from_java_string(JNIEnv *env, jstring str) {
  * @param j_home_path                home directory for an ssh login
  * @param j_shell_exe                shell executable
  * @param j_env_var_list             list of environment variables
+ * @param j_enableServiceShellAccess whether a shell can be opened
  * @param j_enablePublickeyAuth      enable public key logins
  * @param j_enableSingleUsePasswords enable generating single-use passwords
  *
@@ -249,6 +255,7 @@ Java_com_hardbacknutter_sshd_SshdService_start_1sshd(
         jstring j_home_path,
         jstring j_shell_exe,
         jstring j_env_var_list,
+        jboolean j_enableServiceShellAccess,
         jboolean j_enablePublickeyAuth,
         jboolean j_enableSingleUsePasswords) {
 
@@ -264,6 +271,7 @@ Java_com_hardbacknutter_sshd_SshdService_start_1sshd(
         sshd4a_shell_exe = from_java_string(env, j_shell_exe);
         env_var_list = from_java_string(env, j_env_var_list);
 
+        enable_service_shell_access = j_enableServiceShellAccess;
         enable_public_key_auth = j_enablePublickeyAuth;
         enable_single_use_passwords = j_enableSingleUsePasswords;
 

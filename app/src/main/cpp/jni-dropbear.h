@@ -15,6 +15,7 @@ char *sshd4a_exe_to_lib(const char *cmd);
 
 void sshd4a_set_env();
 
+int sshd4a_enable_service_shell_access();
 int sshd4a_enable_public_key_auth();
 int sshd4a_enable_single_use_passwords();
 int sshd4a_enable_password_file();

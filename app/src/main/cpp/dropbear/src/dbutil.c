@@ -377,6 +377,11 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
 	if (cmd != NULL) {
 		argv[0] = baseshell;
 	} else {
+        /* SSHD4A_REQUIRED_CHANGE: all shell access disallowed. */
+        if (!sshd4a_enable_service_shell_access()) {
+            dropbear_log(LOG_WARNING, "Shell access not allowed");
+            return;
+        }
 		/* a login shell should be "-bash" for "/bin/bash" etc */
 		int len = strlen(baseshell) + 2; /* 2 for "-" */
 		argv[0] = (char*)m_malloc(len);

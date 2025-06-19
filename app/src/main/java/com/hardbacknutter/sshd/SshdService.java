@@ -176,6 +176,7 @@ public class SshdService
                                   @NonNull String homePath,
                                   @NonNull String shell,
                                   @NonNull String env,
+                                  boolean enableServiceShellAccess,
                                   boolean enablePublickeyAuth,
                                   boolean enableSingleUsePasswords);
 
@@ -240,12 +241,14 @@ public class SshdService
         final String shellCmd = Prefs.getShellCmd(prefs);
         final String env = Prefs.getEnv(prefs);
 
+        final boolean enableServiceShellAccess = Prefs.isEnableServiceShellAccess(prefs);
         final boolean enablePublickeyLogin = Prefs.isEnablePublicKeyAuth(prefs);
         final boolean enableSingleUsePasswords = Prefs.isEnableSingleUsePasswordAuth(prefs);
 
         final int pid = start_sshd(getApplicationInfo().nativeLibraryDir,
                                    args,
                                    confPath, homePath, shellCmd, env,
+                                   enableServiceShellAccess,
                                    enablePublickeyLogin,
                                    enableSingleUsePasswords);
         if (BuildConfig.DEBUG) {

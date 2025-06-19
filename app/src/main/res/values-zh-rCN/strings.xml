@@ -59,5 +59,7 @@
     <string name="err_unexpected_error">出现意外错误。点击 “确定 ”访问 Github 上的项目页面并记录新问题。</string>
     <string name="lbl_import_keys">导入按键</string>
     <string name="lbl_reset_keys">删除所有按键</string>
-
+    <string name="disabled">关闭</string>
+    <string name="enabled">启用</string>
+    <string name="pt_enable_shell_access">Shell 访问</string>
 </resources>

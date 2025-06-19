@@ -46,6 +46,14 @@
     </com.hardbacknutter.sshd.settings.ExtPreferenceCategory>
 
     <PreferenceCategory android:title="@string/pc_paths">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="sshd.enable.service.shell"
+            android:summaryOff="@string/disabled"
+            android:summaryOn="@string/enabled"
+            android:title="@string/pt_enable_shell_access"
+            />
+
         <!-- default is set from code. -->
         <EditTextPreference
             android:icon="@drawable/home_24px"

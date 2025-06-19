@@ -59,5 +59,7 @@
     <string name="err_device_maybe_not_supported">உங்கள் சாதனம் ஆதரிக்கப்படவில்லை அல்லது நீங்கள் அனுமதிகளை கைமுறையாக அமைக்க வேண்டியிருக்கலாம். Github இல் உள்ள ஆவணங்களைப் பார்வையிட “சரி” என்பதைத் தட்டவும்.</string>
     <string name="lbl_import_keys">விசைகளை இறக்குமதி செய்</string>
     <string name="lbl_reset_keys">அனைத்து விசைகளையும் நீக்கு</string>
-
+    <string name="enabled">இயக்கப்பட்டது</string>
+    <string name="disabled">முடக்கப்பட்டது</string>
+    <string name="pt_enable_shell_access">ஷெல் அணுகல்</string>
 </resources>

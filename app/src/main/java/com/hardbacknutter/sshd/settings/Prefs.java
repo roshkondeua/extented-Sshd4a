@@ -32,6 +32,8 @@ public final class Prefs {
     static final String DROPBEAR_CMDLINE_OPTIONS = "dropbear.options";
 
     /** boolean. */
+    private static final String ENABLE_SERVICE_SHELL_ACCESS = "sshd.enable.service.shell";
+    /** boolean. */
     private static final String ENABLE_SINGLE_USE_PASSWORDS = "sshd.enable.single.use.password";
     /** boolean. */
     private static final String ENABLE_PUBLIC_KEY_LOGIN = "sshd.enable.publickey.login";
@@ -227,6 +229,17 @@ public final class Prefs {
             prefs.edit().putString(HOME, homePath).apply();
         }
         return homePath;
+    }
+
+    /**
+     * Allow remote shell access to the device.
+     *
+     * @param prefs to read from
+     *
+     * @return {@code true} to enable
+     */
+    public static boolean isEnableServiceShellAccess(@NonNull final SharedPreferences prefs) {
+        return prefs.getBoolean(ENABLE_SERVICE_SHELL_ACCESS, true);
     }
 
     /**

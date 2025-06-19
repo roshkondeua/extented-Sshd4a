@@ -58,5 +58,7 @@
     <string name="err_device_maybe_not_supported">Votre appareil n’est pas pris en charge ou vous devrez peut-être définir les autorisations manuellement. Appuyez sur « OK » pour consulter la documentation sur Github.</string>
     <string name="lbl_import_keys">Importer des clés</string>
     <string name="lbl_reset_keys">Supprimer toutes les clés</string>
-
+    <string name="disabled">Désactivé</string>
+    <string name="enabled">Activée</string>
+    <string name="pt_enable_shell_access">Accès au shell</string>
 </resources>
