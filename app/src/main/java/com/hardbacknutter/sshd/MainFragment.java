@@ -328,7 +328,7 @@ public class MainFragment
     @Override
     public void onDestroy() {
         if (vm != null) {
-            if (vm.getStartMode() == StartMode.ByUser) {
+            if (SshdService.getStartMode() == StartMode.ByUser) {
                 //noinspection ConstantConditions
                 vm.stopService(getContext());
             }

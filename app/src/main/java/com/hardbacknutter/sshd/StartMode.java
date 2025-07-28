@@ -1,6 +1,6 @@
 package com.hardbacknutter.sshd;
 
-enum StartMode {
+public enum StartMode {
     /** User started, or started when the app starts. */
     ByUser,
     /** An external (to this app) start request. */

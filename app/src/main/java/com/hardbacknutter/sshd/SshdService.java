@@ -78,7 +78,9 @@ public class SshdService
      */
     @Nullable
     @GuardedBy("lock")
-    private static SshdService sInstance;
+    private static SshdService sInstance = null;
+    @Nullable
+    private static StartMode startMode = null;
 
     static {
         System.loadLibrary("jni-dropbear");
@@ -97,6 +99,18 @@ public class SshdService
     private boolean runInForeground = true;
     private SharedPreferences prefs;
     private boolean notificationChannelCreated;
+
+    /**
+     * What is the current mode.
+     * <p>
+     * Only valid when we're actually running.
+     *
+     * @return mode
+     */
+    @Nullable
+    static StartMode getStartMode() {
+        return startMode;
+    }
 
     /**
      * Check if the native process is running.
@@ -120,8 +134,9 @@ public class SshdService
      *
      * @return the ComponentName, or {@code null} if it failed to start but did not throw.
      *
-     * @throws IllegalStateException if starting failed.
-     *                               On API31+ this would actually be one of:
+     * @throws SecurityException     if the usr has no permission
+     * @throws IllegalStateException API30: starting failed.
+     *                               API31+ will instead throw one of:
      *                               {@link ForegroundServiceStartNotAllowedException}
      *                               {@link BackgroundServiceStartNotAllowedException}
      * @see #stopService(Context)
@@ -130,6 +145,7 @@ public class SshdService
     static ComponentName startService(@NonNull final Context context,
                                       @NonNull final StartMode startMode)
             throws IllegalStateException {
+        SshdService.startMode = startMode;
 
         switch (startMode) {
             case ByUser: {
@@ -161,7 +177,11 @@ public class SshdService
      */
     static boolean stopService(@NonNull final Context context) {
         final Intent intent = new Intent(context, SshdService.class);
-        return context.stopService(intent);
+        final boolean stopped = context.stopService(intent);
+        if (stopped) {
+            startMode = null;
+        }
+        return stopped;
     }
 
     public static native String getDropbearVersion();
