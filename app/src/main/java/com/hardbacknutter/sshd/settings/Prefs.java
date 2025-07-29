@@ -24,6 +24,8 @@ public final class Prefs {
     /** boolean. */
     static final String RUN_ON_BOOT = "service.start.onboot";
 
+    static final String ON_APP_EXIT_KEEP_RUNNING = "service.onappexit.keep_running";
+
     /** String. */
     static final String SSHD_PORT = "sshd.port";
     /** String. */
@@ -90,10 +92,24 @@ public final class Prefs {
      *
      * @return flag
      */
-    public static boolean isStartByIntentAllowed(final Context context) {
+    public static boolean isStartByIntentAllowed(@NonNull final Context context) {
         return PreferenceManager
                 .getDefaultSharedPreferences(context)
                 .getBoolean(RUN_ON_INTENT_ALLOWED, false);
+    }
+
+    /**
+     * Whether a user/manually started service should be stopped
+     * when the app enters {@code #onDestroy()}.
+     *
+     * @param context Current context
+     *
+     * @return flag
+     */
+    public static boolean isKeepRunningOnAppExit(@NonNull final Context context) {
+        return PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getBoolean(ON_APP_EXIT_KEEP_RUNNING, false);
     }
 
     /**

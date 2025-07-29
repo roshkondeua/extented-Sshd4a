@@ -54,6 +54,8 @@
     <string name="about_title">Sshd4a %s</string>
     <string name="ok">சரி</string>
     <string name="cancel">ரத்துசெய்</string>
+    <string name="yes">ஆம்</string>
+    <string name="no">இல்லை</string>
     <string name="dialog_title_attention">கவனத்திற்கு</string>
     <string name="action_help">உதவி</string>
     <string name="err_device_maybe_not_supported">உங்கள் சாதனம் ஆதரிக்கப்படவில்லை அல்லது நீங்கள் அனுமதிகளை கைமுறையாக அமைக்க வேண்டியிருக்கலாம். Github இல் உள்ள ஆவணங்களைப் பார்வையிட “சரி” என்பதைத் தட்டவும்.</string>
@@ -67,4 +69,5 @@
     <string name="tile_not_added">கட்டம் சேர்க்கப்படவில்லை</string>
     <string name="tile_already_added">கட்டம் ஏற்கனவே சேர்க்கப்பட்டுள்ளது</string>
     <string name="info_add_tile">ஒரு க்விக் செட்டிங்ஸ் கட்டம் வழங்கப்பட்டுள்ளது, இது சேவையை துவக்க/நிறுத்த அனுமதிக்கிறது. இதை கைமுறையாக சேர்க்க வேண்டும்.</string>
+    <string name="pt_keep_running_after_app_exit">அப்பிளிக்கேஷனை மூடிய பிறகும் சேவையை இயக்கத்தில் வைத்திரு</string>
 </resources>

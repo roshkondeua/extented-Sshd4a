@@ -53,6 +53,8 @@
     <string name="about_title">Sshd4a %s</string>
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
+    <string name="yes">确定</string>
+    <string name="no">否</string>
     <string name="dialog_title_attention">注意</string>
     <string name="action_help">帮助</string>
     <string name="err_device_maybe_not_supported">您的设备要么不支持，要么可能需要手动设置权限。点击 “确定 ”访问 Github 上的文档。</string>
@@ -67,4 +69,5 @@
     <string name="tile_not_added">磁贴未添加</string>
     <string name="tile_already_added">磁贴已存在</string>
     <string name="info_add_tile">提供了一个快捷设置磁贴，可让您启动/停止服务。必须手动添加。</string>
+    <string name="pt_keep_running_after_app_exit">应用关闭时停止用户手动启动的服务</string>
 </resources>

@@ -75,6 +75,9 @@
     <!-- Preference summary/info message. -->
     <string name="ps_foreground_off">The service will only run while this app is in the foreground.</string>
 
+    <!-- Preference option -->
+    <string name="pt_keep_running_after_app_exit">Keep Service Running After App Exit</string>
+
     <!-- Preference category title -->
     <string name="pc_dropbear"
             translatable="false">Dropbear SSH</string>
@@ -129,6 +132,10 @@
     <string name="ok">OK</string>
     <!-- [VERIFIED] - Button label. -->
     <string name="cancel">Cancel</string>
+    <!-- [VERIFIED] -->
+    <string name="yes">Yes</string>
+    <!-- [VERIFIED] -->
+    <string name="no">No</string>
     <!-- [VERIFIED] -->
     <string name="dialog_title_attention">Attention</string>
     <!-- [VERIFIED] -->

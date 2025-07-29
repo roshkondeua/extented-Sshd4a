@@ -53,6 +53,8 @@
     <string name="warning_no_auth_methods">Sie haben alle Authentifizierungsmethoden deaktiviert. Sind Sie sicher, dass Sie dies tun wollen?</string>
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
     <string name="dialog_title_attention">Achtung</string>
     <string name="action_help">Hilfe</string>
     <string name="err_device_maybe_not_supported">Ihr Gerät wird entweder nicht unterstützt oder Sie müssen die Berechtigungen manuell festlegen. Tippen Sie auf „OK“, um die Dokumentation auf Github zu besuchen.</string>
@@ -66,4 +68,5 @@
     <string name="tile_not_added">Kachel nicht hinzugefügt</string>
     <string name="tile_already_added">Kachel bereits hinzugefügt</string>
     <string name="info_add_tile">Es wird eine Schnellzugriff-Kachel bereitgestellt, mit der Sie den Dienst starten/stoppen können. Sie muss manuell hinzugefügt werden.</string>
+    <string name="pt_keep_running_after_app_exit">Dienst nach App-Beenden weiter ausführen</string>
 </resources>

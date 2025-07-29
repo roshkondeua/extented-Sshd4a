@@ -16,7 +16,7 @@ import com.hardbacknutter.sshd.settings.Prefs;
 
 /**
  * Handles start/stop by Intent.
- *
+ * <p>
  * Setup and delegate the UI to the {@link MainFragment}.
  */
 public class MainActivity

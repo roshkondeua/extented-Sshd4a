@@ -53,6 +53,8 @@
     <string name="warning_no_auth_methods">Vous avez désactivé toutes les méthodes d’authentification. Êtes-vous sûr de vouloir faire cela ?</string>
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
     <string name="dialog_title_attention">Attention</string>
     <string name="action_help">Aide</string>
     <string name="err_device_maybe_not_supported">Votre appareil n’est pas pris en charge ou vous devrez peut-être définir les autorisations manuellement. Appuyez sur « OK » pour consulter la documentation sur Github.</string>
@@ -66,4 +68,5 @@
     <string name="tile_not_added">Tuile non ajoutée</string>
     <string name="tile_already_added">Tuile déjà ajoutée</string>
     <string name="info_add_tile">"Une tuile des réglages rapides est fournie, vous permettant de démarrer/arrêter le service. Elle doit être ajoutée manuellement. "</string>
+    <string name="pt_keep_running_after_app_exit">Maintenir le service actif après la fermeture de l’application</string>
 </resources>

@@ -61,7 +61,8 @@ public class MainFragment
 
     static final String TAG = "MainFragment";
     /** boolean. */
-    private static final String PK_UI_NOTIFICATION_ASK_PERMISSION = "ui.notification.ask_permission";
+    private static final String PK_UI_NOTIFICATION_ASK_PERMISSION =
+            "ui.notification.ask_permission";
     /** boolean. */
     private static final String PK_UI_ASK_TO_ADD_TILE = "ui.tile.ask";
 
@@ -162,19 +163,25 @@ public class MainFragment
         authKeysImportLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(), this::onImportAuthKeys);
 
+        //noinspection DataFlowIssue
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         if (prefs.getBoolean(PK_UI_ASK_TO_ADD_TILE, true)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                askV33();
-            } else {
-                askV30();
-            }
+            askToAddTile();
             // We only ask once
             prefs.edit().putBoolean(PK_UI_ASK_TO_ADD_TILE, false).apply();
         }
     }
 
+    private void askToAddTile() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            askV33();
+        } else {
+            askV30();
+        }
+    }
+
     private void askV30() {
+        //noinspection DataFlowIssue
         new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.app_name)
                 .setIcon(R.drawable.app_tile)
@@ -203,16 +210,19 @@ public class MainFragment
                 result -> {
                     switch (result) {
                         case StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED:
+                            //noinspection DataFlowIssue
                             Snackbar.make(getView(), R.string.tile_added,
                                           Snackbar.LENGTH_SHORT).show();
                             // Not sure this is really needed?
                             TileService.requestListeningState(context, tileService);
                             break;
                         case StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_NOT_ADDED:
+                            //noinspection DataFlowIssue
                             Snackbar.make(getView(), R.string.tile_not_added,
                                           Snackbar.LENGTH_SHORT).show();
                             break;
                         case StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED:
+                            //noinspection DataFlowIssue
                             Snackbar.make(getView(), R.string.tile_already_added,
                                           Snackbar.LENGTH_SHORT).show();
                             break;
@@ -397,9 +407,10 @@ public class MainFragment
     @Override
     public void onDestroy() {
         if (vm != null) {
-            if (SshdService.getStartMode() == StartMode.ByUser) {
-                //noinspection ConstantConditions
-                vm.stopService(getContext());
+            final Context context = requireContext();
+            if (SshdService.getStartMode() == StartMode.ByUser
+                && !Prefs.isKeepRunningOnAppExit(context)) {
+                vm.stopService(context);
             }
         }
         super.onDestroy();

@@ -24,6 +24,13 @@
             android:summaryOff="@string/ps_foreground_off"
             android:summaryOn="@string/ps_foreground_on"
             android:title="@string/pt_foreground" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="service.onappexit.keep_running"
+            android:summaryOff="@string/disabled"
+            android:summaryOn="@string/enabled"
+            android:title="@string/pt_keep_running_after_app_exit"
+            />
     </PreferenceCategory>
 
     <com.hardbacknutter.sshd.settings.ExtPreferenceCategory
