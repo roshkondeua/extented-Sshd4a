@@ -62,4 +62,9 @@
     <string name="disabled">关闭</string>
     <string name="enabled">启用</string>
     <string name="pt_enable_shell_access">Shell 访问</string>
+    <string name="err_see_app">打开应用查看错误信息。</string>
+    <string name="tile_added">磁贴已添加</string>
+    <string name="tile_not_added">磁贴未添加</string>
+    <string name="tile_already_added">磁贴已存在</string>
+    <string name="info_add_tile">提供了一个快捷设置磁贴，可让您启动/停止服务。必须手动添加。</string>
 </resources>

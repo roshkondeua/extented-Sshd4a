@@ -138,9 +138,24 @@
     <!-- [VERIFIED] -->
     <string name="pref_not_set">Not set</string>
 
-    <!-- e.g. some setting is "Enabled", switched on. -->
+    <!-- e.g. some setting is "Enabled", switched on.
+        Also used for the Quick settings tile. -->
     <string name="enabled">Enabled</string>
-    <!-- e.g. some setting is "Disabled", switched off. -->
+    <!-- e.g. some setting is "Disabled", switched off.
+        Also used for the Quick settings tile. -->
     <string name="disabled">Disabled</string>
+
+
+    <!-- Tile text in case of an error.
+         The user will need to start the app to see the error details -->
+    <string name="err_see_app">Open the app for error information.</string>
+    <!-- info message: the user allowed us to add a Quick Settings tile. -->
+    <string name="tile_added">Tile added</string>
+    <!-- info message: the user did NOT allow us to add a Quick Settings tile. -->
+    <string name="tile_not_added">Tile not added</string>
+    <!-- info message: the user tried to add a Quick Settings tile but it was already added. -->
+    <string name="tile_already_added">Tile already added</string>
+    <!-- info message shown as a dialog when adding a Quick Settings tile is a manual process. -->
+    <string name="info_add_tile">A Quick Settings Tile is provided which allows you to start/stop the service. It must be manually added.</string>
 
 </resources>

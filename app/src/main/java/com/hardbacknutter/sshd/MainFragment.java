@@ -2,8 +2,10 @@ package com.hardbacknutter.sshd;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.StatusBarManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,11 +13,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.service.quicksettings.TileService;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,7 +61,9 @@ public class MainFragment
 
     static final String TAG = "MainFragment";
     /** boolean. */
-    private static final String UI_NOTIFICATION_ASK_PERMISSION = "ui.notification.ask_permission";
+    private static final String PK_UI_NOTIFICATION_ASK_PERMISSION = "ui.notification.ask_permission";
+    /** boolean. */
+    private static final String PK_UI_ASK_TO_ADD_TILE = "ui.tile.ask";
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(
@@ -66,7 +73,7 @@ public class MainFragment
                             PreferenceManager
                                     .getDefaultSharedPreferences(getContext())
                                     .edit()
-                                    .putBoolean(UI_NOTIFICATION_ASK_PERMISSION, false)
+                                    .putBoolean(PK_UI_NOTIFICATION_ASK_PERMISSION, false)
                                     .apply();
                         }
                     });
@@ -154,6 +161,68 @@ public class MainFragment
 
         authKeysImportLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(), this::onImportAuthKeys);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (prefs.getBoolean(PK_UI_ASK_TO_ADD_TILE, true)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                askV33();
+            } else {
+                askV30();
+            }
+            // We only ask once
+            prefs.edit().putBoolean(PK_UI_ASK_TO_ADD_TILE, false).apply();
+        }
+    }
+
+    private void askV30() {
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(R.string.app_name)
+                .setIcon(R.drawable.app_tile)
+                .setMessage(R.string.info_add_tile)
+                .setPositiveButton(R.string.ok, (d, w) -> d.dismiss())
+                .create()
+                .show();
+    }
+
+    @RequiresApi(api = 33)
+    private void askV33() {
+        final Context context = requireContext();
+        final StatusBarManager sbm = context.getSystemService(StatusBarManager.class);
+        if (sbm == null) {
+            // Should never get here... flw
+            Log.e(TAG, "No StatusBarManager service found");
+            return;
+        }
+
+        final ComponentName tileService = new ComponentName(context, SshdTileService.class);
+        sbm.requestAddTileService(
+                tileService,
+                getString(R.string.app_name),
+                Icon.createWithResource(context, R.drawable.app_tile),
+                Runnable::run,
+                result -> {
+                    switch (result) {
+                        case StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED:
+                            Snackbar.make(getView(), R.string.tile_added,
+                                          Snackbar.LENGTH_SHORT).show();
+                            // Not sure this is really needed?
+                            TileService.requestListeningState(context, tileService);
+                            break;
+                        case StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_NOT_ADDED:
+                            Snackbar.make(getView(), R.string.tile_not_added,
+                                          Snackbar.LENGTH_SHORT).show();
+                            break;
+                        case StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED:
+                            Snackbar.make(getView(), R.string.tile_already_added,
+                                          Snackbar.LENGTH_SHORT).show();
+                            break;
+                    }
+                });
+    }
+
+    private void requestListeningState(@NonNull final Context context) {
+        final ComponentName tileService = new ComponentName(context, SshdTileService.class);
+        TileService.requestListeningState(context, tileService);
     }
 
     @Override
@@ -209,7 +278,7 @@ public class MainFragment
             != PackageManager.PERMISSION_GRANTED) {
 
             if (PreferenceManager.getDefaultSharedPreferences(getContext())
-                                 .getBoolean(UI_NOTIFICATION_ASK_PERMISSION, true)) {
+                                 .getBoolean(PK_UI_NOTIFICATION_ASK_PERMISSION, true)) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         }

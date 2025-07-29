@@ -62,4 +62,9 @@
     <string name="enabled">இயக்கப்பட்டது</string>
     <string name="disabled">முடக்கப்பட்டது</string>
     <string name="pt_enable_shell_access">ஷெல் அணுகல்</string>
+    <string name="err_see_app">பிழை தகவலுக்கு செயலியைத் திறக்கவும்.</string>
+    <string name="tile_added">கட்டம் சேர்க்கப்பட்டது</string>
+    <string name="tile_not_added">கட்டம் சேர்க்கப்படவில்லை</string>
+    <string name="tile_already_added">கட்டம் ஏற்கனவே சேர்க்கப்பட்டுள்ளது</string>
+    <string name="info_add_tile">ஒரு க்விக் செட்டிங்ஸ் கட்டம் வழங்கப்பட்டுள்ளது, இது சேவையை துவக்க/நிறுத்த அனுமதிக்கிறது. இதை கைமுறையாக சேர்க்க வேண்டும்.</string>
 </resources>

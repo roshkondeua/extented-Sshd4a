@@ -61,4 +61,9 @@
     <string name="disabled">Deaktiviert</string>
     <string name="enabled">Aktiviert</string>
     <string name="pt_enable_shell_access">Shell-Zugriff</string>
+    <string name="err_see_app">Öffnen Sie die App für Fehlerinformationen.</string>
+    <string name="tile_added">Kachel hinzugefügt</string>
+    <string name="tile_not_added">Kachel nicht hinzugefügt</string>
+    <string name="tile_already_added">Kachel bereits hinzugefügt</string>
+    <string name="info_add_tile">Es wird eine Schnellzugriff-Kachel bereitgestellt, mit der Sie den Dienst starten/stoppen können. Sie muss manuell hinzugefügt werden.</string>
 </resources>

@@ -61,4 +61,9 @@
     <string name="disabled">Désactivé</string>
     <string name="enabled">Activée</string>
     <string name="pt_enable_shell_access">Accès au shell</string>
+    <string name="err_see_app">"Ouvrez l’application pour les informations d’erreur. "</string>
+    <string name="tile_added">Tuile ajoutée</string>
+    <string name="tile_not_added">Tuile non ajoutée</string>
+    <string name="tile_already_added">Tuile déjà ajoutée</string>
+    <string name="info_add_tile">"Une tuile des réglages rapides est fournie, vous permettant de démarrer/arrêter le service. Elle doit être ajoutée manuellement. "</string>
 </resources>
