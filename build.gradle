@@ -14,12 +14,12 @@ ext {
 
     toolChain = 21
 
-    // Android 11 as minimum... there are far to many issues/differences dealing
+    // Android 11 as minimum... there are far too many issues/differences dealing
     // with storage permissions if we try for Android 10 or lower
     // See https://developer.android.com/training/data-storage
     minSdkVersion = 30
-    targetSdkVersion = 35
-    compileSdkVersion = 35
+    targetSdkVersion = 36
+    compileSdkVersion = 36
 
     // https://developer.android.com/studio/projects/configure-agp-ndk
     ndk = "28.0.13004108"
