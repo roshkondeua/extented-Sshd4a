@@ -1,0 +1,4 @@
+NEW
+- github #24 add a Quick Settings Tile
+- added a setting to allow a user-started service to keep running when the app exists (default: disabled)
+- supports Android 16

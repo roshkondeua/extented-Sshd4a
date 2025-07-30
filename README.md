@@ -5,9 +5,9 @@ Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a
 Please do **NOT** request implementing some sort of root access. 
 Such requests **will be closed** immediately.
 
-### Download the latest release: 1.8.0
+### Download the latest release: 1.9.0
 
-<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.8.0/Sshd4a-1.8.0.apk">
+<a href="https://github.com/tfonteyn/Sshd4a/releases/download/v1.9.0/Sshd4a-1.9.0.apk">
 <img src="metadata/en-US/images/get-it-on-github.png" alt="Get it on GitHub" style="width:150px;"/></a>
 
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.hardbacknutter.sshd/">
@@ -61,7 +61,7 @@ Translations are editable on [Weblate](https://hosted.weblate.org/engage/sshd4a/
 
 - Standard Android:
   - Requires minimal Android 11 (API 30)
-  - Supported/tested up to Android 15 (API 35).
+  - Supported/tested up to Android 16 (API 36).
 - Android/Google TV
   - Not supported on versions 11/12 but might work depending on TV brand/model.
   - Supported/tested on the Google TV emulator version 13/14.
