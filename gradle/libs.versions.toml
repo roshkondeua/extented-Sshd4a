@@ -1,16 +1,17 @@
 [versions]
-androidGradlePlugin = "8.12.2"
+androidGradlePlugin = "8.13.0"
 # https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android
-androidKotlinPlugin = "2.2.10"
+androidKotlinPlugin = "2.2.20"
 
 # https://developer.android.com/jetpack/androidx/versions
 
-androidxActivity = "1.10.1"
+androidxActivity = "1.11.0"
 androidxAppcompat = "1.7.1"
 androidxConstraintlayout = "2.2.1"
 androidxCore = "1.17.0"
 androidxFragment = "1.8.9"
-androidxLifecycle = "2.9.3"
+androidxLifecycle = "2.9.4"
+androidxLocalbroadcastmanager = "1.1.0"
 androidxPreference = "1.2.1"
 androidxTransition = "1.6.0"
 
@@ -23,7 +24,7 @@ androidxTestRules = '1.7.0'
 desugar = "2.1.5"
 
 # https://github.com/material-components/material-components-android/releases
-material = '1.12.0'
+material = '1.13.0'
 
 [libraries]
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidxActivity" }
@@ -33,6 +34,7 @@ androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "and
 androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
 androidx-lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
+androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name="localbroadcastmanager", version.ref = "androidxLocalbroadcastmanager"}
 androidx-preference = { group = "androidx.preference", name = "preference-ktx", version.ref = "androidxPreference" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }

@@ -483,6 +483,7 @@ public class SshdService
 
     private void updateUI() {
         final Intent intent = new Intent(SERVICE_UI_REQUEST);
+        //noinspection deprecation
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

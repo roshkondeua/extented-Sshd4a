@@ -250,7 +250,7 @@ public class MainFragment
             requestNotificationPermission();
         }
 
-        //noinspection ConstantConditions
+        //noinspection ConstantConditions,deprecation
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(
                 messageReceiver, new IntentFilter(SshdService.SERVICE_UI_REQUEST));
 
@@ -389,7 +389,7 @@ public class MainFragment
     @Override
     public void onPause() {
         vm.cancelUpdateThread();
-        //noinspection ConstantConditions
+        //noinspection ConstantConditions,deprecation
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(messageReceiver);
         super.onPause();
     }
