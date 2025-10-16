@@ -20,7 +20,7 @@ export PATH=${JAVA_HOME}/bin:${PATH}
 SDK=/cygdrive/c/d/sdk
 
 # Android NDK location/version; upgrade as needed/wanted
-NDK=${SDK}/ndk/28.0.13004108
+NDK=${SDK}/ndk/29.0.14206865
 
 # Android minSdkVersion. The minimal version, upgrade as needed/wanted
 export ANDROID_MIN_SDK=30
