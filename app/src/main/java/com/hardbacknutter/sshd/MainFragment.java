@@ -27,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ScrollView;
 
@@ -421,6 +422,17 @@ public class MainFragment
             updateStartButton(toolbarMenuProvider.startButton);
         } else if (isTelevision) {
             updateStartButton(vb.tvBtnStartAction);
+        }
+
+        // We're setting this regardless of StartMode.
+        // If we have a UI, then we always want this flag set while running
+        // to prevent the device going to sleep and slowing down transfers.
+        if (SshdService.isRunning()) {
+            //noinspection DataFlowIssue
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            //noinspection DataFlowIssue
+            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
         populateNetworkAddressList();
