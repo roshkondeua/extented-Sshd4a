@@ -143,7 +143,7 @@
 #define DISABLE_WTMPX 1
 
 /* Enable for PKCS#11 support */
-/* #undef ENABLE_PKCS11 */
+#define ENABLE_PKCS11 /**/
 
 /* Enable for U2F/FIDO support */
 #define ENABLE_SK /**/
@@ -191,13 +191,13 @@
 #define HAVE_ADDR_IN_UTMP 1
 
 /* Define if you have ut_addr in utmpx.h */
-/* #undef HAVE_ADDR_IN_UTMPX */
+#define HAVE_ADDR_IN_UTMPX 1
 
 /* Define if you have ut_addr_v6 in utmp.h */
 #define HAVE_ADDR_V6_IN_UTMP 1
 
 /* Define if you have ut_addr_v6 in utmpx.h */
-/* #undef HAVE_ADDR_V6_IN_UTMPX */
+#define HAVE_ADDR_V6_IN_UTMPX 1
 
 /* Define to 1 if you have the 'arc4random' function. */
 #define HAVE_ARC4RANDOM 1
@@ -225,6 +225,12 @@
 
 /* Define to 1 if you have the 'aug_get_machine' function. */
 /* #undef HAVE_AUG_GET_MACHINE */
+
+/* Define to 1 if you have the 'auth_hostok' function. */
+/* #undef HAVE_AUTH_HOSTOK */
+
+/* Define to 1 if you have the 'auth_timeok' function. */
+/* #undef HAVE_AUTH_TIMEOK */
 
 /* Define to 1 if you have the 'b64_ntop' function. */
 /* #undef HAVE_B64_NTOP */
@@ -343,7 +349,7 @@
 
 /* Define to 1 if you have the declaration of 'getentropy', and to 0 if you
    don't. */
-#define HAVE_DECL_GETENTROPY 0
+#define HAVE_DECL_GETENTROPY 1
 
 /* Define to 1 if you have the declaration of 'getpeereid', and to 0 if you
    don't. */
@@ -361,9 +367,25 @@
    don't. */
 #define HAVE_DECL_HOWMANY 1
 
+/* Define to 1 if you have the declaration of 'htole64', and to 0 if you
+   don't. */
+#define HAVE_DECL_HTOLE64 1
+
 /* Define to 1 if you have the declaration of 'h_errno', and to 0 if you
    don't. */
 #define HAVE_DECL_H_ERRNO 1
+
+/* Define to 1 if you have the declaration of 'INFINITY', and to 0 if you
+   don't. */
+#define HAVE_DECL_INFINITY 1
+
+/* Define to 1 if you have the declaration of 'le32toh', and to 0 if you
+   don't. */
+#define HAVE_DECL_LE32TOH 1
+
+/* Define to 1 if you have the declaration of 'le64toh', and to 0 if you
+   don't. */
+#define HAVE_DECL_LE64TOH 1
 
 /* Define to 1 if you have the declaration of 'loginfailed', and to 0 if you
    don't. */
@@ -429,6 +451,10 @@
    don't. */
 #define HAVE_DECL__GETSHORT 0
 
+/* Define to 1 if you have the declaration of '__builtin_inff', and to 0 if
+   you don't. */
+/* #undef HAVE_DECL___BUILTIN_INFF */
+
 /* Define to 1 if you have the 'DES_crypt' function. */
 /* #undef HAVE_DES_CRYPT */
 
@@ -450,11 +476,22 @@
 /* Define to 1 if you have the 'dlopen' function. */
 #define HAVE_DLOPEN 1
 
-/* Define to 1 if you have the 'DSA_generate_parameters_ex' function. */
-/* #undef HAVE_DSA_GENERATE_PARAMETERS_EX */
-
 /* Define to 1 if you have the 'EC_KEY_METHOD_new' function. */
 /* #undef HAVE_EC_KEY_METHOD_NEW */
+
+/* Define to 1 if you have the 'EC_POINT_get_affine_coordinates' function. */
+/* #undef HAVE_EC_POINT_GET_AFFINE_COORDINATES */
+
+/* Define to 1 if you have the 'EC_POINT_get_affine_coordinates_GFp' function.
+   */
+/* #undef HAVE_EC_POINT_GET_AFFINE_COORDINATES_GFP */
+
+/* Define to 1 if you have the 'EC_POINT_set_affine_coordinates' function. */
+/* #undef HAVE_EC_POINT_SET_AFFINE_COORDINATES */
+
+/* Define to 1 if you have the 'EC_POINT_set_affine_coordinates_GFp' function.
+   */
+/* #undef HAVE_EC_POINT_SET_AFFINE_COORDINATES_GFP */
 
 /* Define to 1 if you have the <elf.h> header file. */
 #define HAVE_ELF_H 1
@@ -506,6 +543,12 @@
 
 /* Define to 1 if you have the 'EVP_DigestInit_ex' function. */
 /* #undef HAVE_EVP_DIGESTINIT_EX */
+
+/* Define to 1 if you have the 'EVP_DigestSign' function. */
+/* #undef HAVE_EVP_DIGESTSIGN */
+
+/* Define to 1 if you have the 'EVP_DigestVerify' function. */
+/* #undef HAVE_EVP_DIGESTVERIFY */
 
 /* Define to 1 if you have the 'EVP_MD_CTX_cleanup' function. */
 /* #undef HAVE_EVP_MD_CTX_CLEANUP */
@@ -615,6 +658,9 @@
 /* Define to 1 if the system has the type 'fsfilcnt_t'. */
 #define HAVE_FSFILCNT_T 1
 
+/* Define to 1 if you have the 'fstatat' function. */
+#define HAVE_FSTATAT 1
+
 /* Define to 1 if you have the 'fstatfs' function. */
 #define HAVE_FSTATFS 1
 
@@ -640,7 +686,7 @@
 #define HAVE_GETCWD 1
 
 /* Define to 1 if you have the 'getentropy' function. */
-/* #undef HAVE_GETENTROPY */
+#define HAVE_GETENTROPY 1
 
 /* Define to 1 if you have the 'getgrouplist' function. */
 #define HAVE_GETGROUPLIST 1
@@ -688,7 +734,7 @@
 /* #undef HAVE_GETPWANAM */
 
 /* Define to 1 if you have the 'getrandom' function. */
-/* #undef HAVE_GETRANDOM */
+#define HAVE_GETRANDOM 1
 
 /* Define to 1 if you have the 'getrlimit' function. */
 #define HAVE_GETRLIMIT 1
@@ -733,7 +779,7 @@
 /* #undef HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL */
 
 /* Define to 1 if you have the 'glob' function. */
-/* #undef HAVE_GLOB */
+#define HAVE_GLOB 1
 
 /* Define to 1 if you have the <glob.h> header file. */
 #define HAVE_GLOB_H 1
@@ -769,7 +815,7 @@
 #define HAVE_HOST_IN_UTMP 1
 
 /* Define if you have ut_host in utmpx.h */
-/* #undef HAVE_HOST_IN_UTMPX */
+#define HAVE_HOST_IN_UTMPX 1
 
 /* Define to 1 if you have the <iaf.h> header file. */
 /* #undef HAVE_IAF_H */
@@ -781,7 +827,7 @@
 #define HAVE_ID_IN_UTMP 1
 
 /* Define if you have ut_id in utmpx.h */
-/* #undef HAVE_ID_IN_UTMPX */
+#define HAVE_ID_IN_UTMPX 1
 
 /* Define to 1 if you have the <ifaddrs.h> header file. */
 #define HAVE_IFADDRS_H 1
@@ -953,6 +999,9 @@
 /* Define to 1 if you have the 'mkdtemp' function. */
 #define HAVE_MKDTEMP 1
 
+/* Define to 1 if you have the 'mmap' function. */
+#define HAVE_MMAP 1
+
 /* define if you have mode_t data type */
 #define HAVE_MODE_T 1
 
@@ -982,6 +1031,12 @@
 
 /* Define to 1 if you have the 'ngetaddrinfo' function. */
 /* #undef HAVE_NGETADDRINFO */
+
+/* Define to 1 if you have the 'nlist' function. */
+/* #undef HAVE_NLIST */
+
+/* Define to 1 if you have the <nlist.h> header file. */
+/* #undef HAVE_NLIST_H */
 
 /* Define to 1 if you have the 'nl_langinfo' function. */
 #define HAVE_NL_LANGINFO 1
@@ -1091,7 +1146,7 @@
 #define HAVE_REALLOC 0
 
 /* Define to 1 if you have the 'reallocarray' function. */
-/* #undef HAVE_REALLOCARRAY */
+#define HAVE_REALLOCARRAY 1
 
 /* Define to 1 if you have the 'realpath' function. */
 #define HAVE_REALPATH 1
@@ -1342,6 +1397,9 @@
 /* define if you have struct addrinfo data type */
 #define HAVE_STRUCT_ADDRINFO 1
 
+/* Define to 1 if 'd_type' is a member of 'struct dirent'. */
+#define HAVE_STRUCT_DIRENT_D_TYPE 1
+
 /* define if you have struct in6_addr data type */
 #define HAVE_STRUCT_IN6_ADDR 1
 
@@ -1390,9 +1448,6 @@
 
 /* define if you have struct timeval */
 #define HAVE_STRUCT_TIMEVAL 1
-
-/* Define to 1 if you have the 'swap32' function. */
-/* #undef HAVE_SWAP32 */
 
 /* Define to 1 if you have the 'sysconf' function. */
 #define HAVE_SYSCONF 1
@@ -1545,13 +1600,13 @@
 #define HAVE_TV_IN_UTMP 1
 
 /* Define if you have ut_tv in utmpx.h */
-/* #undef HAVE_TV_IN_UTMPX */
+#define HAVE_TV_IN_UTMPX 1
 
 /* Define if you have ut_type in utmp.h */
 #define HAVE_TYPE_IN_UTMP 1
 
 /* Define if you have ut_type in utmpx.h */
-/* #undef HAVE_TYPE_IN_UTMPX */
+#define HAVE_TYPE_IN_UTMPX 1
 
 /* Define to 1 if you have the <ucred.h> header file. */
 /* #undef HAVE_UCRED_H */
@@ -1564,6 +1619,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
+
+/* Define to 1 if you have the 'unlinkat' function. */
+#define HAVE_UNLINKAT 1
 
 /* Define to 1 if you have the 'unsetenv' function. */
 #define HAVE_UNSETENV 1
@@ -1605,7 +1663,7 @@
 /* #undef HAVE_UTMPXNAME */
 
 /* Define to 1 if you have the <utmpx.h> header file. */
-/* #undef HAVE_UTMPX_H */
+#define HAVE_UTMPX_H 1
 
 /* Define to 1 if you have the <utmp.h> header file. */
 #define HAVE_UTMP_H 1
@@ -1701,6 +1759,9 @@
    EOPNOTSUPP. */
 /* #undef LINK_OPNOTSUPP_ERRNO */
 
+/* Lock all memory to protect sshd against Linux kcompactd */
+/* #undef LINUX_MEMLOCK_ONFAULT */
+
 /* Adjust Linux out-of-memory killer */
 /* #undef LINUX_OOM_ADJUST */
 
@@ -1724,6 +1785,9 @@
 
 /* Set this to your mail directory if you do not have _PATH_MAILDIR */
 /* #undef MAIL_DIRECTORY */
+
+/* Define if your compiler lacks __builtin_popcount */
+/* #undef MISSING_BUILTIN_POPCOUNT */
 
 /* Need setpgrp to for controlling tty */
 /* #undef NEED_SETPGRP */
@@ -1798,6 +1862,9 @@
 /* System dirs owned by bin (uid 2) */
 /* #undef PLATFORM_SYS_DIR_UID */
 
+/* need inet in pledge for setsockopt IP_TOS */
+#define PLEDGE_EXTRA_INET /**/
+
 /* Port number of PRNGD/EGD random number socket */
 /* #undef PRNGD_PORT */
 
@@ -1816,9 +1883,6 @@
 /* no privsep sandboxing */
 #define SANDBOX_NULL 1
 
-/* Sandbox using pledge(2) */
-/* #undef SANDBOX_PLEDGE */
-
 /* Sandbox using setrlimit(2) */
 /* #undef SANDBOX_RLIMIT */
 
@@ -1833,9 +1897,6 @@
 
 /* Sandbox using Solaris/Illumos privileges */
 /* #undef SANDBOX_SOLARIS */
-
-/* Sandbox using systrace(4) */
-/* #undef SANDBOX_SYSTRACE */
 
 /* Specify the system call convention in use */
 /* #undef SECCOMP_AUDIT_ARCH */
@@ -1915,6 +1976,9 @@
 /* syslog_r function is safe to use in in a signal handler */
 /* #undef SYSLOG_R_SAFE_IN_SIGHAND */
 
+/* Have sshd notify systemd on start/reload */
+/* #undef SYSTEMD_NOTIFY */
+
 /* Support routing domains using Linux VRF */
 /* #undef SYS_RDOMAIN_LINUX */
 
@@ -1956,6 +2020,9 @@
 
 /* Define if you have Solaris projects */
 /* #undef USE_SOLARIS_PROJECTS */
+
+/* Use libwtmpdb for sshd */
+/* #undef USE_WTMPDB */
 
 /* compiler variable declarations after code */
 #define VARIABLE_DECLARATION_AFTER_CODE 1
