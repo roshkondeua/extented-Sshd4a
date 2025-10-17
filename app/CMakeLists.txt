@@ -854,6 +854,7 @@ target_include_directories(libscp.so PRIVATE ${DROPBEAR_INCLUDES})
 add_executable(libsftp-server.so ${SRC_SFTP_SERVER})
 target_include_directories(libsftp-server.so PRIVATE
         ${BASE_SRC_SFTP_SERVER}
+        ${BASE_SRC_SFTP_SERVER}/openbsd-compat/include
         ${BASE_SRC_SFTP_SERVER}/openbsd-compat
         )
 

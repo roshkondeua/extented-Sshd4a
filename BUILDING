@@ -190,6 +190,8 @@ autoreconf
 ./configure --host ${ANDROID_TARGET} --disable-lastlog --disable-utmp --disable-wtmp \
             --enable-largefile --without-openssl
 
+# ISSUE THE NEXT SET OF COMMANDS FROM THE TERMINAL INSIDE STUDIO
+# IF YOU ARE NOT THERE YET.
 
 cd ${PROJECT_ROOT}
 # Add remote: "upstream-openssh" pointing to the location used above
