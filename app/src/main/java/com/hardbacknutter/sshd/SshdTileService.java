@@ -50,8 +50,8 @@ public class SshdTileService
         }
 
         if (running) {
-            final boolean stopped = SshdService.stopService(this);
-            setRunningState(!stopped);
+            SshdService.stopService(this);
+            setRunningState(false);
 
         } else {
             ComponentName componentName = null;

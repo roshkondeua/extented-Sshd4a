@@ -121,8 +121,8 @@ public class MainActivity
 
         // Only allowed to stop and quit if we were started by Intent
         if (SshdService.getStartMode() == StartMode.ByIntent) {
-            final boolean stopped = vm.stopService(this);
-            setResult(stopped ? RESULT_OK : RESULT_CANCELED);
+            vm.stopService(this);
+            setResult(RESULT_OK);
             // If the stop-request failed, then removing the task will kill the service.
             finishAndRemoveTask();
         }

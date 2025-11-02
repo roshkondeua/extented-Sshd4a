@@ -172,16 +172,16 @@ public class SshdService
      *
      * @param context Current context
      *
-     * @return If the service is running, then it is stopped and {@code true} is returned;
-     *         else {@code false} is returned.
+     * @throws SecurityException     If the caller does not have permission to access the service
+     *                               or the service can not be found.
+     * @throws IllegalStateException If the application is in a state where the service
+     *                               can not be started (such as not in the foreground in a state
+     *                               when services are allowed).
      */
-    static boolean stopService(@NonNull final Context context) {
+    static void stopService(@NonNull final Context context) {
         final Intent intent = new Intent(context, SshdService.class);
-        final boolean stopped = context.stopService(intent);
-        if (stopped) {
-            startMode = null;
-        }
-        return stopped;
+        context.stopService(intent);
+        startMode = null;
     }
 
     public static native String getDropbearVersion();

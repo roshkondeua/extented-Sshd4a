@@ -88,12 +88,11 @@ public class ServiceViewModel
         return success;
     }
 
-    boolean stopService(@NonNull final Context context) {
+    void stopService(@NonNull final Context context) {
         cancelUpdateThread();
 
-        final boolean stopped = SshdService.stopService(context);
+        SshdService.stopService(context);
         updateUI();
-        return stopped;
     }
 
 
