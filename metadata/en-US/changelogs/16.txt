@@ -1,0 +1,4 @@
+NEW
+- When the app is started interactively, the device will be kept awake as long as the service is running.
+  This prevents slow-downs during transfers when the screen lock time-out would kick in.
+- Updated OpenSSH 10.2p1

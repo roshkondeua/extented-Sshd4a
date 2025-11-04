@@ -1,0 +1,2 @@
+FIXES:
+- a minor fix to keep the quick-settings tile in sync with the service status
