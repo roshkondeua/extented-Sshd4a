@@ -5,9 +5,17 @@ Windows OS port forwarding from the external listenaddress to the localhost:
 
 Use "ipconfig" on the windows box to get your current address; for example: 192.168.0.56
 
+View the current rules:
+
+    netsh interface portproxy show all
+
 Proxy the host interface 192.168.0.56:2223 to the localhost:2222
 
     netsh interface portproxy add v4tov4 listenaddress=192.168.0.56 listenport=2223 connectaddress=127.0.0.1 connectport=2222
+
+Check/view if you have the firewall already to prevent adding multiple:
+
+    netsh advfirewall firewall show rule "ALLOW TCP PORT 2223"
 
 Open the firewall for port 2223 (i.e. the windows host)
 
@@ -19,8 +27,14 @@ To access the emulator from a shell on the emulator hosting machine, run:
     adb root
     # enable a forward from the local port (i.e. 127.0.0.1) 2223 to the emulator port 2222
     adb forward tcp:2223 tcp:2222
-    # you can now connect to the sshd server on the emulator with:
+    
+Connect to the sshd server on the emulator with:
+
     ssh -p 2223 localhost
+
+Connect to the sftp server on the emulator with:
+
+    sftp -P 2223 localhost
 
 Delete the proxy rule:
 
