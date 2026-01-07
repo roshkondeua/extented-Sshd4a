@@ -214,7 +214,7 @@ public class MainFragment
                             //noinspection DataFlowIssue
                             Snackbar.make(getView(), R.string.tile_added,
                                           Snackbar.LENGTH_SHORT).show();
-                            // Not sure this is really needed?
+                            // Not sure if this is really needed?
                             TileService.requestListeningState(context, tileService);
                             break;
                         case StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_NOT_ADDED:
@@ -262,10 +262,9 @@ public class MainFragment
         // 4. ROTATE, the service is triggered to stop running
         // 5. onResume... service still running
         // 6. so we don't start it.
-        // 7. the service is finally stopped
-        //    and we have NOT (re)started it.
-        // 2025-04-12: won't fix... unless some user complains very hard..
-        // .. and that might result in locking the rotation of the device for this app.
+        // 7. the service is finally stopped, and we have NOT (re)started it
+        // 2025-04-12: won't fix... unless some user complains very hard...
+        // ... and that might result in locking the rotation of the device for this app.
         if (SshdService.isRunning()) {
             vm.startUpdateThread(getContext());
 
@@ -296,7 +295,7 @@ public class MainFragment
     }
 
     /**
-     * github #12:
+     * GitHub #12:
      * Android/Google TV 11 & 12:
      * The standard Google image does not provide the needed Dialog.
      * Some vendors <strong>might</strong> add them.
