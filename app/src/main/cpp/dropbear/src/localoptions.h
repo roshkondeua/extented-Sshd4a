@@ -48,6 +48,8 @@
 
 /* Not literally true, but we can only support a single user */
 #define DROPBEAR_SVR_MULTIUSER 0
+/* not compatible (or needed?) with Android. */
+#define DROPBEAR_SVR_DROP_PRIVS 0
 
 #define DROPBEAR_USER_ALGO_LIST 0
 #define DROPBEAR_ENABLE_GCM_MODE 1
