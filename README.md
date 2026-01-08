@@ -5,7 +5,7 @@ Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a
 Please do **NOT** request implementing some sort of root access. 
 Such requests **will be closed** immediately.
 
-### Download the latest release: 1.10.1
+### Download the latest release: 1.11.0
 
 <a href="https://github.com/tfonteyn/Sshd4a/releases">
 <img src="metadata/en-US/images/get-it-on-github.png" alt="Get it on GitHub" style="width:150px;"/></a>
@@ -21,7 +21,7 @@ Services are provided by:
 - https://github.com/openssh/openssh-portable
 
 The latest release contains:
-- Dropbear 2025.88
+- Dropbear 2025.89
 - rsync 3.4.1
 - sftp-server from OpenSSH 10.2p1
 
