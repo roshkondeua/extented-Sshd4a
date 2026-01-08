@@ -1,0 +1,5 @@
+NEW
+
+- updated to dropbear-2025.89
+
+No other code changes.
