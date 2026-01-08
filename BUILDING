@@ -48,10 +48,6 @@ if [ ! -d "$NDK" ]; then
   exit 1
 fi
 
-# info dump as reminder...
-echo "ANDROID_TARGET=${ANDROID_TARGET}"
-echo "ANDROID_MIN_SDK=${ANDROID_MIN_SDK}"
-
 export AR=${TOOLCHAIN}/bin/llvm-ar
 export CC=${TOOLCHAIN}/bin/${ANDROID_TARGET}${ANDROID_MIN_SDK}-clang
 export AS=${CC}
@@ -63,13 +59,25 @@ export STRIP=${TOOLCHAIN}/bin/llvm-strip
 # content for ".gitattributes"
 export GATRR="* text eol=lf\n*.txt text\n*.png binary\n"
 
-
 # #############################################################################
 # Define the project root
 # #############################################################################
 
 # The root directory of the Ssh4d project (i.e. where the projects .git is)
 export PROJECT_ROOT=/cygdrive/c/Data/AndroidStudioProjects/Sshd4a/
+
+# #############################################################################
+# Information dump
+# #############################################################################
+echo Tools:
+echo JAVA_HOME=${JAVA_HOME}
+echo SDK=${SDK}
+echo NDK=${NDK}
+echo ANDROID_MIN_SDK=${ANDROID_MIN_SDK}
+echo ANDROID_TARGET=${ANDROID_TARGET}
+echo TOOLCHAIN=${TOOLCHAIN}
+echo Project:
+echo PROJECT_ROOT=${PROJECT_ROOT}
 
 # #############################################################################
 # Building as-is, after cloning the git repo
@@ -85,7 +93,7 @@ cd ${PROJECT_ROOT}/app/src/main/cpp/
 # #############################################################################
 # #############################################################################
 # THE REMAINDER OF THIS DOCUMENT DESCRIBES HOW TO UPGRADE THE EXTERNAL PACKAGES
-# It's a living doc, and might contain errors!
+# It's a living doc, and may contain errors!
 # #############################################################################
 # #############################################################################
 
@@ -93,7 +101,7 @@ cd ${PROJECT_ROOT}/app/src/main/cpp/
 
 export RSYNC_VERSION="rsync-3.4.1"
 export OPENSSH_VERSION="openssh-10.2p1"
-export DROPBEAR_VERSION="dropbear-2025.88"
+export DROPBEAR_VERSION="dropbear-2025.89"
 
 export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
 export OPENSSH_DOWNLOAD="https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz"
@@ -216,7 +224,7 @@ git merge --allow-unrelated-histories upstream-openssh/dev
 # ############################################################################
 
 cd ${SRC_ROOT}
-wget -q ${DROPBEAR_DOWNLOAD}
+wget ${DROPBEAR_DOWNLOAD}
 7z x -so ${DROPBEAR_VERSION}* | tar xf -
 
 # rename the directory so we don't need to change the git remote names
@@ -240,12 +248,15 @@ cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp/dropbear
             --enable-bundled-libtom --enable-largefile
 
 
+# Now switch to the ssh4d project and merge the remote from above
 cd ${PROJECT_ROOT}
 # Add remote: "upstream-dropbear" pointing to the location used above
 git remote add upstream-dropbear ${SRC_ROOT}/${DROPBEAR}
 
-# pull the new code and merge
+# pull the new code
 git fetch upstream-dropbear
+
+# finally merge
 git merge --allow-unrelated-histories upstream-dropbear/dev
 
 #    Merge and solve conflicts as usual.
