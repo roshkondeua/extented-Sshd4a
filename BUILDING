@@ -263,7 +263,7 @@ git merge --allow-unrelated-histories upstream-dropbear/dev
 #    Typically just "Accept theirs" for all files
 #    EXCEPT for our mandatory changes which are (should be) marked with SSHD4A_*
 #
-#    2025-05-29: files modified:
+#    2026-01-08: modified files:
 #      cpp/dropbear/src/
 #         common-session.c
 #         dbrandom.c
