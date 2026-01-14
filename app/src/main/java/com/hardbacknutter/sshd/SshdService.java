@@ -219,7 +219,7 @@ public class SshdService
     }
 
     /**
-     * Gather arguments, start the native code and setup a watchdog.
+     * Gather arguments, start the native code and set up a watchdog.
      */
     private void startSshd() {
         if (BuildConfig.DEBUG) {
