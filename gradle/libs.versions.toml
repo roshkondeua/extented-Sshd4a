@@ -1,7 +1,21 @@
 [versions]
-androidGradlePlugin = "8.13.2"
-# https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android
-androidKotlinPlugin = "2.3.0"
+# Android 11 as minimum... there are far too many issues/differences dealing
+# with storage permissions if we try for Android 10 or lower
+# See https://developer.android.com/training/data-storage
+minSdk = "30"
+# Android 16
+targetSdk = "36"
+compileSdk = "36"
+
+# JDK used by Gradle
+java-toolchain = "21"
+
+# https://developer.android.com/studio/projects/configure-agp-ndk
+ndk = "29.0.14206865"
+# don't forget to update CMakeLists.txt cmake_minimum_required
+cmakeVersion = "4.1.2"
+
+androidGradlePlugin = "9.0.0"
 
 # https://developer.android.com/jetpack/androidx/versions
 
@@ -46,4 +60,3 @@ google-desugar = { group = "com.android.tools", name = "desugar_jdk_libs_nio", v
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
-android-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "androidKotlinPlugin" }

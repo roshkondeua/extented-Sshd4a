@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias libs.plugins.android.application
-    alias libs.plugins.android.kotlin
 }
 
 /*
@@ -25,12 +24,14 @@ if (project.hasProperty("Sshd4a.properties")) {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(rootProject.ext.toolChain)
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.toolchain.get())
     }
 }
 
 kotlin {
-    jvmToolchain rootProject.ext.toolChain
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.java.toolchain.get()))
+    }
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
     }
@@ -38,14 +39,14 @@ kotlin {
 
 android {
     namespace = "com.hardbacknutter.sshd"
-    compileSdk = rootProject.ext.compileSdkVersion
+    compileSdk = libs.versions.compileSdk.get().toInteger()
 
-    ndkVersion = rootProject.ext.ndk
+    ndkVersion = libs.versions.ndk.get()
 
     externalNativeBuild {
         cmake {
             path file('CMakeLists.txt')
-            version = rootProject.ext.cmakeVersion
+            version = libs.versions.cmakeVersion.get()
         }
     }
 
@@ -63,8 +64,8 @@ android {
         versionCode = rootProject.ext.applicationVersionCode
         versionName = rootProject.ext.applicationVersionName
 
-        minSdk = rootProject.ext.minSdkVersion
-        targetSdk = rootProject.ext.targetSdkVersion
+        minSdk = libs.versions.minSdk.get().toInteger()
+        targetSdk = libs.versions.targetSdk.get().toInteger()
 
         externalNativeBuild {
             cmake {
@@ -116,6 +117,11 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+        viewBinding = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_17
@@ -123,22 +129,11 @@ android {
         coreLibraryDesugaringEnabled = true
     }
 
-    buildFeatures {
-        buildConfig = true
-        viewBinding = true
-    }
-
     testOptions {
         unitTests {
             includeAndroidResources = true
             // Can be enabled to make Log.x work. OR, use Logger.x
             returnDefaultValues = false
-            all {
-                reports {
-                    junitXml.getRequired().set(true)
-                    html.getRequired().set(false)
-                }
-            }
         }
     }
 
@@ -162,12 +157,19 @@ android {
         includeInBundle = false
     }
 
-    applicationVariants.configureEach {
-        final variant ->
-            variant.outputs.configureEach {
-                outputFileName =
-                        "${rootProject.name}-${defaultConfig.versionName}-${variant.name}.apk"
+    androidComponents {
+        onVariants(selector().all(), { variant ->
+            variant.outputs.each { output ->
+                output.outputFileName.set("${rootProject.name}-${output.versionName.get()}-${variant.name}.apk")
             }
+        })
+    }
+}
+
+tasks.withType(Test).configureEach {
+    reports {
+        junitXml.required.set(true)
+        html.required.set(false)
     }
 }
 
