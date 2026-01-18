@@ -167,13 +167,6 @@ android {
     }
 }
 
-tasks.withType(Test).configureEach {
-    reports {
-        junitXml.required.set(true)
-        html.required.set(false)
-    }
-}
-
 dependencies {
 
     coreLibraryDesugaring(libs.google.desugar)
