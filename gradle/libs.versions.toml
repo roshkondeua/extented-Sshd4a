@@ -15,11 +15,11 @@ ndk = "29.0.14206865"
 # don't forget to update CMakeLists.txt cmake_minimum_required
 cmakeVersion = "4.1.2"
 
-androidGradlePlugin = "9.0.0"
+androidGradlePlugin = "9.0.1"
 
 # https://developer.android.com/jetpack/androidx/versions
 
-androidxActivity = "1.12.2"
+androidxActivity = "1.12.4"
 androidxAppcompat = "1.7.1"
 androidxConstraintlayout = "2.2.1"
 androidxCore = "1.17.0"
