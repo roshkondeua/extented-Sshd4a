@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--suppress LongLine -->
 <resources>
-    <string name="app_name"
-            translatable="false">Sshd4a</string>
-    <string name="service_name"
-            translatable="false">Sshd4a</string>
-
     <!-- Service description needed for Android OS. -->
     <string name="service_description">Provides an sshd server with shell access, rsync and scp/sftp services.</string>
 
@@ -13,11 +8,11 @@
     <string name="msg_request_files_management">This application needs special permission to access your files in order to be able to use “rsync”. Without this permission the functionality of this app will be severely limited.\n\n After tapping “OK” you will be asked to enable this permission.\n Scroll down in the list of applications and enable Sshd4a.</string>
 
     <!-- About dialog title:
-         Param1: version string -->
+         Param 1: version string -->
     <string name="about_title">Sshd4a %s</string>
     <!-- Menu option -->
     <string name="lbl_about">About</string>
-    <!-- Message text with component versions on the the about Dialog.
+    <!-- Message text with component versions on the about Dialog.
          Params 1,2,3: version numbers.
     -->
     <string name="about_versions">Services provided by:\n\nDropbear %1$s\nRsync %2$s\nSftp-server from %3$s</string>
@@ -78,9 +73,6 @@
     <!-- Preference option -->
     <string name="pt_keep_running_after_app_exit">Keep Service Running After App Exit</string>
 
-    <!-- Preference category title -->
-    <string name="pc_dropbear"
-            translatable="false">Dropbear SSH</string>
     <!-- Preference option -->
     <string name="pt_port">Port Number (1024 &lt; port &lt; 32768)</string>
     <!-- Preference option -->
