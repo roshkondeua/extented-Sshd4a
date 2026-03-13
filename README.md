@@ -13,6 +13,22 @@ Such requests **will be closed** immediately.
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.hardbacknutter.sshd/">
 <img src="metadata/en-US/images/IzzyOnDroid.png" alt="Get it on IzzySoft" style="width:150px;"/></a>
 
+**Warning**: when installing on devices with the newest Google updates, this app may be scanned and
+flagged as _fake_.
+
+What you can do:
+
+- Visit [https://keepandroidopen.org/](https://keepandroidopen.org/)
+- Log an issue and ask for details; but read the above site **FIRST**.
+- Ignore the false positive, and install anyhow.
+- Read the source code and build the app yourself from the source, and install that.
+- Feel free to not install/delete the app.
+
+What you should not do:
+
+- blame the developer and start wild accusations. All the sources are here, and you can build/verify
+  for yourself every single line.
+
 ## Services:
 
 Services are provided by:
