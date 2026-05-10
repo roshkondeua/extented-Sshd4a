@@ -733,6 +733,7 @@ set(SRC_SFTP_SERVER
         ${BASE_SRC_SFTP_SERVER}/sshbuf-misc.c
         ${BASE_SRC_SFTP_SERVER}/sshbuf-getput-basic.c
         ${BASE_SRC_SFTP_SERVER}/ssherr.c
+        ${BASE_SRC_SFTP_SERVER}/ssherr-libcrypto.c
         ${BASE_SRC_SFTP_SERVER}/xmalloc.c
         )
 
