@@ -684,11 +684,13 @@ set(SRC_DROPBEAR
         ${BASE_SRC_DROPBEAR}/svr-authpubkey.c
         ${BASE_SRC_DROPBEAR}/svr-authpubkeyoptions.c
         ${BASE_SRC_DROPBEAR}/svr-chansession.c
+        ${BASE_SRC_DROPBEAR}/svr-forward.c
         ${BASE_SRC_DROPBEAR}/svr-kex.c
         ${BASE_SRC_DROPBEAR}/svr-main.c
         ${BASE_SRC_DROPBEAR}/svr-runopts.c
         ${BASE_SRC_DROPBEAR}/svr-service.c
         ${BASE_SRC_DROPBEAR}/svr-session.c
+        ${BASE_SRC_DROPBEAR}/svr-streamfwd.c
         ${BASE_SRC_DROPBEAR}/svr-tcpfwd.c
         ${BASE_SRC_DROPBEAR}/tcp-accept.c
         ${BASE_SRC_DROPBEAR}/termcodes.c
