@@ -20,7 +20,8 @@ export PATH=${JAVA_HOME}/bin:${PATH}
 SDK=/cygdrive/c/d/sdk
 
 # Android NDK location/version; upgrade as needed/wanted
-NDK=${SDK}/ndk/29.0.14206865
+# This must also be updated in gradle/libs.versions.toml
+NDK=${SDK}/ndk/30.0.14904198
 
 # Android minSdkVersion. The minimal version, upgrade as needed/wanted
 export ANDROID_MIN_SDK=30
