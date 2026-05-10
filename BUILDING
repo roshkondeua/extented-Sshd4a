@@ -102,7 +102,7 @@ cd ${PROJECT_ROOT}/app/src/main/cpp/
 
 export RSYNC_VERSION="rsync-3.4.2"
 export OPENSSH_VERSION="openssh-10.3p1"
-export DROPBEAR_VERSION="dropbear-2025.89"
+export DROPBEAR_VERSION="dropbear-2026.91"
 
 export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
 export OPENSSH_DOWNLOAD="https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz"
@@ -251,6 +251,8 @@ cd ${SRC_ROOT}/${DROPBEAR}/app/src/main/cpp/dropbear
             --disable-utmp --disable-wtmp \
             --enable-bundled-libtom --enable-largefile
 
+# ISSUE THE NEXT SET OF COMMANDS FROM THE TERMINAL INSIDE STUDIO
+# IF YOU ARE NOT THERE YET.
 
 # Now switch to the ssh4d project and merge the remote from above
 cd ${PROJECT_ROOT}
