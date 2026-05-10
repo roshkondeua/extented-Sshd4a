@@ -386,7 +386,7 @@ static void handle_stats(int f)
 
 static void output_itemized_counts(const char *prefix, int *counts)
 {
-	static char *labels[] = { "reg", "dir", "link", "dev", "special" };
+	static char *const labels[] = { "reg", "dir", "link", "dev", "special" };
 	char buf[1024], *pre = " (";
 	int j, len = 0;
 	int total = counts[0];
@@ -1743,7 +1743,9 @@ int main(int argc,char *argv[])
 	our_gid = MY_GID();
 	am_root = our_uid == ROOT_UID;
 
-	unset_env_var("DISPLAY");
+	// DISPLAY should not be emptied unconditionally
+	if (!getenv("SSH_ASKPASS"))
+		unset_env_var("DISPLAY");
 
 #if defined USE_OPENSSL && defined SET_OPENSSL_CONF
 #define TO_STR2(x) #x

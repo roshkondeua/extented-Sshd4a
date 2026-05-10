@@ -100,7 +100,7 @@ cd ${PROJECT_ROOT}/app/src/main/cpp/
 
 # Define the versions for the external project code; update the urls if changed
 
-export RSYNC_VERSION="rsync-3.4.1"
+export RSYNC_VERSION="rsync-3.4.2"
 export OPENSSH_VERSION="openssh-10.2p1"
 export DROPBEAR_VERSION="dropbear-2025.89"
 
