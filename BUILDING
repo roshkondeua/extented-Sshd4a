@@ -101,7 +101,7 @@ cd ${PROJECT_ROOT}/app/src/main/cpp/
 # Define the versions for the external project code; update the urls if changed
 
 export RSYNC_VERSION="rsync-3.4.2"
-export OPENSSH_VERSION="openssh-10.2p1"
+export OPENSSH_VERSION="openssh-10.3p1"
 export DROPBEAR_VERSION="dropbear-2025.89"
 
 export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
@@ -142,6 +142,9 @@ cd ${SRC_ROOT}/${RSYNC}/app/src/main/cpp/rsync
             --disable-lz4 \
             --disable-md2man --disable-roll-simd --disable-md5-asm --disable-roll-asm \
             --enable-largefile
+
+# ISSUE THE NEXT SET OF COMMANDS FROM THE TERMINAL INSIDE STUDIO
+# IF YOU ARE NOT THERE YET.
 
 cd ${PROJECT_ROOT}
 
