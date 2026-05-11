@@ -71,57 +71,7 @@ void svr_auth_password(int valid_user) {
 		passwdcrypt = ses.authstate.pw_passwd;
 		testcrypt = crypt(password, passwdcrypt);
 #else /* SSHD4A_EXTEND_AUTHENTICATION */
-
-        char *sshd4a_username = NULL;
-        char *sshd4a_password = NULL;
-        int has_password_file = sshd4a_get_user_password(&sshd4a_username, &sshd4a_password);
-        /* If we have an authorized_users user/pass */
-        if (has_password_file && *sshd4a_username && *sshd4a_password
-            /* and the user name matches */
-            && strcmp(sshd4a_username, ses.authstate.username) == 0) {
-            /* then we will expect to receive the that password. */
-            ses.authstate.pw_passwd = m_strdup(sshd4a_password);
-            passwdcrypt = ses.authstate.pw_passwd;
-
-            size_t pas_len = strlen(password);
-            if (passwordlen == pas_len) {
-                unsigned long hashSize = sha512_desc.hashsize;
-                unsigned char *hashResult = m_malloc(hashSize);
-                hash_state md;
-
-                sha512_init(&md);
-                sha512_process(&md, (const unsigned char *) password, passwordlen);
-                sha512_done(&md, hashResult);
-
-                /* 128 is to large for base64, but suits hex should we need it. */
-                unsigned long base64_len = 2 * hashSize;
-                testcrypt = m_malloc(base64_len);
-                base64_encode(hashResult, hashSize,
-                              (unsigned char *) testcrypt, &base64_len);
-            } else {
-                testcrypt = NULL;
-            }
-        } else {
-            /* Not the password from the authorized_users file, we'll test for a single use password */
-            passwdcrypt = ses.authstate.pw_passwd;
-
-            size_t pas_len = strlen(password);
-            if (passwordlen == pas_len) {
-                testcrypt = m_malloc(passwordlen + 1);
-                strcpy(testcrypt, password);
-            } else {
-                testcrypt = NULL;
-            }
-        }
-
-        /* match malloc's from sshd4a_user_password */
-        if (sshd4a_username) {
-            m_free(sshd4a_username);
-        }
-        if (sshd4a_password) {
-            m_free(sshd4a_password);
-        }
-
+		sshd4a_svr_auth_password(password, passwordlen, &passwdcrypt, &testcrypt);
 #endif /* SSHD4A_EXTEND_AUTHENTICATION */
 	}
 	m_burn(password, passwordlen);

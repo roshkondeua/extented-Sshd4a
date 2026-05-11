@@ -208,6 +208,64 @@ int sshd4a_get_user_password(char **user, char **password) {
 }
 
 /*
+ * testcrypt must be m_free'd by the caller.
+ */
+void sshd4a_svr_auth_password(const char *password, unsigned int passwordlen,
+                              char **passwdcrypt, char **testcrypt) {
+
+    char *sshd4a_username = NULL;
+    char *sshd4a_password = NULL;
+    int has_password_file = sshd4a_get_user_password(&sshd4a_username, &sshd4a_password);
+
+    /* If we have an AUTHORIZED_USERS_FILE user/pass */
+    if (has_password_file && *sshd4a_username && *sshd4a_password
+        /* and the user name matches */
+        && strcmp(sshd4a_username, ses.authstate.username) == 0) {
+        /* then we will expect to receive that password. */
+        ses.authstate.pw_passwd = m_strdup(sshd4a_password);
+        *passwdcrypt = ses.authstate.pw_passwd;
+
+        if (passwordlen == strlen(password)) {
+            unsigned long hashSize = sha512_desc.hashsize;
+            unsigned char *hashResult = m_malloc(hashSize);
+            hash_state md;
+
+            sha512_init(&md);
+            sha512_process(&md, (const unsigned char *) password, passwordlen);
+            sha512_done(&md, hashResult);
+
+            /* 128 is to large for base64, but suits hex should we need it. */
+            unsigned long base64_len = 2 * hashSize;
+            *testcrypt = m_malloc(base64_len);
+            base64_encode(hashResult, hashSize,
+                          (unsigned char *) *testcrypt, &base64_len);
+
+            m_free(hashResult);
+        } else {
+            *testcrypt = NULL;
+        }
+    } else {
+        /* Not the password from the authorized_users file, we'll test for a single use password */
+        *passwdcrypt = ses.authstate.pw_passwd;
+
+        if (passwordlen == strlen(password)) {
+            *testcrypt = m_malloc(passwordlen + 1);
+            strcpy(*testcrypt, password);
+        } else {
+            *testcrypt = NULL;
+        }
+    }
+
+    /* match strdup malloc's from sshd4a_get_user_password */
+    if (sshd4a_username) {
+        m_free(sshd4a_username);
+    }
+    if (sshd4a_password) {
+        m_free(sshd4a_password);
+    }
+}
+
+/*
  * This makes sure that no previously-added atexit gets called (some users have
  * an atexit registered by libGLESv2_adreno.so)
  */

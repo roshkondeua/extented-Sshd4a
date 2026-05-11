@@ -22,6 +22,7 @@ int sshd4a_enable_password_file();
 
 void sshd4a_generate_single_use_password(char **gen_pass);
 
-int sshd4a_get_user_password(char **user, char **password);
+void sshd4a_svr_auth_password(const char *password, unsigned int passwordlen,
+                              char **passwdcrypt, char **testcrypt);
 
 #endif /* SSHD4A_JNI_DROPBEAR_H */
