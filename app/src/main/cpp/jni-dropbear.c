@@ -277,6 +277,32 @@ void sshd4a_svr_auth_password(const char *password, unsigned int passwordlen,
 }
 
 /*
+* Depending on our configuration flags,
+* we add or remove authentication options to the global session structure.
+*/
+void sshd4a_svr_authinitialise() {
+    /* explicitly set/unset, one less place to add #ifdef */
+    if (sshd4a_enable_public_key_auth()) {
+        ses.authstate.authtypes |= AUTH_TYPE_PUBKEY;
+    } else {
+        ses.authstate.authtypes &= ~AUTH_TYPE_PUBKEY;
+    }
+
+    if (sshd4a_enable_password_file()) {
+        ses.authstate.authtypes |= AUTH_TYPE_PASSWORD;
+    }
+    /* Check and generate at this time, as the user MUST be able to see the message
+     * in the logfile before they start a login attempt.
+     */
+    if (sshd4a_enable_single_use_passwords()) {
+        char *gen_pass = NULL;
+        sshd4a_generate_single_use_password(&gen_pass);
+        ses.authstate.authtypes |= AUTH_TYPE_PASSWORD;
+        ses.authstate.pw_passwd = m_strdup(gen_pass);
+    }
+
+}
+/*
  * This makes sure that no previously-added atexit gets called (some users have
  * an atexit registered by libGLESv2_adreno.so)
  */
