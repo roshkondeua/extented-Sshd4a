@@ -176,10 +176,15 @@ int sshd4a_enable_password_file() {
     return config_file_exists(AUTHORIZED_USERS_FILE, 3);
 }
 
+/*
+ * Get the username and password from the master-password file.
+ *
+ * user/password must be m_free'd by the caller.
+ */
 int sshd4a_get_user_password(char **user, char **password) {
     char *fn = sshd4a_conf_file(AUTHORIZED_USERS_FILE);
     FILE *f = fopen(fn, "r");
-    m_free(fn); /* match "m_malloc()" from sshd4a_conf_file */
+    m_free(fn); /* match m_malloc from sshd4a_conf_file */
     if (!f) {
         return 0;
     }
@@ -193,11 +198,17 @@ int sshd4a_get_user_password(char **user, char **password) {
     read = getline(&line, &len, f);
     if (read > 0 && strstr(line, ":") != NULL) {
         char *p;
-        p = strtok(line, ":");
-        *user = strdup(p);
+        char *saveptr;
 
-        p = strtok(NULL, ":");
-        *password = strdup(p);
+        p = strtok_r(line, ":", &saveptr);
+        if (p != NULL) {
+            *user = strdup(p);
+        }
+
+        p = strtok_r(NULL, ":", &saveptr);
+        if (p != NULL) {
+            *password = strdup(p);
+        }
 
         ret_value = 1;
     }
