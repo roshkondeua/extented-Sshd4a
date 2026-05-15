@@ -19,13 +19,6 @@ if [ ! -f local.properties ]; then
     echo "sdk.dir=$ANDROID_HOME" > local.properties
 fi
 
-# For some reason I cannot make this permanent in the repository...
-# make sure these are executable
-chmod +x gradlew
-chmod +x app/src/main/cpp/prebuild-dropbear.sh
-chmod +x app/src/main/cpp/prebuild-rsyn.sh
-chmod +x app/src/main/cpp/dropbear/src/ifndef_wrapper.sh
-
 # ############################################################################
 # CMake setup
 # ############################################################################
