@@ -811,6 +811,9 @@ set(SRC_RSYNC
         )
 # #############################################################################
 
+# strip absolute file paths for reproducable builds
+add_compile_options(-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.)
+
 # Code modifications are flagged with
 #   SSHD4A_REQUIRED_CHANGE
 # Used in comments to indicate code changes which are unconditional.
