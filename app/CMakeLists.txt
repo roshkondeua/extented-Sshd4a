@@ -811,10 +811,13 @@ set(SRC_RSYNC
         )
 # #############################################################################
 
-# strip build-id
-add_link_options("-Wl,--build-id=none")
 # strip absolute file paths
 add_compile_options(-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.)
+# Stop Clang from generating the .comment section which differs between platforms
+add_compile_options("-fno-ident")
+
+# strip build-id
+add_link_options("-Wl,--build-id=none")
 
 # Code modifications are flagged with
 #   SSHD4A_REQUIRED_CHANGE
