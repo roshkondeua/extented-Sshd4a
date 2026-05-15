@@ -811,7 +811,9 @@ set(SRC_RSYNC
         )
 # #############################################################################
 
-# strip absolute file paths for reproducable builds
+# strip build-id
+add_link_options("-Wl,--build-id=none")
+# strip absolute file paths
 add_compile_options(-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.)
 
 # Code modifications are flagged with
