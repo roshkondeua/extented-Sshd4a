@@ -53,12 +53,11 @@ cd $ANDROID_HOME/cmdline-tools
 # Check the url and get the latest version. Below version was current on 2026-05-14.
 # When updating, make sure to re-link "latest"
 # https://developer.android.com/studio#command-line-tools-only
-
 wget https://dl.google.com/android/repository/commandlinetools-linux-14742923_latest.zip
 unzip commandlinetools-linux-14742923_latest.zip
 rm commandlinetools-linux-14742923_latest.zip
-mv cmdline-tools 14742923
-ln -s 14742923 latest
+mv cmdline-tools 20.0
+ln -s 20.0 latest
 cd ~
 
 # Add to the path. You may want to add these to your permanent environment.
