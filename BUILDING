@@ -38,8 +38,18 @@ sudo apt install -y openjdk-21-jdk-headless
 
 # Install build-essential: glibc headers + tools for the NDK,
 # unzip/wget for the SDK tools and gawk/awk for rsync building
-# If you're not on Debian, replace gawk with what you need (awk)
 sudo apt install -y build-essential wget unzip git gawk
+
+# ############################################################################
+# Fedora environment prerequisites
+# ############################################################################
+
+sudo dnf upgrade --refresh -y
+
+# Fedora 44 only provides java 25.
+sudo dnf install -y java-25-openjdk-devel
+
+sudo dnf install -y @development-tools wget unzip git gawk
 
 # ############################################################################
 # Android SDK installation
