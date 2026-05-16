@@ -1,0 +1,9 @@
+No application changes.
+
+This release updates the build system to provide reproducible builds
+ for the good people at https://izzyondroid.org/
+
+ The BUILDING docs were updated, and a new "build.sh" makes it
+ finally possible for anyone to rebuild this app easily.
+
+ Signing the build is now also optional.
