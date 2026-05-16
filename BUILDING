@@ -62,7 +62,7 @@ ln -s 14742923 latest
 cd ~
 
 # Add to the path. You may want to add these to your permanent environment.
-export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 
 # Accept the licence
 yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
