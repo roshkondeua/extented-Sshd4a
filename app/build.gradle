@@ -14,11 +14,11 @@ plugins {
         sign.keyAlias=MyKeyAlias
         sign.keyPassword=MyKeyPassword
  */
-final def props = new Properties()
+final def keystoreProperties = new Properties()
 if (project.hasProperty("Sshd4a.properties")) {
     final def file = new File(project.property("Sshd4a.properties"))
     if (file.exists()) {
-        props.load(new FileInputStream(file))
+        keystoreProperties.load(new FileInputStream(file))
     }
 }
 
@@ -52,10 +52,15 @@ android {
 
     signingConfigs {
         release {
-            storeFile = file(props["sign.storeFile"])
-            storePassword = props["sign.storePassword"]
-            keyAlias = props["sign.keyAlias"]
-            keyPassword = props["sign.keyPassword"]
+            if (!keystoreProperties.isEmpty()) {
+                storeFile = file(keystoreProperties["sign.storeFile"])
+                storePassword = keystoreProperties["sign.storePassword"]
+                keyAlias = keystoreProperties["sign.keyAlias"]
+                keyPassword = keystoreProperties["sign.keyPassword"]
+            } else {
+                println "Keystore properties file not found." +
+                        " No signing configuration will be applied."
+            }
         }
     }
 
@@ -77,7 +82,9 @@ android {
             }
         }
 
-        signingConfig = signingConfigs.release
+        if (!keystoreProperties.isEmpty()) {
+            signingConfig = signingConfigs.release
+        }
 
         resourceConfigurations +=  ["de", "en", "fr", "ta", "zh_CN"]
 
