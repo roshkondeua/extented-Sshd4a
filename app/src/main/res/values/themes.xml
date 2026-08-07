@@ -43,7 +43,6 @@
         <item name="checkboxStyle">@style/Widget.App.CheckBox</item>
         <item name="radioButtonStyle">@style/Widget.App.RadioButton</item>
         <item name="materialSwitchStyle">@style/Widget.App.Switch</item>
-        <item name="switchPreferenceStyle">@style/Widget.App.SwitchPreference</item>
 
         <!-- We MUST set these separately! Just setting the common buttonBarButtonStyle is NOT enough -->
         <item name="buttonBarButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>

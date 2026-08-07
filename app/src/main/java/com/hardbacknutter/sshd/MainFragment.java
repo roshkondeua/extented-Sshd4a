@@ -45,7 +45,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -72,11 +71,10 @@ public class MainFragment
                     new ActivityResultContracts.RequestPermission(), isGranted -> {
                         if (!isGranted) {
                             //noinspection DataFlowIssue
-                            PreferenceManager
-                                    .getDefaultSharedPreferences(getContext())
-                                    .edit()
-                                    .putBoolean(PK_UI_NOTIFICATION_ASK_PERMISSION, false)
-                                    .apply();
+                            Prefs.getSharedPreferences(getContext())
+                                .edit()
+                                .putBoolean(PK_UI_NOTIFICATION_ASK_PERMISSION, false)
+                                .apply();
                         }
                     });
 
@@ -165,7 +163,7 @@ public class MainFragment
                 new ActivityResultContracts.GetContent(), this::onImportAuthKeys);
 
         //noinspection DataFlowIssue
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences prefs = Prefs.getSharedPreferences(getContext());
         if (prefs.getBoolean(PK_UI_ASK_TO_ADD_TILE, true)) {
             askToAddTile();
             // We only ask once
@@ -287,8 +285,8 @@ public class MainFragment
                 getContext(), Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED) {
 
-            if (PreferenceManager.getDefaultSharedPreferences(getContext())
-                                 .getBoolean(PK_UI_NOTIFICATION_ASK_PERMISSION, true)) {
+            if (Prefs.getSharedPreferences(getContext())
+                     .getBoolean(PK_UI_NOTIFICATION_ASK_PERMISSION, true)) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
@@ -449,8 +447,7 @@ public class MainFragment
 
         // The configured interface listener(s)
         //noinspection ConstantConditions
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(getContext());
+        final SharedPreferences prefs = Prefs.getSharedPreferences(getContext());
         final List<String> bindings = Prefs.getBindings(prefs);
         if (bindings.isEmpty()) {
             vb.listeners.setText(R.string.err_no_ip);

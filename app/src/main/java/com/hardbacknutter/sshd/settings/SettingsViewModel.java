@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.preference.PreferenceManager;
 
 import com.hardbacknutter.sshd.SshdSettings;
 
@@ -16,16 +15,16 @@ public class SettingsViewModel
 
     /** Updates the password summary. */
     private final MutableLiveData<String> pwSummaryUpdate = new MutableLiveData<>();
-    /** PreferenceDataStore for user/password fields. */
-    private UserPassStorage dsUP;
+    /** DataStore for user/password fields. */
+    private UserPassStorage userPassDataStore;
 
     void init(@NonNull final Context context) {
-        if (dsUP == null) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (userPassDataStore == null) {
+            final SharedPreferences prefs = Prefs.getSharedPreferences(context);
             // Force init if never set before
             Prefs.getHomePath(context, prefs);
 
-            dsUP = new UserPassStorage(context, this);
+            userPassDataStore = new UserPassStorage(context, this);
         }
     }
 
@@ -39,12 +38,12 @@ public class SettingsViewModel
     }
 
     @NonNull
-    UserPassStorage getDsUP() {
-        return dsUP;
+    UserPassStorage getUserPassDataStore() {
+        return userPassDataStore;
     }
 
     boolean hasAtLeastOneAuthMethod(@NonNull final Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences prefs = Prefs.getSharedPreferences(context);
 
         if (Prefs.isEnableSingleUsePasswordAuth(prefs)
             || Prefs.isEnablePublicKeyAuth(prefs)) {

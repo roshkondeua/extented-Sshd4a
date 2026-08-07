@@ -24,13 +24,7 @@
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
     </style>
 
-    <style name="Widget.App.SwitchPreference"
-           parent="Preference.SwitchPreference.Material">
-        <item name="android:widgetLayout">@layout/preference_widget_material_switch</item>
-    </style>
-
-    <!-- used by the "buttonBarButtonStyle" attributes
-        REMINDER: the androidx.preference library AlertDialog does NOT use M3 ! -->
+    <!-- used by the "buttonBarButtonStyle" attributes -->
     <style name="Widget.App.DialogButtonBarButtons"
            parent="Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textColor">?attr/colorSecondary</item>

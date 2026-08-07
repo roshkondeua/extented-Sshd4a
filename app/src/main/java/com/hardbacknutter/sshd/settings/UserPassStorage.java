@@ -4,16 +4,16 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.preference.PreferenceDataStore;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import com.hardbacknutter.prefslib.SettingsDataStore;
 import com.hardbacknutter.sshd.R;
 import com.hardbacknutter.sshd.SshdSettings;
 
 class UserPassStorage
-        extends PreferenceDataStore {
+        implements SettingsDataStore {
 
     /** NOT PERSISTED, written directly to the dropbear directory. */
     static final String PK_SSHD_AUTH_USERNAME = "sshd.authorized.username";

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.preference.PreferenceManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,31 +22,33 @@ public final class Prefs {
     static final String RUN_IN_FOREGROUND = "service.start.foreground";
     /** boolean. */
     static final String RUN_ON_BOOT = "service.start.onboot";
-
+    /** boolean. */
+    static final String RUN_ON_APP_START = "service.start.onopen";
+    /** boolean. */
+    static final String RUN_ON_INTENT_ALLOWED = "service.start.on.intent.allowed";
+    /** boolean. */
     static final String ON_APP_EXIT_KEEP_RUNNING = "service.onappexit.keep_running";
 
     /** String. */
     static final String SSHD_PORT = "sshd.port";
-    /** String. */
     static final int DEFAULT_PORT = 2222;
     /** String. */
     static final String DROPBEAR_CMDLINE_OPTIONS = "dropbear.options";
+    /** String. */
+    static final String ENV_VARS = "sshd.env";
+    /** String. */
+    static final String HOME = "sshd.home";
+    /** String. */
+    static final String SHELL = "sshd.shell";
+    static final String DEFAULT_SHELL = "/system/bin/sh";
+
 
     /** boolean. */
-    private static final String ENABLE_SERVICE_SHELL_ACCESS = "sshd.enable.service.shell";
+    static final String ENABLE_SERVICE_SHELL_ACCESS = "sshd.enable.service.shell";
     /** boolean. */
-    private static final String ENABLE_SINGLE_USE_PASSWORDS = "sshd.enable.single.use.password";
+    static final String ENABLE_SINGLE_USE_PASSWORDS = "sshd.enable.single.use.password";
     /** boolean. */
-    private static final String ENABLE_PUBLIC_KEY_LOGIN = "sshd.enable.publickey.login";
-    private static final String ENV_VARS = "sshd.env";
-    private static final String HOME = "sshd.home";
-    private static final String SHELL = "sshd.shell";
-    private static final String DEFAULT_SHELL = "/system/bin/sh";
-
-    /** boolean. */
-    private static final String RUN_ON_APP_START = "service.start.onopen";
-    /** boolean. */
-    private static final String RUN_ON_INTENT_ALLOWED = "service.start.on.intent.allowed";
+    static final String ENABLE_PUBLIC_KEY_LOGIN = "sshd.enable.publickey.login";
 
     /**
      * Extra command line options to pass to the dropbear executable.
@@ -59,6 +60,14 @@ public final class Prefs {
     private Prefs() {
     }
 
+    @NonNull
+    public static SharedPreferences getSharedPreferences(@NonNull final Context context) {
+        // Use same file name as used by the legacy androidx.preference
+        return context.getSharedPreferences(
+                context.getPackageName() + "_preferences",
+                Context.MODE_PRIVATE);
+    }
+
     /**
      * Start the service when the device is booted.
      *
@@ -67,9 +76,7 @@ public final class Prefs {
      * @return flag
      */
     public static boolean isStartOnBoot(@NonNull final Context context) {
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getBoolean(RUN_ON_BOOT, false);
+        return getSharedPreferences(context).getBoolean(RUN_ON_BOOT, false);
     }
 
     /**
@@ -80,9 +87,7 @@ public final class Prefs {
      * @return flag
      */
     public static boolean isRunOnAppStart(@NonNull final Context context) {
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getBoolean(RUN_ON_APP_START, false);
+        return getSharedPreferences(context).getBoolean(RUN_ON_APP_START, false);
     }
 
     /**
@@ -93,9 +98,7 @@ public final class Prefs {
      * @return flag
      */
     public static boolean isStartByIntentAllowed(@NonNull final Context context) {
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getBoolean(RUN_ON_INTENT_ALLOWED, false);
+        return getSharedPreferences(context).getBoolean(RUN_ON_INTENT_ALLOWED, false);
     }
 
     /**
@@ -107,9 +110,7 @@ public final class Prefs {
      * @return flag
      */
     public static boolean isKeepRunningOnAppExit(@NonNull final Context context) {
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getBoolean(ON_APP_EXIT_KEEP_RUNNING, false);
+        return getSharedPreferences(context).getBoolean(ON_APP_EXIT_KEEP_RUNNING, false);
     }
 
     /**
@@ -121,7 +122,7 @@ public final class Prefs {
      *         {@code false}: the system can kill the service
      */
     public static boolean isRunInForeground(@NonNull final Context context) {
-        return isRunInForeground(PreferenceManager.getDefaultSharedPreferences(context));
+        return isRunInForeground(getSharedPreferences(context));
     }
 
     /**

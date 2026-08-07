@@ -27,7 +27,8 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.math.MathUtils;
-import androidx.preference.PreferenceManager;
+
+import com.hardbacknutter.sshd.settings.Prefs;
 
 public final class NightMode {
 
@@ -49,8 +50,9 @@ public final class NightMode {
      */
     private static final int[] NIGHT_MODES = {
             // follow the system setting
-            Build.VERSION.SDK_INT >= 29 ? AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-                                        : AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY,
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            ? AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            : AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY,
             // light
             AppCompatDelegate.MODE_NIGHT_NO,
             // dark
@@ -97,8 +99,7 @@ public final class NightMode {
     private static int getIntListPref(@NonNull final Context context,
                                       @NonNull final String key,
                                       final int defValue) {
-        final String value = PreferenceManager.getDefaultSharedPreferences(context)
-                                              .getString(key, null);
+        final String value = Prefs.getSharedPreferences(context).getString(key, null);
         if (value == null || value.isEmpty()) {
             return defValue;
         }

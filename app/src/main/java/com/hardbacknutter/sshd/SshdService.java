@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.preference.PreferenceManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -363,7 +362,7 @@ public class SshdService
         if (BuildConfig.DEBUG) {
             Log.d(TAG + "|onCreate", "ENTER");
         }
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = Prefs.getSharedPreferences(this);
 
         // check for, and kill any potentially stale ssh process
         synchronized (lock) {
