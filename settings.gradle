@@ -14,4 +14,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Sshd4a"
-include ':app'
+include(":app")
+include(":LiveDataEvent")
+include(":PrefsLib")

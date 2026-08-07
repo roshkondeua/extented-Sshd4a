@@ -24,13 +24,13 @@ if (project.hasProperty("Sshd4a.properties")) {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(libs.versions.java.toolchain.get())
+        languageVersion = JavaLanguageVersion.of(libs.versions.javaToolchain.get())
     }
 }
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(libs.versions.java.toolchain.get()))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.javaToolchain.get()))
     }
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
@@ -96,6 +96,9 @@ android {
     buildTypes {
         // don't use for real builds
         abstractRelease {
+            // libraries use 'release'
+            matchingFallbacks = ['release']
+
             minifyEnabled = true
             shrinkResources = true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -175,6 +178,7 @@ android {
 }
 
 dependencies {
+    implementation(project(path: ":PrefsLib"))
 
     coreLibraryDesugaring(libs.google.desugar)
 
