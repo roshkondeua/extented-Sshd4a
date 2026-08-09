@@ -2,6 +2,7 @@ package com.hardbacknutter.sshd.settings;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -17,14 +20,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 import com.hardbacknutter.prefslib.BooleanSetting;
-import com.hardbacknutter.prefslib.PasswordSetting;
 import com.hardbacknutter.prefslib.Setting;
 import com.hardbacknutter.prefslib.SettingsDataStore;
 import com.hardbacknutter.prefslib.SettingsManager;
@@ -80,6 +84,11 @@ public class SettingsFragment
             };
     private SettingsManager settingsManager;
 
+    private ActivityResultLauncher<String> authKeysImportLauncher;
+
+    private View progressOverlay;
+    private CircularProgressIndicator progressIndicator;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +114,6 @@ public class SettingsFragment
                 Prefs.getSharedPreferences(context));
 
         final SettingsManager.Builder factory = new SettingsManager.Builder(context, store);
-
-        vm = new ViewModelProvider(this).get(SettingsViewModel.class);
-        vm.init(context);
 
         factory.header(R.string.pc_startup);
         factory.bool(Prefs.RUN_ON_BOOT,
@@ -152,7 +158,7 @@ public class SettingsFragment
                      R.string.pt_env,
                      null, null);
 
-        factory.header(R.string.pc_paths);
+        factory.header(R.string.pc_login);
         factory.bool(Prefs.ENABLE_SERVICE_SHELL_ACCESS,
                      R.string.pt_enable_shell_access,
                      R.string.disabled, R.string.enabled,
@@ -163,13 +169,13 @@ public class SettingsFragment
         factory.text(Prefs.HOME,
                      R.string.pt_home,
                      null, p -> {
-            p.setIcon(R.drawable.home_24px);
-        });
+                    p.setIcon(R.drawable.home_24px);
+                });
         factory.text(Prefs.SHELL, R.string.pt_shell,
                      null, p -> {
-            p.setIcon(R.drawable.terminal_24px);
-            p.setValue(Prefs.DEFAULT_SHELL);
-        });
+                    p.setIcon(R.drawable.terminal_24px);
+                    p.setValue(Prefs.DEFAULT_SHELL);
+                });
         factory.bool(Prefs.ENABLE_SINGLE_USE_PASSWORDS,
                      R.string.pt_single_use_passwords,
                      null, p -> {
@@ -180,19 +186,42 @@ public class SettingsFragment
                      R.string.pt_public_key_login,
                      null, p -> {
                     p.setSummary(R.string.pt_public_key_login_info);
+                    p.setIcon(R.drawable.vpn_key_24px);
                     p.setChecked(true);
                 });
-        // Not saved to preferences. Handled in code.
         factory.text(UserPassStorage.PK_SSHD_AUTH_USERNAME,
                      R.string.pt_authorized_username,
                      this::onUsernameChange, p -> {
                     p.setIcon(R.drawable.supervisor_account_24px);
+                    // dropbear/file datastore
+                    p.setDataStore(vm.getUserPassDataStore());
                 });
-        // Not saved to preferences. Handled in code.
         factory.password(UserPassStorage.PK_SSHD_AUTH_PASSWORD,
                          R.string.pt_authorized_password,
-                         this::onPasswordChange, p -> {
+                         null, p -> {
                     p.setIcon(R.drawable.password_24px);
+                    // dropbear/file datastore
+                    // The ViewModel will initially ALWAYS return a {@code null} password,
+                    // but  will return the current unencrypted password
+                    // after the user has entered it once during this settings-session
+                    p.setDataStore(vm.getUserPassDataStore());
+                });
+
+        // The title is translated, the summary is just the name of the file, untranslated
+        factory.header(R.string.pc_key_management, p -> {
+            p.setIcon(R.drawable.vpn_key_24px);
+            p.setSummary(R.string.pc_authorized_keys);
+        });
+        factory.action("import_file", R.string.lbl_import_keys_file,
+                       this::onImportKeysFromFile, null);
+        factory.text(Prefs.IMPORT_URL, R.string.lbl_import_keys_url,
+                     this::onImportKeysFromUrl, p -> {
+                    p.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+                    p.setDialogMessageProvider(s -> getString(R.string.info_valid_url));
+                });
+        factory.action("delete_keys", R.string.lbl_delete_keys,
+                       this::onDeleteKeys, p -> {
+                    p.setIcon(R.drawable.delete_24px);
                 });
 
         factory.header(R.string.pc_ui);
@@ -212,7 +241,29 @@ public class SettingsFragment
                               @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        progressOverlay = view.findViewById(R.id.progressOverlay);
+        progressIndicator = view.findViewById(R.id.progressIndicator);
         final RecyclerView recyclerView = Objects.requireNonNull(view.findViewById(R.id.settings));
+
+        vm = new ViewModelProvider(this).get(SettingsViewModel.class);
+        //noinspection DataFlowIssue
+        vm.init(getContext());
+
+        vm.onImportDone().observe(getViewLifecycleOwner(), this::onImportDone);
+        vm.onImportFailed().observe(getViewLifecycleOwner(), this::onImportFailed);
+        vm.onImportRunning().observe(getViewLifecycleOwner(), show -> {
+            if (show) {
+                progressOverlay.setVisibility(View.VISIBLE);
+                progressIndicator.post(() -> progressIndicator.show());
+            } else {
+                progressIndicator.hide();
+                progressOverlay.setVisibility(View.GONE);
+            }
+        });
+
+        authKeysImportLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(), this::importAuthKeys);
+
         this.settingsManager = onCreateSettings()
                 .build(this, recyclerView);
 
@@ -237,7 +288,7 @@ public class SettingsFragment
         }
 
         initPortField();
-        initUsernameAndPasswordFields();
+        initPasswordFields();
     }
 
     /**
@@ -253,37 +304,14 @@ public class SettingsFragment
     }
 
     /**
-     * Hook up with the separate {@link UserPassStorage}
-     * to set the initial values and state.
+     * Set the initial enabled-state of the password field
      *
      * @see #onUsernameChange(Setting, Object)
-     * @see #onPasswordChange(Setting, Object)
      */
-    private void initUsernameAndPasswordFields() {
-        // init the observer BEFORE setting the field text
-        vm.onPasswordSummaryUpdate().observe(getViewLifecycleOwner(), s -> {
-            final PasswordSetting setting = settingsManager
-                    .requireSetting(UserPassStorage.PK_SSHD_AUTH_PASSWORD);
-            setting.setSummary(s);
-        });
-
-        final StringSetting pUsername = settingsManager.requireSetting(
-                UserPassStorage.PK_SSHD_AUTH_USERNAME);
-        final String currentUsername = vm.getUserPassDataStore().getCurrentUsername();
-        pUsername.setValue(currentUsername);
-        settingsManager.notifyItemChanged(pUsername);
-
-        // The ViewModel will initially ALWAYS return a {@code null} password,
-        // but  will return the current unencrypted password
-        // after the user has entered it once during this settings-session
-        final StringSetting pPassword = settingsManager.requireSetting(
-                UserPassStorage.PK_SSHD_AUTH_PASSWORD);
-        pPassword.setValue(vm.getUserPassDataStore().getCurrentPassword());
-        settingsManager.notifyItemChanged(pPassword);
-
-        // set the initial state
-        final boolean hasUsername = currentUsername != null && !currentUsername.isBlank();
-        settingsManager.setEnabled(hasUsername, UserPassStorage.PK_SSHD_AUTH_PASSWORD);
+    private void initPasswordFields() {
+        // set the initial state of the password field
+        settingsManager.setEnabled(vm.getUserPassDataStore().hasUsername(),
+                                   UserPassStorage.PK_SSHD_AUTH_PASSWORD);
     }
 
     private boolean onRunModeChanged(@NonNull final Setting setting,
@@ -338,29 +366,7 @@ public class SettingsFragment
         final boolean hasUsername = username != null && !username.isBlank();
         settingsManager.setEnabled(hasUsername, UserPassStorage.PK_SSHD_AUTH_PASSWORD);
 
-        // save manually to the setting
-        ((StringSetting) setting).setValue((String) newValue);
-        // and notify the sm about the change.
-        settingsManager.notifyItemChanged(setting);
-        // Now save to the datastore
-        //noinspection DataFlowIssue
-        setting.save(getContext(), vm.getUserPassDataStore());
-        // but NOT to SharedPreferences,
-        return false;
-    }
-
-    private boolean onPasswordChange(@NonNull final Setting setting,
-                                     @Nullable final Object newValue) {
-
-        // save manually to the setting
-        ((StringSetting) setting).setValue((String) newValue);
-        // and notify the sm about the change.
-        settingsManager.notifyItemChanged(setting);
-        // Now save to the datastore
-        //noinspection DataFlowIssue
-        setting.save(getContext(), vm.getUserPassDataStore());
-        // but NOT to SharedPreferences,
-        return false;
+        return true;
     }
 
     private boolean onChangeTheme(@NonNull final Setting setting,
@@ -378,5 +384,124 @@ public class SettingsFragment
             NightMode.apply(0);
         }
         return true;
+    }
+
+    private boolean onImportKeysFromFile(@NonNull final Setting setting) {
+        authKeysImportLauncher.launch("*/*");
+        return true;
+    }
+
+    private boolean onImportKeysFromUrl(@NonNull final Setting setting,
+                                        @Nullable final Object newValue) {
+
+        final String url = newValue != null ? ((String) newValue).strip() : null;
+        final boolean valid = isValidHttpsUri(url);
+        if (valid) {
+            //noinspection DataFlowIssue
+            vm.importAuthKeys(getContext(), url);
+        } else {
+            // show the dialog again
+            settingsManager.performClick(setting.getKey());
+        }
+
+        // always store even when invalid; easier for the user to correct typos.
+        return true;
+    }
+
+    /**
+     * Basic sanity checks.
+     *
+     * @param url to check
+     *
+     * @return flag
+     */
+    private boolean isValidHttpsUri(@Nullable final String url) {
+        // removed is valid
+        if (url == null || url.strip().isBlank()) {
+            return true;
+        }
+
+        final Uri uri = Uri.parse(url.strip());
+        final String scheme = uri.getScheme();
+
+        return "https".equalsIgnoreCase(scheme) && uri.getHost() != null;
+    }
+
+    /**
+     * Start a background task to import the keys from a local file.
+     *
+     * @param uri to import from
+     */
+    private void importAuthKeys(@Nullable final Uri uri) {
+        if (uri != null) {
+            //noinspection DataFlowIssue
+            vm.importAuthKeys(getContext(), uri);
+        }
+    }
+
+    private boolean onDeleteKeys(@NonNull final Setting setting) {
+        final Context context = getContext();
+        //noinspection ConstantConditions
+        new MaterialAlertDialogBuilder(context)
+                .setIcon(R.drawable.warning_24px)
+                .setTitle(R.string.lbl_delete_keys)
+                .setMessage(R.string.confirm_reset_keys)
+                .setCancelable(true)
+                .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    vm.deleteAuthKeys(context);
+                    //noinspection DataFlowIssue
+                    Snackbar.make(getView(), R.string.info_keys_deleted, Snackbar.LENGTH_LONG)
+                            .show();
+                })
+                .create()
+                .show();
+        return true;
+    }
+
+    private void onImportDone(@Nullable final Void aVoid) {
+        //noinspection DataFlowIssue
+        Snackbar.make(getView(), R.string.info_import_complete, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    /**
+     * Called when the import of keys is finished.
+     *
+     * @param e the exception; can be {@code null} for a general IO problem
+     */
+    private void onImportFailed(@Nullable final Exception e) {
+        final Context context = getContext();
+        final String errorMsg;
+
+        if (e instanceof UnknownHostException) {
+            // a url import was attempted.
+            final StringSetting urlSetting = settingsManager.requireSetting(Prefs.IMPORT_URL);
+            final Uri uri = Uri.parse(urlSetting.getValue());
+            //noinspection DataFlowIssue
+            errorMsg = context.getString(R.string.err_unknown_host, uri.getHost());
+
+        } else if (e instanceof FileRenameException) {
+            // unlikely we ever get here... the imported temp file could not be moved/renamed
+            //noinspection DataFlowIssue
+            errorMsg = context.getString(R.string.err_key_import);
+
+        } else {
+            // TODO: check more exception types and split this
+            //noinspection DataFlowIssue
+            errorMsg = context.getString(R.string.err_key_import);
+        }
+
+        // Note that the state of the current key file is unknown at this point.
+        // We rely on the user being intelligent enough to realise this
+        // and repeat the import.
+        new MaterialAlertDialogBuilder(context)
+                .setIcon(R.drawable.error_24px)
+                .setTitle(R.string.dialog_title_attention)
+                .setMessage(errorMsg)
+                .setCancelable(true)
+                .setPositiveButton(R.string.ok, (d, w) -> d.dismiss())
+                .create()
+                .show();
     }
 }

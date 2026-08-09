@@ -7,16 +7,19 @@ import android.util.Log;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -39,23 +42,24 @@ public class ServiceViewModel
 
     private final AtomicBoolean forceLogUpdate = new AtomicBoolean();
     private final AtomicBoolean cancelRequested = new AtomicBoolean();
+
     private final MutableLiveData<List<String>> logData = new MutableLiveData<>();
     private final MutableLiveData<Void> updateUi = new MutableLiveData<>();
 
     private boolean specialPermDialogShowing;
 
     @NonNull
-    MutableLiveData<List<String>> onLogUpdate() {
+    LiveData<List<String>> onLogUpdate() {
         return logData;
+    }
+
+    @NonNull
+    LiveData<Void> onUpdateUi() {
+        return updateUi;
     }
 
     void forceLogUpdate() {
         forceLogUpdate.set(true);
-    }
-
-    @NonNull
-    MutableLiveData<Void> onUpdateUi() {
-        return updateUi;
     }
 
     /**
@@ -64,7 +68,6 @@ public class ServiceViewModel
     void updateUI() {
         updateUi.setValue(null);
     }
-
 
     boolean startService(@NonNull final Context context,
                          @NonNull final StartMode startMode) {
@@ -95,12 +98,12 @@ public class ServiceViewModel
         updateUI();
     }
 
-
     /**
      * Start a thread to monitor the logfile.
      *
      * @param context Current context
      */
+    @SuppressWarnings("BlockingMethodInNonBlockingContext")
     void startUpdateThread(@NonNull final Context context) {
         cancelRequested.set(false);
         final String path = SshdSettings.getDropbearDirectory(context).getPath();
@@ -137,7 +140,6 @@ public class ServiceViewModel
         cancelRequested.set(true);
     }
 
-
     /**
      * Collect up to {@link BuildConfig#NR_OF_LOG_LINES} lines from the end of the log file.
      *
@@ -149,6 +151,7 @@ public class ServiceViewModel
     @NonNull
     private List<String> collectLogLines(@NonNull final File file) {
         final List<String> lines = new ArrayList<>();
+        //noinspection OverlyBroadCatchBlock
         try {
             if (file.exists()) {
                 //noinspection ImplicitDefaultCharsetUsage
@@ -169,43 +172,6 @@ public class ServiceViewModel
         } else {
             return lines;
         }
-    }
-
-    /**
-     * Import the given uri as the new "authorized_keys" file; overwrites the previous!
-     *
-     * @param context Current context
-     * @param uri     to import
-     *
-     * @return {@code null} on success; an error message on failure
-     */
-    @Nullable
-    String importAuthKeys(@NonNull final Context context,
-                          @NonNull final Uri uri) {
-        final File path = SshdSettings.getDropbearDirectory(context);
-
-        // First write to a new temp file
-        final File tmpFile = new File(path, SshdSettings.AUTHORIZED_KEYS + ".tmp");
-
-        String error = null;
-
-        try (InputStream is = context.getContentResolver().openInputStream(uri)) {
-            Files.copy(is, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            if (!tmpFile.renameTo(new File(path, SshdSettings.AUTHORIZED_KEYS))) {
-                error = context.getString(R.string.err_key_import);
-            }
-        } catch (@NonNull final IOException e) {
-            error = context.getString(R.string.err_key_import) + '\n' + e.getLocalizedMessage();
-        } finally {
-            //noinspection ResultOfMethodCallIgnored
-            tmpFile.delete();
-        }
-        return error;
-    }
-
-    void deleteAuthKeys(@NonNull final Context context) {
-        //noinspection ResultOfMethodCallIgnored
-        new File(SshdSettings.getDropbearDirectory(context), SshdSettings.AUTHORIZED_KEYS).delete();
     }
 
     public boolean isSpecialPermDialogShowing() {

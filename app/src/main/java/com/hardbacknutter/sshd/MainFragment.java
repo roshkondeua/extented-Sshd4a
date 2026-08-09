@@ -92,7 +92,7 @@ public class MainFragment
         }
     };
     private FragmentMainBinding vb;
-    private ActivityResultLauncher<String> authKeysImportLauncher;
+
     @Nullable
     private ToolbarMenuProvider toolbarMenuProvider;
     private boolean isTelevision;
@@ -127,8 +127,6 @@ public class MainFragment
 
             vb.tvBtnStartAction.setOnClickListener(v -> onMenu(R.id.start_action));
             vb.tvBtnSettings.setOnClickListener(v -> onMenu(R.id.settings));
-            vb.tvBtnImportKeys.setOnClickListener(v -> onMenu(R.id.menu_import_keys));
-            vb.tvBtnResetKeys.setOnClickListener(v -> onMenu(R.id.menu_reset_keys));
             vb.tvBtnHelp.setOnClickListener(v -> onMenu(R.id.menu_help));
             vb.tvBtnAbout.setOnClickListener(v -> onMenu(R.id.about));
 
@@ -158,9 +156,6 @@ public class MainFragment
             vb.logScroller.post(() -> vb.logScroller.fullScroll(ScrollView.FOCUS_DOWN));
         });
         vm.onUpdateUi().observe(getViewLifecycleOwner(), aVoid -> onUpdateUi());
-
-        authKeysImportLauncher = registerForActivityResult(
-                new ActivityResultContracts.GetContent(), this::onImportAuthKeys);
 
         //noinspection DataFlowIssue
         final SharedPreferences prefs = Prefs.getSharedPreferences(getContext());
@@ -356,7 +351,7 @@ public class MainFragment
                 .setIcon(R.drawable.warning_24px)
                 .setMessage(R.string.err_device_maybe_not_supported)
                 .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
-                .setPositiveButton(R.string.ok, (d, w) -> {
+                .setPositiveButton(R.string.action_help, (d, w) -> {
                     d.dismiss();
                     gotoProjectHelp();
                 })
@@ -456,38 +451,6 @@ public class MainFragment
         }
     }
 
-    private void onImportAuthKeys(@Nullable final Uri uri) {
-        if (uri != null) {
-            //noinspection ConstantConditions
-            final String error = vm.importAuthKeys(getContext(), uri);
-            if (error != null) {
-                // note that the state of the current key file is unknown at this point
-                new MaterialAlertDialogBuilder(getContext())
-                        .setIcon(R.drawable.error_24px)
-                        .setTitle(R.string.dialog_title_attention)
-                        .setMessage(error)
-                        .setCancelable(true)
-                        .setPositiveButton(R.string.ok, (d, w) -> d.dismiss())
-                        .create()
-                        .show();
-            }
-        }
-    }
-
-    private void showResetKeys() {
-        final Context context = getContext();
-        //noinspection ConstantConditions
-        new MaterialAlertDialogBuilder(context)
-                .setIcon(R.drawable.warning_24px)
-                .setTitle(R.string.lbl_reset_keys_long)
-                .setMessage(R.string.confirm_reset_keys)
-                .setCancelable(true)
-                .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
-                .setPositiveButton(R.string.ok, (d, w) -> vm.deleteAuthKeys(context))
-                .create()
-                .show();
-    }
-
     private void showAbout() {
         final Context context = getContext();
         String version;
@@ -568,12 +531,6 @@ public class MainFragment
             }
         } else if (itemId == R.id.settings) {
             replaceFragment(SettingsFragment.class, SettingsFragment.TAG);
-            return true;
-        } else if (itemId == R.id.menu_import_keys) {
-            authKeysImportLauncher.launch("*/*");
-            return true;
-        } else if (itemId == R.id.menu_reset_keys) {
-            showResetKeys();
             return true;
         } else if (itemId == R.id.menu_help) {
             gotoProjectHelp();

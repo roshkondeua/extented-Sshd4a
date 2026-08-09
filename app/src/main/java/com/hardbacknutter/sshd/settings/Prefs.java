@@ -50,6 +50,9 @@ public final class Prefs {
     /** boolean. */
     static final String ENABLE_PUBLIC_KEY_LOGIN = "sshd.enable.publickey.login";
 
+    /** The url from which the user last imported keys. */
+    static final String IMPORT_URL = "import.url";
+
     /**
      * Extra command line options to pass to the dropbear executable.
      * Splits on spaces, but respects " and \

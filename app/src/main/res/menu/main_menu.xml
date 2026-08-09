@@ -11,13 +11,7 @@
         android:id="@+id/settings"
         android:icon="@drawable/settings_24px"
         android:title="@string/lbl_settings"/>
-    <item
-        android:id="@+id/menu_import_keys"
-        android:title="@string/lbl_import_keys_long" />
-    <item
-        android:id="@+id/menu_reset_keys"
-        android:title="@string/lbl_reset_keys_long" />
-    <item
+  <item
         android:id="@+id/menu_help"
         android:title="@string/action_help" />
     <item

@@ -26,8 +26,8 @@
     <string name="lbl_interface">网络接口：</string>
     <string name="lbl_port">端口：</string>
     <string name="lbl_stop">停止</string>
-    <string name="lbl_import_keys_long">导入一个 “authorized_keys” 文件</string>
-    <string name="lbl_reset_keys_long">删除全部的 “authorized_keys”</string>
+    <string name="lbl_import_keys">导入一个 “authorized_keys” 文件</string>
+    <string name="lbl_delete_keys">删除全部的 “authorized_keys”</string>
     <string name="confirm_reset_keys">删除全部已认证的公钥？\n你将只能使用密码登录。</string>
     <string name="pc_startup">自启</string>
     <string name="pt_start_service_on_device_boot">开机时启动服务。</string>
@@ -39,7 +39,7 @@
     <string name="pt_port">端口号(1024 &lt; 端口 &lt; 32768)</string>
     <string name="pt_cmdline_options">额外的命令行选项</string>
     <string name="pt_env">环境变量。\n（每行一个“键=值”）</string>
-    <string name="pc_paths">SSH 登录</string>
+    <string name="pc_login">SSH 登录</string>
     <string name="pt_home">家目录</string>
     <string name="pt_shell">登录 Shell</string>
     <string name="pe_ui_theme_from_device">跟随设备主题</string>
@@ -57,10 +57,8 @@
     <string name="no">否</string>
     <string name="dialog_title_attention">注意</string>
     <string name="action_help">帮助</string>
-    <string name="err_device_maybe_not_supported">您的设备要么不支持，要么可能需要手动设置权限。点击 “确定 ”访问 Github 上的文档。</string>
+    <string name="err_device_maybe_not_supported">您的设备要么不支持，要么可能需要手动设置权限。点击 “帮助”访问 Github 上的文档。</string>
     <string name="err_unexpected_error">出现意外错误。点击 “确定 ”访问 Github 上的项目页面并记录新问题。</string>
-    <string name="lbl_import_keys">导入按键</string>
-    <string name="lbl_reset_keys">删除所有按键</string>
     <string name="disabled">关闭</string>
     <string name="enabled">启用</string>
     <string name="pt_enable_shell_access">Shell 访问</string>
@@ -70,4 +68,11 @@
     <string name="tile_already_added">磁贴已存在</string>
     <string name="tile_info_adding">提供了一个快捷设置磁贴，可让您启动/停止服务。必须手动添加。</string>
     <string name="pt_keep_running_after_app_exit">应用关闭时停止用户手动启动的服务</string>
+    <string name="info_keys_deleted">已删除</string>
+    <string name="info_import_complete">"导入已完成"</string>
+    <string name="info_valid_url">请输入以“https://”开头的有效 URL。</string>
+    <string name="err_unknown_host">无法解析主机“%1$s”：没有与主机名关联的地址</string>
+    <string name="pc_key_management">已授权密钥</string>
+    <string name="lbl_import_keys_file">从文件导入</string>
+    <string name="lbl_import_keys_url">从 URL 导入</string>
 </resources>

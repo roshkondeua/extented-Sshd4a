@@ -2,7 +2,7 @@
 <!--suppress LongLine --><resources>
     <string name="about_title">Sshd4a %s</string>
     <string name="about_versions">Dienste bereitgestellt von:\n\nDropbear %1$s\nRsync %2$s\nSftp-server von %3$s</string>
-    <string name="confirm_reset_keys">Alle authorized_keys löschen?\nSie können sich dann nur noch mit Einmalpasswörtern anmelden.</string>
+    <string name="confirm_reset_keys">Alle autorisierten Schlüssel löschen?\nSie können sich dann nur noch mit Einmalpasswörtern anmelden.</string>
     <string name="err_failed_to_save">Das Passwort konnte nicht gespeichert werden</string>
     <string name="err_key_import">Beim Importieren Ihrer Schlüssel ist etwas schief gelaufen.</string>
     <string name="err_no_ip">Keine Netzwerkschnittstellen gefunden?</string>
@@ -14,16 +14,16 @@
     <string name="notification_listeners_list">Sshd4a hört auf %1$s</string>
     <string name="lbl_about">Über diese App</string>
     <string name="lbl_github_project">Github-Projekt</string>
-    <string name="lbl_import_keys_long">Importieren einer „authorized_keys“-Datei</string>
+    <string name="lbl_import_keys">Importieren einer „authorized_keys“-Datei</string>
     <string name="lbl_all_interfaces">Alle Schnittstellen:</string>
     <string name="lbl_interface">Schnittstelle:</string>
     <string name="lbl_port">Port-Nummer:</string>
-    <string name="lbl_reset_keys_long">Alle autorisierten Schlüssel löschen</string>
+    <string name="lbl_delete_keys">Alle autorisierten Schlüssel löschen</string>
     <string name="lbl_settings">Einstellungen</string>
     <string name="lbl_start">Starten</string>
     <string name="lbl_stop">Beenden</string>
     <string name="msg_request_files_management">Diese Anwendung benötigt eine spezielle Berechtigung für den Zugriff auf Ihre Dateien, um „rsync“ verwenden zu können. Ohne diese Erlaubnis ist die Funktionalität dieser Anwendung stark eingeschränkt.\n\n Nachdem Sie auf „OK“ getippt haben, werden Sie aufgefordert, diese Berechtigung zu aktivieren.\nScrollen Sie in der Liste der Anwendungen nach unten und aktivieren Sie Sshd4a.</string>
-    <string name="pc_paths">SSH-Anmeldung</string>
+    <string name="pc_login">SSH-Anmeldung</string>
     <string name="pc_startup">Starten</string>
     <string name="pc_ui">Benutzeroberfläche</string>
     <string name="pe_ui_theme_dark">Dunkel</string>
@@ -57,9 +57,7 @@
     <string name="no">Nein</string>
     <string name="dialog_title_attention">Achtung</string>
     <string name="action_help">Hilfe</string>
-    <string name="err_device_maybe_not_supported">Ihr Gerät wird entweder nicht unterstützt oder Sie müssen die Berechtigungen manuell festlegen. Tippen Sie auf „OK“, um die Dokumentation auf Github zu besuchen.</string>
-    <string name="lbl_import_keys">Schlüssel importieren</string>
-    <string name="lbl_reset_keys">Alle Schlüssel löschen</string>
+    <string name="err_device_maybe_not_supported">Ihr Gerät wird entweder nicht unterstützt oder Sie müssen die Berechtigungen manuell festlegen. Tippen Sie auf „Hilfe“, um die Dokumentation auf Github zu besuchen.</string>
     <string name="disabled">Deaktiviert</string>
     <string name="enabled">Aktiviert</string>
     <string name="pt_enable_shell_access">Shell-Zugriff</string>
@@ -69,4 +67,11 @@
     <string name="tile_already_added">Kachel bereits hinzugefügt</string>
     <string name="tile_info_adding">Es wird eine Schnellzugriff-Kachel bereitgestellt, mit der Sie den Dienst starten/stoppen können. Sie muss manuell hinzugefügt werden.</string>
     <string name="pt_keep_running_after_app_exit">Dienst nach App-Beenden weiter ausführen</string>
+    <string name="info_keys_deleted">Gelöscht</string>
+    <string name="info_import_complete">Import abgeschlossen</string>
+    <string name="info_valid_url">Bitte geben Sie eine gültige URL ein, die mit „https://“ beginnt.</string>
+    <string name="err_unknown_host">Host „%1$s“ kann nicht aufgelöst werden: Keine Adresse mit dem Hostnamen verknüpft</string>
+    <string name="pc_key_management">Autorisierte Schlüssel</string>
+    <string name="lbl_import_keys_file">Aus Datei importieren</string>
+    <string name="lbl_import_keys_url">Von URL importieren</string>
 </resources>

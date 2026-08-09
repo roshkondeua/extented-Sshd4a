@@ -10,6 +10,10 @@
     <string name="pc_dropbear"
             translatable="false">Dropbear SSH</string>
 
+    <!-- Preference category title, summary -->
+    <string name="pc_authorized_keys"
+            translatable="false">“authorized_keys”</string>
+
     <!-- ListPreference -->
     <string-array name="pe_ui_theme_mode">
         <item>@string/pe_ui_theme_from_device</item>

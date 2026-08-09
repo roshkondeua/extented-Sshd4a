@@ -53,7 +53,7 @@ public final class SshdSettings {
      * The traditional OpenSSH key file.
      * Stored in {@link SshdSettings#getDropbearDirectory}.
      */
-    static final String AUTHORIZED_KEYS = "authorized_keys";
+    public static final String AUTHORIZED_KEYS = "authorized_keys";
 
     /**
      * Logfile for the native code.
@@ -71,11 +71,14 @@ public final class SshdSettings {
      * <p>
      * See <a href="https://developer.android.com/studio/run/emulator-networking">emulator</a>.
      *
+     * @param limit max number of entries to return
+     *
      * @return a list of all IP addresses used by the device.
      */
     @SuppressWarnings("SameParameterValue")
     @NonNull
     public static List<String> getHostAddresses(final int limit) {
+        //noinspection OverlyBroadCatchBlock
         try {
             return Collections
                     .list(NetworkInterface.getNetworkInterfaces())
@@ -95,8 +98,16 @@ public final class SshdSettings {
         return new ArrayList<>();
     }
 
+    /**
+     * Get the directory were the dropbear configuration files are stored.
+     * This if the ".dropbear" directory in the standard/internal Files folder.
+     *
+     * @param context Current context
+     *
+     * @return File
+     */
     @NonNull
-    static File getDropbearDirectory(@NonNull final Context context) {
+    public static File getDropbearDirectory(@NonNull final Context context) {
         final File path = new File(context.getFilesDir(), ".dropbear");
         if (!path.exists()) {
             path.mkdir();
@@ -197,8 +208,6 @@ public final class SshdSettings {
         // If the user explicitly removed the password,
         // Silently drop the username.
         // Remove the credentials file.
-        //
-        //
         if (passwordUpdated && (password == null || password.isBlank())) {
             if (fileExists) {
                 file.delete();

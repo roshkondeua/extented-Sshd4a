@@ -23,8 +23,8 @@
     <string name="lbl_start">தொடங்கு</string>
     <string name="lbl_stop">நிறுத்து</string>
     <string name="lbl_settings">அமைப்பு</string>
-    <string name="lbl_import_keys_long">“அங்கீகரிக்கப்பட்ட_கீச்” கோப்பை இறக்குமதி செய்யுங்கள்</string>
-    <string name="lbl_reset_keys_long">அங்கீகரிக்கப்பட்ட அனைத்து விசைகளையும் நீக்கு</string>
+    <string name="lbl_import_keys">“அங்கீகரிக்கப்பட்ட_கீச்” கோப்பை இறக்குமதி செய்யுங்கள்</string>
+    <string name="lbl_delete_keys">அங்கீகரிக்கப்பட்ட அனைத்து விசைகளையும் நீக்கு</string>
     <string name="confirm_reset_keys">அனைத்து அங்கீகரிக்கப்பட்ட_கிகளையும் நீக்கவா?\n ஒற்றை பயன்பாட்டு கடவுச்சொற்களுடன் மட்டுமே நீங்கள் உள்நுழைய முடியும்.</string>
     <string name="pc_startup">தொடங்கு</string>
     <string name="pt_start_service_on_device_boot">உங்கள் சாதனம் துவக்கப்படும் போது சேவையைத் தொடங்கவும்.</string>
@@ -35,7 +35,7 @@
     <string name="ps_foreground_off">இந்த பயன்பாடு முன்னணியில் இருக்கும்போது மட்டுமே பணி இயங்கும்.</string>
     <string name="pt_port">துறைமுகம் எண் (1024 &lt;போர்ட் &lt;32768)</string>
     <string name="pt_cmdline_options">கூடுதல் கட்டளை விருப்பங்கள்</string>
-    <string name="pc_paths">பாஓடு உள்நுழைவு</string>
+    <string name="pc_login">பாஓடு உள்நுழைவு</string>
     <string name="pt_home">வீட்டு அடைவு</string>
     <string name="pt_shell">உள்நுழைவு செல்</string>
     <string name="pc_ui">பயனர் இடைமுகம்</string>
@@ -58,9 +58,7 @@
     <string name="no">இல்லை</string>
     <string name="dialog_title_attention">கவனத்திற்கு</string>
     <string name="action_help">உதவி</string>
-    <string name="err_device_maybe_not_supported">உங்கள் சாதனம் ஆதரிக்கப்படவில்லை அல்லது நீங்கள் அனுமதிகளை கைமுறையாக அமைக்க வேண்டியிருக்கலாம். Github இல் உள்ள ஆவணங்களைப் பார்வையிட “சரி” என்பதைத் தட்டவும்.</string>
-    <string name="lbl_import_keys">விசைகளை இறக்குமதி செய்</string>
-    <string name="lbl_reset_keys">அனைத்து விசைகளையும் நீக்கு</string>
+    <string name="err_device_maybe_not_supported">உங்கள் சாதனம் ஆதரிக்கப்படவில்லை அல்லது நீங்கள் அனுமதிகளை கைமுறையாக அமைக்க வேண்டியிருக்கலாம். Github இல் உள்ள ஆவணங்களைப் பார்வையிட “உதவி” என்பதைத் தட்டவும்.</string>
     <string name="enabled">இயக்கப்பட்டது</string>
     <string name="disabled">முடக்கப்பட்டது</string>
     <string name="pt_enable_shell_access">ஷெல் அணுகல்</string>
@@ -70,4 +68,11 @@
     <string name="tile_already_added">கட்டம் ஏற்கனவே சேர்க்கப்பட்டுள்ளது</string>
     <string name="tile_info_adding">ஒரு க்விக் செட்டிங்ஸ் கட்டம் வழங்கப்பட்டுள்ளது, இது சேவையை துவக்க/நிறுத்த அனுமதிக்கிறது. இதை கைமுறையாக சேர்க்க வேண்டும்.</string>
     <string name="pt_keep_running_after_app_exit">அப்பிளிக்கேஷனை மூடிய பிறகும் சேவையை இயக்கத்தில் வைத்திரு</string>
+    <string name="info_keys_deleted">நீக்கப்பட்டது</string>
+    <string name="info_import_complete">இறக்குமதி முழுமையானது</string>
+    <string name="info_valid_url">“https://” எனத் தொடங்கும் சரியான URL-ஐ உள்ளிடவும்.</string>
+    <string name="err_unknown_host">“%1$s” ஹோஸ்டை மீட்டெடுக்க முடியவில்லை: ஹோஸ்ட் பெயருடன் தொடர்புடைய முகவரி எதுவும் இல்லை</string>
+    <string name="pc_key_management">அங்கீகரிக்கப்பட்ட விசைகள்</string>
+    <string name="lbl_import_keys_file">கோப்பிலிருந்து இறக்குமதி செய்</string>
+    <string name="lbl_import_keys_url">URL-லிருந்து இறக்குமதி செய்</string>
 </resources>

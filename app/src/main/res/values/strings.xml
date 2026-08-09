@@ -19,7 +19,7 @@
     <!-- Button text on the about Dialog.-->
     <string name="lbl_github_project">Github project</string>
 
-    <string name="err_device_maybe_not_supported">Your device is either unsupported or you might need to set the permissions manually. Tap “OK” to visit the documentation on Github.</string>
+    <string name="err_device_maybe_not_supported">Your device is either unsupported or you might need to set the permissions manually. Tap “Help” to visit the documentation on Github.</string>
     <string name="err_failed_to_save">Failed to save the password</string>
     <string name="err_key_import">Something went wrong while importing your keys.</string>
     <string name="err_no_ip">No network interfaces found?</string>
@@ -27,6 +27,9 @@
     <string name="err_port_number">The port must be between 1024 and 32768.</string>
     <string name="err_service_failed_to_start">The service failed to start. Try again and check the log.</string>
     <string name="err_unexpected_error">There was an unexpected error. Tap “OK” to visit the project page on Github and log a new issue.</string>
+    <!-- error message for when a user enters an invalid url for importing keys. -->
+    <string name="info_valid_url">Please enter a valid URL starting with “https://”.</string>
+    <string name="err_unknown_host">Unable to resolve host “%1$s”: No address associated with hostname</string>
 
     <!-- Dialog message/question. -->
     <string name="warning_no_auth_methods">You have disabled all authentication methods. Are you sure you want to do this?</string>
@@ -43,16 +46,23 @@
     <!-- Label for the port number field.  -->
     <string name="lbl_port">Port:</string>
 
-    <!-- Menu option. Used on TV's. -->
-    <string name="lbl_import_keys">Import keys</string>
+    <!-- Preference category title -->
+    <string name="pc_key_management">Authorized keys</string>
     <!-- Menu option. -->
-    <string name="lbl_import_keys_long">Import an “authorized_keys” file</string>
-    <!-- Menu option. Used on TV's. -->
-    <string name="lbl_reset_keys">Delete all keys</string>
-    <string name="lbl_reset_keys_long">Delete all authorized keys</string>
+    <string name="lbl_import_keys_file">Import from a file</string>
+    <!-- Menu option. -->
+    <string name="lbl_import_keys_url">Import from a URL</string>
+    <!-- Menu option. Do NOT translate the "authorized_keys" part. This is the file name. -->
+    <string name="lbl_import_keys">Import an “authorized_keys” file</string>
+    <!-- Menu option. -->
+    <string name="lbl_delete_keys">Delete all authorized keys</string>
+    <!-- informational message after keys were deleted. -->
+    <string name="info_keys_deleted">Deleted</string>
+
+    <string name="info_import_complete">Import complete</string>
 
     <!-- Dialog message/question. -->
-    <string name="confirm_reset_keys">Delete all authorized_keys?\nYou will only be able to login with single-use passwords.</string>
+    <string name="confirm_reset_keys">Delete all authorized keys?\nYou will only be able to login with single-use passwords.</string>
 
     <!-- Preference category title -->
     <string name="pc_startup">Startup</string>
@@ -81,7 +91,7 @@
     <string name="pt_env">Environment variables.\n(One “name=value” per line)</string>
 
     <!-- Preference category title -->
-    <string name="pc_paths">SSH Login</string>
+    <string name="pc_login">SSH Login</string>
     <!-- Preference option -->
     <string name="pt_enable_shell_access">Shell access</string>
     <!-- Preference option -->

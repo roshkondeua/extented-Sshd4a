@@ -54,6 +54,7 @@
         <!-- Material3 theme OVERLAYS! -->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
 
+        <item name="scrimBackground">@color/scrim_color</item>
     </style>
 
     <!-- *************************************************************************************** -->

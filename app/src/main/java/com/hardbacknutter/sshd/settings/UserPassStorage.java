@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import com.hardbacknutter.prefslib.SettingsDataStore;
-import com.hardbacknutter.sshd.R;
 import com.hardbacknutter.sshd.SshdSettings;
 
 class UserPassStorage
@@ -20,15 +19,6 @@ class UserPassStorage
     /** NOT PERSISTED, written directly to the dropbear directory. */
     static final String PK_SSHD_AUTH_PASSWORD = "sshd.authorized.password";
 
-    private static final String ASTERIX = "********";
-
-    @NonNull
-    private final SettingsViewModel vm;
-
-    @NonNull
-    private final String notSetText;
-
-    private boolean hasStoredPassword;
     @Nullable
     private String currentUsername;
     @Nullable
@@ -36,58 +26,22 @@ class UserPassStorage
 
     private boolean passwordUpdated;
 
-    UserPassStorage(@NonNull final Context context,
-                    @NonNull final SettingsViewModel vm) {
-        this.vm = vm;
-        notSetText = context.getString(R.string.pref_not_set);
+    UserPassStorage(@NonNull final Context context) {
 
         final String[] up = SshdSettings.readPasswordFile(context);
         if (up != null) {
-            hasStoredPassword = up[1] != null;
-
             currentUsername = up[0];
             currentPassword = null;
         }
     }
 
     /**
-     * Called for initial population of the UI field.
-     * With PreferenceDataStore this must be done manually.
+     * Use to set the initial enabled-state of the password field.
      *
-     * @return username
+     * @return flag
      */
-    @Nullable
-    String getCurrentUsername() {
-        return currentUsername;
-    }
-
-    /**
-     * Called for initial population of the UI field.
-     * With PreferenceDataStore this must be done manually.
-     *
-     * @return password
-     */
-    @Nullable
-    String getCurrentPassword() {
-        return currentPassword;
-    }
-
-    /**
-     * Updates are send by calling {@link SettingsViewModel#updatePasswordSummary(String)}.
-     *
-     * @return current summary text
-     */
-    @NonNull
-    private String getPasswordSummaryText() {
-        if (passwordUpdated && currentPassword != null && !currentPassword.isEmpty()) {
-            return ASTERIX;
-        }
-
-        if (!passwordUpdated && hasStoredPassword) {
-            return ASTERIX;
-        }
-
-        return notSetText;
+    boolean hasUsername() {
+        return currentUsername != null && !currentUsername.isBlank();
     }
 
     /**
@@ -113,7 +67,6 @@ class UserPassStorage
             case PK_SSHD_AUTH_PASSWORD:
                 currentPassword = value;
                 passwordUpdated = true;
-                vm.updatePasswordSummary(getPasswordSummaryText());
                 break;
             default:
                 throw new IllegalArgumentException(key);
@@ -128,7 +81,6 @@ class UserPassStorage
             case PK_SSHD_AUTH_USERNAME:
                 return currentUsername;
             case PK_SSHD_AUTH_PASSWORD:
-                vm.updatePasswordSummary(getPasswordSummaryText());
                 return currentPassword;
             default:
                 throw new IllegalArgumentException(key);

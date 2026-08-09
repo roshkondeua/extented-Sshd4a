@@ -109,18 +109,6 @@
             />
 
         <Button
-            android:id="@+id/tv_btn_import_keys"
-            style="@style/TVButton.Menu"
-            android:text="@string/lbl_import_keys"
-            />
-
-        <Button
-            android:id="@+id/tv_btn_reset_keys"
-            style="@style/TVButton.Menu"
-            android:text="@string/lbl_reset_keys"
-            />
-
-        <Button
             android:id="@+id/tv_btn_help"
             style="@style/TVButton.Menu"
             android:text="@string/action_help"
