@@ -184,7 +184,7 @@ public class MainFragment
         new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.app_name)
                 .setIcon(R.drawable.app_tile)
-                .setMessage(R.string.info_add_tile)
+                .setMessage(R.string.tile_info_adding)
                 .setPositiveButton(R.string.ok, (d, w) -> d.dismiss())
                 .create()
                 .show();

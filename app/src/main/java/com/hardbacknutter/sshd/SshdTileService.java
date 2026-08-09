@@ -55,6 +55,7 @@ public class SshdTileService
 
         } else {
             ComponentName componentName = null;
+            //noinspection OverlyBroadCatchBlock
             try {
                 componentName = SshdService.startService(this, StartMode.ByUser);
             } catch (@NonNull final Exception e) {
@@ -86,7 +87,7 @@ public class SshdTileService
     private void setErrorState() {
         final Tile tile = getQsTile();
         tile.setState(Tile.STATE_UNAVAILABLE);
-        tile.setSubtitle(getString(R.string.err_see_app));
+        tile.setSubtitle(getString(R.string.tile_err_see_app));
         tile.updateTile();
     }
 }

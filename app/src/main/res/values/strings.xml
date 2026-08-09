@@ -147,7 +147,7 @@
 
     <!-- Tile text in case of an error.
          The user will need to start the app to see the error details -->
-    <string name="err_see_app">Open the app for error information.</string>
+    <string name="tile_err_see_app">Open the app for error information.</string>
     <!-- info message: the user allowed us to add a Quick Settings tile. -->
     <string name="tile_added">Tile added</string>
     <!-- info message: the user did NOT allow us to add a Quick Settings tile. -->
@@ -155,6 +155,6 @@
     <!-- info message: the user tried to add a Quick Settings tile but it was already added. -->
     <string name="tile_already_added">Tile already added</string>
     <!-- info message shown as a dialog when adding a Quick Settings tile is a manual process. -->
-    <string name="info_add_tile">A Quick Settings Tile is provided which allows you to start/stop the service. It must be manually added.</string>
+    <string name="tile_info_adding">A Quick Settings Tile is provided which allows you to start/stop the service. It must be manually added.</string>
 
 </resources>
