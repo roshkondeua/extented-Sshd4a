@@ -33,6 +33,7 @@
 
         <item name="startButtonTextColor">@color/green_800</item>
         <item name="stopButtonTextColor">@color/m3red_20</item>
+        <item name="scrimBackground">#40000000</item>
     </style>
 
     <!-- Base theme - used by both Day and Night themes. -->
@@ -44,7 +45,8 @@
         <item name="radioButtonStyle">@style/Widget.App.RadioButton</item>
         <item name="materialSwitchStyle">@style/Widget.App.Switch</item>
 
-        <!-- We MUST set these separately! Just setting the common buttonBarButtonStyle is NOT enough -->
+        <!-- We MUST set these separately!
+             Just setting the common buttonBarButtonStyle is NOT enough -->
         <item name="buttonBarButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
         <item name="buttonBarPositiveButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
         <item name="buttonBarNegativeButtonStyle">@style/Widget.App.DialogButtonBarButtons</item>
@@ -53,8 +55,6 @@
 
         <!-- Material3 theme OVERLAYS! -->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
-
-        <item name="scrimBackground">@color/scrim_color</item>
     </style>
 
     <!-- *************************************************************************************** -->

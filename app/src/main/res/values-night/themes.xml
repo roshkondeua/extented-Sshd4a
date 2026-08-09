@@ -31,5 +31,6 @@
 
     <item name="startButtonTextColor">@color/green_500</item>
     <item name="stopButtonTextColor">@color/m3red_40</item>
+    <item name="scrimBackground">#66FFFFFF</item>
 </style>
 </resources>

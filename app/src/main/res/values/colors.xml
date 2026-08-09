@@ -3,8 +3,6 @@
     <color name="black">#ff000000</color>
     <color name="white">#ffffffff</color>
 
-    <color name="scrim_color">#40000000</color>
-
     <color name="ic_app_background">#7DBDBC</color>
 
     <!-- Green -->
