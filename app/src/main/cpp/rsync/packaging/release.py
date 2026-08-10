@@ -103,8 +103,8 @@ def require_samba_host():
 def require_top_of_checkout():
     if not os.path.isfile('packaging/release.py'):
         die("Run this script from the top of your rsync checkout.")
-    if not os.path.isdir('.git'):
-        die("There is no .git dir in the current directory.")
+    if not os.path.exists('.git'):
+        die("There is no .git in the current directory (run from the top of a git checkout or worktree).")
 
 
 def replace_or_die(regex, repl, txt, die_msg):

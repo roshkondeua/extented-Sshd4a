@@ -23,6 +23,8 @@
 
 int do_fsync = 0;
 int inplace = 0;
+int am_daemon = 0;
+int am_chrooted = 0;
 int modify_window = 0;
 int preallocate_files = 0;
 int protect_args = 0;
@@ -34,9 +36,14 @@ int preserve_perms = 0;
 int preserve_executability = 0;
 int omit_link_times = 0;
 int open_noatime = 0;
-size_t max_alloc = 0; /* max_alloc is needed when combined with util2.o */
+size_t max_alloc = (size_t)-1; /* unlimited: helpers link util2.o, where 0 makes
+			       * every my_alloc()/my_strdup() abort with
+			       * "exceeded --max-alloc=0" (hit on the
+			       * secure_relative_open() fallback path). */
 char *partial_dir;
 char *module_dir;
+/* curr_dir[]/curr_dir_len (read by secure_relative_open) are defined in
+ * syscall.c, which every helper links -- no stub needed here. */
 filter_rule_list daemon_filter_list;
 
  void rprintf(UNUSED(enum logcode code), const char *format, ...)
