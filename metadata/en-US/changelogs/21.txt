@@ -1,0 +1,8 @@
+- rsync 3.4.4
+- openssh 10.4p1
+- dropbear 2026.94
+
+- GitHub #32 added an option to import the authorized keys from a url.
+  This allows having your public keys on a "https://host/keys.txt" for easy updates.
+- Importing from file/url and deleting keys have moved from the menu to the settings screen
+  These can now be found near the bottom of the list of settings.
