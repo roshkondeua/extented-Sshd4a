@@ -5,7 +5,7 @@ Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a
 Please do **NOT** request implementing some sort of root access. 
 Such requests **will be closed** immediately.
 
-### Download the latest release: 1.12.0
+### Download the latest release: 1.13.0
 
 <a href="https://github.com/tfonteyn/Sshd4a/releases">
 <img src="metadata/en-US/images/get-it-on-github.png" alt="Get it on GitHub" style="width:150px;"/></a>
@@ -32,14 +32,14 @@ What you should not do:
 ## Services:
 
 Services are provided by:
-- https://matt.ucc.asn.au/dropbear/dropbear.html
+- https://github.com/mkj/dropbear
 - https://rsync.samba.org/
 - https://github.com/openssh/openssh-portable
 
 The latest release contains:
-- Dropbear 2026.91
-- rsync 3.4.2
-- sftp-server from OpenSSH 10.3p1
+- Dropbear 2026.94
+- rsync 3.4.4
+- sftp-server from OpenSSH 10.4p1
 
 ## Rsync support:
 
@@ -77,7 +77,7 @@ Translations are editable on [Weblate](https://hosted.weblate.org/engage/sshd4a/
 
 - Standard Android:
   - Requires minimal Android 11 (API 30)
-  - Supported/tested up to Android 16 (API 36).
+  - Supported/tested up to Android 17 (API 37).
 - Android/Google TV
   - Not supported on versions 11/12 but might work depending on TV brand/model.
   - Supported/tested on the Google TV emulator version 13/14.
