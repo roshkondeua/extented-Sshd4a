@@ -644,6 +644,7 @@ set(SRC_DROPBEAR
         ${BASE_SRC_DROPBEAR}/compat.c
         ${BASE_SRC_DROPBEAR}/crypto_desc.c
         ${BASE_SRC_DROPBEAR}/curve25519.c
+        ${BASE_SRC_DROPBEAR}/dbctype.c
         ${BASE_SRC_DROPBEAR}/dbhelpers.c
         ${BASE_SRC_DROPBEAR}/dbmalloc.c
         ${BASE_SRC_DROPBEAR}/dbrandom.c
@@ -697,9 +698,10 @@ set(SRC_DROPBEAR
         )
 
 set(SRC_DROPBEAR_SCP
+        ${BASE_SRC_DROPBEAR}/atomicio.c
+        ${BASE_SRC_DROPBEAR}/dbctype.c
         ${BASE_SRC_DROPBEAR}/scp.c
         ${BASE_SRC_DROPBEAR}/scpmisc.c
-        ${BASE_SRC_DROPBEAR}/atomicio.c
         )
 
 set(SRC_SFTP_SERVER
