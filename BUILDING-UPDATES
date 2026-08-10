@@ -17,12 +17,13 @@ sudo apt install autoconf
 # RSYNC    - https://rsync.samba.org/
 # OPENSSH  - https://github.com/openssh/openssh-portable
 # DROPBEAR - https://matt.ucc.asn.au/dropbear/dropbear.html
+#            or https://github.com/mkj/dropbear
 #            Note we use the mirror at https://dropbear.nl due to asn.au
-#            giving consistent TLS issues (too strict for wget?)
+#            giving consistent TLS issues
 
-export RSYNC_VERSION="rsync-3.4.2"
-export OPENSSH_VERSION="openssh-10.3p1"
-export DROPBEAR_VERSION="dropbear-2026.91"
+export RSYNC_VERSION="rsync-3.4.4"
+export OPENSSH_VERSION="openssh-10.4p1"
+export DROPBEAR_VERSION="dropbear-2026.94"
 
 export RSYNC_DOWNLOAD="https://download.samba.org/pub/rsync/src/${RSYNC_VERSION}.tar.gz"
 export OPENSSH_DOWNLOAD="https://mirror.ox.ac.uk/pub/OpenBSD/OpenSSH/portable/${OPENSSH_VERSION}.tar.gz"
