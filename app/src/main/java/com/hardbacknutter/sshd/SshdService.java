@@ -11,6 +11,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -422,7 +424,17 @@ public class SshdService
 
                 text = getString(R.string.notification_listeners_list, s);
             }
-            startForeground(ONGOING_NOTIFICATION_ID, createNotification(text));
+            final Notification notification = createNotification(text);
+
+            // GitHub #34: with targetSdk 37, on a physical Android 17 (Pixel 7a)
+            // startup failed using the 2-arg call.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(ONGOING_NOTIFICATION_ID, notification,
+                                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                );
+            } else {
+                startForeground(ONGOING_NOTIFICATION_ID, notification);
+            }
         }
 
         // If we (i.e. this service, which is != this sshd process) get killed,

@@ -64,8 +64,11 @@
             android:name=".SshdService"
             android:description="@string/service_description"
             android:foregroundServiceType="specialUse"
-            android:label="@string/service_name"
-            />
+            android:label="@string/service_name">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="sshd/rsync/sftp requires 'special-use' to be useful at all" />
+        </service>
 
         <service
             android:name=".SshdTileService"

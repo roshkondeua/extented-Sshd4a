@@ -1,0 +1,4 @@
+FIXES:
+
+- GitHub #34: starting the service on a Pixel device with Android 17 was failing
+              due to new enforcements by the OS.
