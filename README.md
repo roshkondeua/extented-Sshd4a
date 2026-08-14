@@ -5,7 +5,7 @@ Some documentation can be found on the [wiki](https://github.com/tfonteyn/Sshd4a
 Please do **NOT** request implementing some sort of root access. 
 Such requests **will be closed** immediately.
 
-### Download the latest release: 1.13.1
+### Download the latest release: 1.13.2
 
 <a href="https://github.com/tfonteyn/Sshd4a/releases">
 <img src="metadata/en-US/images/get-it-on-github.png" alt="Get it on GitHub" style="width:150px;"/></a>
