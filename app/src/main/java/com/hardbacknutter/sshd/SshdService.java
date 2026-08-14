@@ -230,7 +230,7 @@ public class SshdService
         // kill any stale ssh process lingering around
         stopSshd();
 
-        // See all options: cpp/dropbear/svr-runopts.c
+        // See all options: cpp/dropbear/src/svr-runopts.c
         final List<String> argList = new ArrayList<>();
         // the command to run; i.e. args[0]
         argList.add("sshd");
