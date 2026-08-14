@@ -4,8 +4,8 @@
 # See https://developer.android.com/training/data-storage
 minSdk = "30"
 # Android 17
-targetSdk = "37"
-compileSdk = "37"
+targetSdk = "36"
+compileSdk = "36"
 
 # JDK used by Gradle
 javaToolchain = "25"
@@ -23,7 +23,7 @@ androidxActivity = "1.13.0"
 androidxAnnotation = "1.10.0"
 androidxAppcompat = "1.7.1"
 androidxConstraintlayout = "2.2.2"
-androidxCore = "1.19.0"
+androidxCore = "1.18.0"
 androidxFragment = "1.8.9"
 androidxLifecycle = "2.11.0"
 androidxLocalbroadcastmanager = "1.1.0"

@@ -1,0 +1,6 @@
+FIXES:
+
+- GitHub #34: starting the service on a Pixel device with Android 17 was failing
+              due to new enforcements by the OS.
+- temporary going back to targetting Android 16. The app still works/supports Android 17.
+  This solves complication seen in #34.
