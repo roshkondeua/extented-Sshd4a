@@ -15,7 +15,7 @@ jobs:
           submodules: recursive
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
@@ -57,6 +57,7 @@ jobs:
           sign.keyAlias=${{ secrets.KEY_ALIAS }}
           sign.keyPassword=${{ secrets.KEY_PASSWORD }}
           EOF
+          mkdir -p ~/.gradle
           echo "Sshd4a.properties=$PWD/Sshd4a.properties" >> ~/.gradle/gradle.properties
 
       - name: Build release APK
