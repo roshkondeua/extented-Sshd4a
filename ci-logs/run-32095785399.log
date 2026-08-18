@@ -1,0 +1,1062 @@
+1:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/io.c:30:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/params.c:76:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/main.c:23:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/progress.c:23:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/sender.c:22:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/receiver.c:22:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/flist.c:23:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.c:22:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/socket.c:27:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/socket.c:687:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   687 |         for (tok = strtok(options, " \t,"); tok; tok = strtok(NULL," \t,")) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/socket.c:687:49: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   687 |         for (tok = strtok(options, " \t,"); tok; tok = strtok(NULL," \t,")) {
+C/C++:       |                                                        ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 5 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/token.c:22:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/usage.c:20:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/usage.c:242:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   242 |         for (tok = strtok(tmpbuf, " "); tok; tok = next_tok) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/usage.c:243:14: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   243 |                 next_tok = strtok(NULL, " ");
+C/C++:       |                            ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 5 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util2.c:23:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/uidlist.c:26:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:23:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1941:28: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1941 |                         for (const char *part = strtok(bcopy, "/");
+C/C++:       |                                                 ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1943:16: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1943 |                              part = strtok(NULL, "/"))
+C/C++:       |                                     ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1967:26: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1967 |         for (const char *part = strtok(path_copy, "/");
+C/C++:       |                                 ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1969:14: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1969 |              part = strtok(NULL, "/"))
+C/C++:       |                     ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1973:8: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1973 |                         if (strtok(NULL, "/") != NULL) {
+C/C++:       |                             ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:2074:27: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  2074 |                 for (const char *part = strtok(path_copy, "/");
+C/C++:       |                                         ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:2076:15: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  2076 |                      part = strtok(NULL, "/"))
+C/C++:       |                             ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 10 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:23:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:869:21: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   869 |                 char *end, *tok = strtok(str, ",");
+C/C++:       |                                   ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:883:9: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   883 |         return strtok(str, " ,\t\r\n");
+C/C++:       |                ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:1462:6: warning: variable 'len' set but not used [-Wunused-but-set-variable]
+C/C++:  1462 |         int len;
+C/C++:       |             ^
+C/C++: 6 warnings generated.
+
+> Task :app:buildCMakeRelWithDebInfo[arm64-v8a]
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/access.c:253:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   253 |         for (tok = strtok(list2, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/access.c:253:47: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   253 |         for (tok = strtok(list2, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                                                      ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:142:26: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   142 |                 const char **ptr, *s = strtok(line, "\n\r");
+C/C++:       |                                        ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:211:12: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   211 |                 if ((p = strtok(buffer, "\n\r")) != NULL)
+C/C++:       |                          ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:258:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   258 |         for (tok = strtok(users, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:258:47: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   258 |         for (tok = strtok(users, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                                                      ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 4 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/socket.c:687:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   687 |         for (tok = strtok(options, " \t,"); tok; tok = strtok(NULL," \t,")) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/socket.c:687:49: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   687 |         for (tok = strtok(options, " \t,"); tok; tok = strtok(NULL," \t,")) {
+C/C++:       |                                                        ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/usage.c:242:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   242 |         for (tok = strtok(tmpbuf, " "); tok; tok = next_tok) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/usage.c:243:14: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   243 |                 next_tok = strtok(NULL, " ");
+C/C++:       |                            ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1941:28: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1941 |                         for (const char *part = strtok(bcopy, "/");
+C/C++:       |                                                 ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1943:16: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1943 |                              part = strtok(NULL, "/"))
+C/C++:       |                                     ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1967:26: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1967 |         for (const char *part = strtok(path_copy, "/");
+C/C++:       |                                 ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1969:14: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1969 |              part = strtok(NULL, "/"))
+C/C++:       |                     ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1973:8: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1973 |                         if (strtok(NULL, "/") != NULL) {
+C/C++:       |                             ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:2074:27: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  2074 |                 for (const char *part = strtok(path_copy, "/");
+C/C++:       |                                         ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:2076:15: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  2076 |                      part = strtok(NULL, "/"))
+C/C++:       |                             ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 7 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:869:21: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   869 |                 char *end, *tok = strtok(str, ",");
+C/C++:       |                                   ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:883:9: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   883 |         return strtok(str, " ,\t\r\n");
+C/C++:       |                ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:1462:6: warning: variable 'len' set but not used [-Wunused-but-set-variable]
+C/C++:  1462 |         int len;
+C/C++:       |             ^
+C/C++: 3 warnings generated.
+
+> Task :LiveDataEvent:mergeReleaseGeneratedProguardFiles
+> Task :LiveDataEvent:exportReleaseConsumerProguardFiles
+
+> Task :app:buildCMakeRelWithDebInfo[x86_64]
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/popt/popt.c:453:9: warning: variable 'rc' set but not used [-Wunused-but-set-variable]
+C/C++:   453 |     int rc;
+C/C++:       |         ^
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/access.c:253:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   253 |         for (tok = strtok(list2, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/access.c:253:47: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   253 |         for (tok = strtok(list2, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                                                      ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:142:26: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   142 |                 const char **ptr, *s = strtok(line, "\n\r");
+C/C++:       |                                        ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:211:12: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   211 |                 if ((p = strtok(buffer, "\n\r")) != NULL)
+C/C++:       |                          ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:258:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   258 |         for (tok = strtok(users, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/authenticate.c:258:47: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   258 |         for (tok = strtok(users, " ,\t"); tok; tok = strtok(NULL, " ,\t")) {
+C/C++:       |                                                      ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 4 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/dropbear/src/mlkem768.c:27:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/dropbear/src/includes.h:217:9: warning: 'static_assert' macro redefined [-Wmacro-redefined]
+C/C++:   217 | #define static_assert(condition, message)
+C/C++:       |         ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/assert.h:70:10: note: previous definition is here
+C/C++:    70 | # define static_assert _Static_assert
+C/C++:       |          ^
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/socket.c:687:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   687 |         for (tok = strtok(options, " \t,"); tok; tok = strtok(NULL," \t,")) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/socket.c:687:49: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   687 |         for (tok = strtok(options, " \t,"); tok; tok = strtok(NULL," \t,")) {
+C/C++:       |                                                        ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/usage.c:242:13: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   242 |         for (tok = strtok(tmpbuf, " "); tok; tok = next_tok) {
+C/C++:       |                    ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/usage.c:243:14: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   243 |                 next_tok = strtok(NULL, " ");
+C/C++:       |                            ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1941:28: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1941 |                         for (const char *part = strtok(bcopy, "/");
+C/C++:       |                                                 ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1943:16: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1943 |                              part = strtok(NULL, "/"))
+C/C++:       |                                     ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1967:26: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1967 |         for (const char *part = strtok(path_copy, "/");
+C/C++:       |                                 ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1969:14: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1969 |              part = strtok(NULL, "/"))
+C/C++:       |                     ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:1973:8: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  1973 |                         if (strtok(NULL, "/") != NULL) {
+C/C++:       |                             ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:2074:27: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  2074 |                 for (const char *part = strtok(path_copy, "/");
+C/C++:       |                                         ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/syscall.c:2076:15: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:  2076 |                      part = strtok(NULL, "/"))
+C/C++:       |                             ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: 7 warnings generated.
+
+> Task :app:buildCMakeRelWithDebInfo[armeabi-v7a]
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/xattrs.c:22:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/options.c:22:
+C/C++: In file included from /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/rsync.h:340:
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:180:9: warning: 'SIZEOF_CHARP' macro redefined [-Wmacro-redefined]
+C/C++:   180 | #define SIZEOF_CHARP 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:153:9: note: previous definition is here
+C/C++:   153 | #define SIZEOF_CHARP 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:181:9: warning: 'SIZEOF_LONG' macro redefined [-Wmacro-redefined]
+C/C++:   181 | #define SIZEOF_LONG 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:158:9: note: previous definition is here
+C/C++:   158 | #define SIZEOF_LONG 8
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:182:9: warning: 'SIZEOF_TIME_T' macro redefined [-Wmacro-redefined]
+C/C++:   182 | #define SIZEOF_TIME_T 4
+C/C++:       |         ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/config.h:163:9: note: previous definition is here
+C/C++:   163 | #define SIZEOF_TIME_T 8
+C/C++:       |         ^
+C/C++: 3 warnings generated.
+
+> Task :app:dataBindingMergeDependencyArtifactsRelease
+> Task :app:generateReleaseResources
+
+> Task :app:buildCMakeRelWithDebInfo[x86_64]
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:869:21: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   869 |                 char *end, *tok = strtok(str, ",");
+C/C++:       |                                   ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:883:9: warning: 'strtok' is deprecated: strtok() is not thread-safe; use strtok_r() instead [-Wdeprecated-declarations]
+C/C++:   883 |         return strtok(str, " ,\t\r\n");
+C/C++:       |                ^
+C/C++: /usr/local/lib/android/sdk/ndk/30.0.14904198/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h:125:20: note: 'strtok' has been explicitly marked deprecated here
+C/C++:   125 |     __attribute__((__deprecated__("strtok() is not thread-safe; use strtok_r() instead")));
+C/C++:       |                    ^
+C/C++: /home/runner/work/extented-Sshd4a/extented-Sshd4a/app/src/main/cpp/rsync/util1.c:1462:6: warning: variable 'len' set but not used [-Wunused-but-set-variable]
+C/C++:  1462 |         int len;
+C/C++:       |             ^
+C/C++: 3 warnings generated.
+
+> Task :PrefsLib:compileReleaseJavaWithJavac
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :app:mergeReleaseNativeLibs
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:stripReleaseDebugSymbols
+> Task :app:packageReleaseResources
+> Task :app:processReleaseNavigationResources
+> Task :app:parseReleaseLocalResources
+> Task :app:generateReleaseBuildConfig
+> Task :app:generateReleaseRFile
+> Task :app:javaPreCompileRelease FROM-CACHE
+> Task :LiveDataEvent:writeReleaseAarMetadata
+> Task :PrefsLib:writeReleaseAarMetadata
+> Task :app:checkReleaseAarMetadata
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:extractReleaseNativeSymbolTables
+> Task :app:compileReleaseNavigationResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :LiveDataEvent:extractDeepLinksRelease
+> Task :app:mergeReleaseNativeDebugMetadata
+> Task :PrefsLib:extractDeepLinksRelease FROM-CACHE
+> Task :LiveDataEvent:processReleaseManifest
+> Task :LiveDataEvent:mapReleaseSourceSetPaths
+> Task :PrefsLib:processReleaseManifest
+> Task :LiveDataEvent:compileReleaseLibraryResources
+> Task :PrefsLib:mapReleaseSourceSetPaths
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :PrefsLib:mergeReleaseGeneratedProguardFiles
+> Task :PrefsLib:compileReleaseLibraryResources
+> Task :PrefsLib:exportReleaseConsumerProguardFiles
+> Task :app:processReleaseManifestForPackage
+> Task :LiveDataEvent:processReleaseJavaRes NO-SOURCE
+> Task :PrefsLib:extractProguardFiles
+> Task :LiveDataEvent:bundleLibRuntimeToJarRelease
+> Task :PrefsLib:processReleaseJavaRes NO-SOURCE
+> Task :PrefsLib:bundleLibCompileToJarRelease
+> Task :app:extractProguardFiles
+> Task :app:mergeReleaseStartupProfile
+> Task :LiveDataEvent:generateReleaseAssets UP-TO-DATE
+> Task :PrefsLib:generateReleaseLibraryProguardRules
+> Task :PrefsLib:generateReleaseAssets UP-TO-DATE
+> Task :PrefsLib:mergeReleaseAssets
+> Task :LiveDataEvent:mergeReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :LiveDataEvent:createFullJarRelease
+> Task :PrefsLib:mergeReleaseJavaResource
+> Task :LiveDataEvent:extractProguardFiles
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :LiveDataEvent:prepareLintJarForPublish
+> Task :LiveDataEvent:generateReleaseLintModel
+> Task :PrefsLib:prepareLintJarForPublish
+> Task :PrefsLib:checkReleaseAarMetadata
+> Task :PrefsLib:extractDeepLinksForAarRelease
+> Task :app:mergeReleaseResources
+> Task :app:dataBindingGenBaseClassesRelease
+> Task :app:compileReleaseKotlin NO-SOURCE
+> Task :PrefsLib:generateReleaseLintModel
+
+> Task :app:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :app:processReleaseJavaRes NO-SOURCE
+> Task :app:mergeReleaseJavaResource
+> Task :PrefsLib:mergeReleaseConsumerProguardFiles
+> Task :LiveDataEvent:checkReleaseAarMetadata
+> Task :LiveDataEvent:extractDeepLinksForAarRelease FROM-CACHE
+> Task :app:processReleaseResources
+> Task :app:mergeReleaseGeneratedProguardFiles
+> Task :LiveDataEvent:mergeReleaseConsumerProguardFiles
+> Task :LiveDataEvent:mergeReleaseJavaResource
+> Task :PrefsLib:extractReleaseAnnotations
+> Task :LiveDataEvent:writeReleaseLintModelMetadata
+> Task :PrefsLib:writeReleaseLintModelMetadata
+> Task :LiveDataEvent:generateReleaseLintVitalModel
+> Task :LiveDataEvent:extractReleaseAnnotations
+> Task :LiveDataEvent:syncReleaseLibJars
+> Task :PrefsLib:generateReleaseLintVitalModel
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :LiveDataEvent:bundleReleaseLocalLintAar
+> Task :LiveDataEvent:stripReleaseDebugSymbols NO-SOURCE
+> Task :LiveDataEvent:copyReleaseJniLibsProjectAndLocalJars
+> Task :LiveDataEvent:mergeReleaseResources
+> Task :LiveDataEvent:bundleReleaseAar
+> Task :PrefsLib:stripReleaseDebugSymbols NO-SOURCE
+> Task :PrefsLib:copyReleaseJniLibsProjectAndLocalJars
+> Task :LiveDataEvent:verifyReleaseResources
+> Task :LiveDataEvent:assembleRelease
+> Task :PrefsLib:mergeReleaseResources
+> Task :PrefsLib:minifyReleaseWithR8
+> Task :PrefsLib:bundleLibRuntimeToJarRelease
+> Task :PrefsLib:syncReleaseLibJars
+> Task :PrefsLib:createFullJarRelease
+> Task :app:generateReleaseLintVitalReportModel
+> Task :PrefsLib:bundleReleaseLocalLintAar
+> Task :PrefsLib:bundleReleaseAar
+> Task :app:expandReleaseArtProfileWildcards
+> Task :PrefsLib:verifyReleaseResources
+> Task :PrefsLib:assembleRelease
+> Task :LiveDataEvent:lintVitalAnalyzeRelease
+> Task :PrefsLib:lintVitalAnalyzeRelease
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:minifyReleaseWithR8
+> Task :app:convertShrunkResourcesToBinaryRelease
+> Task :app:optimizeReleaseResources
+> Task :app:l8DexDesugarLibRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease FAILED
+
+[Incubating] Problems report is available at: file:///home/runner/work/extented-Sshd4a/extented-Sshd4a/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:packageRelease' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing com.android.build.gradle.tasks.PackageAndroidArtifact$IncrementalSplitterRunnable
+   > com.android.ide.common.signing.KeytoolException: Failed to read key sshd4a-release from store "/home/runner/work/_temp/release.keystore": Get Key failed: Given final block not properly padded. Such issues can arise if a bad key is used during decryption.
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:packageRelease' (registered by plugin 'com.android.internal.application').
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:135)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:133)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:121)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskExecuter.java:41)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.DefaultNodeExecutor.executeLocalTaskNode(DefaultNodeExecutor.java:55)
+	at org.gradle.execution.plan.DefaultNodeExecutor.execute(DefaultNodeExecutor.java:34)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:355)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:343)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:339)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:84)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:339)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:328)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing com.android.build.gradle.tasks.PackageAndroidArtifact$IncrementalSplitterRunnable
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:273)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:132)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocksBlocking$0(DefaultWorkerLeaseService.java:412)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocksBlocking(DefaultWorkerLeaseService.java:407)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.blocking(DefaultWorkerLeaseService.java:257)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.blocking(DefaultWorkerLeaseService.java:239)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$1(DefaultAsyncWorkTracker.java:128)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.resources.AbstractResourceLockRegistry.whileDisallowingLockChanges(AbstractResourceLockRegistry.java:51)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.whileDisallowingProjectLockChanges(DefaultWorkerLeaseService.java:262)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:127)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$0(DefaultAsyncWorkTracker.java:101)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:374)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsIsolatedTask(DefaultWorkerLeaseService.java:234)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsIsolatedTask(DefaultWorkerLeaseService.java:223)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:101)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:79)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:67)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:267)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:244)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:227)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:210)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:176)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:167)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:47)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:137)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:134)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:134)
+	at org.gradle.internal.execution.steps.ExecuteStep$Mutable.execute(ExecuteStep.java:80)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:51)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:29)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:39)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:42)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:24)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:28)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:76)
+	at org.gradle.internal.Either$Right.fold(Either.java:176)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:74)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:49)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:70)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:32)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:69)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:37)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:63)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:34)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:79)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:105)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.execute(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.executeMutable(CaptureMutableStateBeforeExecutionStep.java:86)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:45)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeWithNonEmptySources(SkipEmptyMutableWorkStep.java:210)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:85)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:53)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:77)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:43)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$executeMutable$0(AssignMutableWorkspaceStep.java:34)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:305)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:30)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:21)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:56)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:38)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:68)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:132)
+	... 30 more
+Caused by: java.lang.RuntimeException: com.android.ide.common.signing.KeytoolException: Failed to read key sshd4a-release from store "/home/runner/work/_temp/release.keystore": Get Key failed: Given final block not properly padded. Such issues can arise if a bad key is used during decryption.
+	at com.android.build.gradle.internal.packaging.IncrementalPackagerBuilder.withSigning(IncrementalPackagerBuilder.java:228)
+	at com.android.build.gradle.tasks.PackageAndroidArtifact$Companion.doTask(PackageAndroidArtifact.kt:929)
+	at com.android.build.gradle.tasks.PackageAndroidArtifact$Companion.access$doTask(PackageAndroidArtifact.kt:759)
+	at com.android.build.gradle.tasks.PackageAndroidArtifact$IncrementalSplitterRunnable.doExecute(PackageAndroidArtifact.kt:414)
+	at com.android.build.gradle.internal.workeractions.WorkActionAdapter.execute(WorkActionAdapter.kt:34)
+	at com.android.build.gradle.tasks.PackageAndroidArtifact$IncrementalSplitterRunnable.execute(PackageAndroidArtifact.kt:383)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:103)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$1(DefaultWorkerExecutor.java:169)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:191)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$600(DefaultConditionalExecutionQueue.java:112)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:168)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0(DefaultWorkerLeaseService.java:302)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks(DefaultWorkerLeaseService.java:300)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:296)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:288)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:131)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:137)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:163)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:125)
+	... 2 more
+Caused by: com.android.ide.common.signing.KeytoolException: Failed to read key sshd4a-release from store "/home/runner/work/_temp/release.keystore": Get Key failed: Given final block not properly padded. Such issues can arise if a bad key is used during decryption.
+	at com.android.ide.common.signing.KeystoreHelper.getCertificateInfo(KeystoreHelper.java:254)
+	at com.android.build.gradle.internal.packaging.IncrementalPackagerBuilder.withSigning(IncrementalPackagerBuilder.java:168)
+	... 37 more
+Caused by: java.security.UnrecoverableKeyException: Get Key failed: Given final block not properly padded. Such issues can arise if a bad key is used during decryption.
+	at com.android.ide.common.signing.KeystoreHelper.getCertificateInfo(KeystoreHelper.java:236)
+	... 38 more
+Caused by: javax.crypto.BadPaddingException: Given final block not properly padded. Such issues can arise if a bad key is used during decryption.
+	... 39 more
+
+
+BUILD FAILED in 2m 21s
+136 actionable tasks: 132 executed, 4 from cache
+Configuration cache entry stored.
