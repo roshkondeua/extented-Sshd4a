@@ -16,6 +16,10 @@ tasks.withType(Test).configureEach {
 
 ext {
     applicationId = "com.roshkond.sshd4a.extended"
-    applicationVersionCode = 23
-    applicationVersionName = "1.13.2"
+    // versionCode передаётся из CI (build.yml: -PciVersionCode=...) и всегда растёт с каждой сборкой,
+    // независимо от versionName ниже. Фоллбэк 1000 — на случай локальной сборки без CI.
+    applicationVersionCode = project.hasProperty("ciVersionCode") ? project.property("ciVersionCode").toInteger() : 1000
+    // versionName меняем вручную при значимых этапах: 1.13.2.1, 1.13.2.2, ...
+    // (база 1.13.2 — версия апстрима, на которой сделан форк)
+    applicationVersionName = "1.13.2.1"
 }
