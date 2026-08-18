@@ -55,6 +55,10 @@ public class SettingsFragment
                     try {
                         //noinspection DataFlowIssue
                         vm.getUserPassDataStore().storeCredentials(getContext());
+                        //noinspection DataFlowIssue
+                        vm.getRootPassDataStore().storeCredentials(getContext());
+                        //noinspection DataFlowIssue
+                        vm.getShellPassDataStore().storeCredentials(getContext());
 
                     } catch (@NonNull final IOException | NoSuchAlgorithmException ignore) {
                         // we should never get here... flw
@@ -207,6 +211,38 @@ public class SettingsFragment
                     p.setDataStore(vm.getUserPassDataStore());
                 });
 
+        factory.header(R.string.pc_login_root, p -> {
+            p.setSummary(R.string.ps_login_root_info);
+        });
+        factory.text(UserPassStorage.PK_SSHD_AUTH_ROOT_USERNAME,
+                     R.string.pt_authorized_root_username,
+                     this::onRootUsernameChange, p -> {
+                    p.setIcon(R.drawable.supervisor_account_24px);
+                    p.setDataStore(vm.getRootPassDataStore());
+                });
+        factory.password(UserPassStorage.PK_SSHD_AUTH_ROOT_PASSWORD,
+                         R.string.pt_authorized_root_password,
+                         null, p -> {
+                    p.setIcon(R.drawable.password_24px);
+                    p.setDataStore(vm.getRootPassDataStore());
+                });
+
+        factory.header(R.string.pc_login_shell, p -> {
+            p.setSummary(R.string.ps_login_shell_info);
+        });
+        factory.text(UserPassStorage.PK_SSHD_AUTH_SHELL_USERNAME,
+                     R.string.pt_authorized_shell_username,
+                     this::onShellUsernameChange, p -> {
+                    p.setIcon(R.drawable.supervisor_account_24px);
+                    p.setDataStore(vm.getShellPassDataStore());
+                });
+        factory.password(UserPassStorage.PK_SSHD_AUTH_SHELL_PASSWORD,
+                         R.string.pt_authorized_shell_password,
+                         null, p -> {
+                    p.setIcon(R.drawable.password_24px);
+                    p.setDataStore(vm.getShellPassDataStore());
+                });
+
         // The title is translated, the summary is just the name of the file, untranslated
         factory.header(R.string.pc_key_management, p -> {
             p.setIcon(R.drawable.vpn_key_24px);
@@ -312,6 +348,10 @@ public class SettingsFragment
         // set the initial state of the password field
         settingsManager.setEnabled(vm.getUserPassDataStore().hasUsername(),
                                    UserPassStorage.PK_SSHD_AUTH_PASSWORD);
+        settingsManager.setEnabled(vm.getRootPassDataStore().hasUsername(),
+                                   UserPassStorage.PK_SSHD_AUTH_ROOT_PASSWORD);
+        settingsManager.setEnabled(vm.getShellPassDataStore().hasUsername(),
+                                   UserPassStorage.PK_SSHD_AUTH_SHELL_PASSWORD);
     }
 
     private boolean onRunModeChanged(@NonNull final Setting setting,
@@ -365,6 +405,26 @@ public class SettingsFragment
 
         final boolean hasUsername = username != null && !username.isBlank();
         settingsManager.setEnabled(hasUsername, UserPassStorage.PK_SSHD_AUTH_PASSWORD);
+
+        return true;
+    }
+
+    private boolean onRootUsernameChange(@NonNull final Setting setting,
+                                         @Nullable final Object newValue) {
+        final String username = (String) newValue;
+
+        final boolean hasUsername = username != null && !username.isBlank();
+        settingsManager.setEnabled(hasUsername, UserPassStorage.PK_SSHD_AUTH_ROOT_PASSWORD);
+
+        return true;
+    }
+
+    private boolean onShellUsernameChange(@NonNull final Setting setting,
+                                          @Nullable final Object newValue) {
+        final String username = (String) newValue;
+
+        final boolean hasUsername = username != null && !username.isBlank();
+        settingsManager.setEnabled(hasUsername, UserPassStorage.PK_SSHD_AUTH_SHELL_PASSWORD);
 
         return true;
     }

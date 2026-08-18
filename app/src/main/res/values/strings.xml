@@ -115,6 +115,26 @@
     <!-- Preference option -->
     <string name="pt_authorized_password">System password</string>
 
+    <!-- Preference category title -->
+    <string name="pc_login_root">Root user (su)</string>
+    <!-- Preference summary/info message. -->
+    <string name="ps_login_root_info">Optional. If set, logging in with this username/password
+        gets a shell escalated to root via \'su\' and its own home directory.</string>
+    <!-- Preference option -->
+    <string name="pt_authorized_root_username">Root username</string>
+    <!-- Preference option -->
+    <string name="pt_authorized_root_password">Root password</string>
+
+    <!-- Preference category title -->
+    <string name="pc_login_shell">Shell (ADB) user</string>
+    <!-- Preference summary/info message. -->
+    <string name="ps_login_shell_info">Optional. If set, logging in with this username/password
+        gets a shell escalated to the ADB \'shell\' UID via \'su\' and its own home directory.</string>
+    <!-- Preference option -->
+    <string name="pt_authorized_shell_username">Shell username</string>
+    <!-- Preference option -->
+    <string name="pt_authorized_shell_password">Shell password</string>
+
     <!-- Preference option -->
     <string name="pt_single_use_passwords">Single use passwords</string>
     <!-- Preference summary/info message. -->

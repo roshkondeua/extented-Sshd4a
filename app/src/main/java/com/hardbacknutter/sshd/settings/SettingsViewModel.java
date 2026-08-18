@@ -32,6 +32,10 @@ public class SettingsViewModel
 
     /** DataStore for user/password fields. */
     private UserPassStorage userPassDataStore;
+    /** DataStore for the optional root (su) user/password fields. */
+    private UserPassStorage rootPassDataStore;
+    /** DataStore for the optional shell (ADB) user/password fields. */
+    private UserPassStorage shellPassDataStore;
 
     void init(@NonNull final Context context) {
         if (userPassDataStore == null) {
@@ -39,7 +43,18 @@ public class SettingsViewModel
             // Force init if never set before
             Prefs.getHomePath(context, prefs);
 
-            userPassDataStore = new UserPassStorage(context);
+            userPassDataStore = new UserPassStorage(
+                    context, SshdSettings.ROLE_USER,
+                    UserPassStorage.PK_SSHD_AUTH_USERNAME,
+                    UserPassStorage.PK_SSHD_AUTH_PASSWORD);
+            rootPassDataStore = new UserPassStorage(
+                    context, SshdSettings.ROLE_ROOT,
+                    UserPassStorage.PK_SSHD_AUTH_ROOT_USERNAME,
+                    UserPassStorage.PK_SSHD_AUTH_ROOT_PASSWORD);
+            shellPassDataStore = new UserPassStorage(
+                    context, SshdSettings.ROLE_SHELL,
+                    UserPassStorage.PK_SSHD_AUTH_SHELL_USERNAME,
+                    UserPassStorage.PK_SSHD_AUTH_SHELL_PASSWORD);
         }
     }
 
@@ -73,6 +88,16 @@ public class SettingsViewModel
         return userPassDataStore;
     }
 
+    @NonNull
+    UserPassStorage getRootPassDataStore() {
+        return rootPassDataStore;
+    }
+
+    @NonNull
+    UserPassStorage getShellPassDataStore() {
+        return shellPassDataStore;
+    }
+
     boolean hasAtLeastOneAuthMethod(@NonNull final Context context) {
         final SharedPreferences prefs = Prefs.getSharedPreferences(context);
 
@@ -81,11 +106,8 @@ public class SettingsViewModel
             return true;
         }
 
-        final String[] userAndPassword = SshdSettings.readPasswordFile(context);
-        // both need to be not-empty
-        return userAndPassword != null && userAndPassword.length == 2
-               && userAndPassword[0] != null && !userAndPassword[0].isBlank()
-               && userAndPassword[1] != null && !userAndPassword[1].isBlank();
+        // any configured role (user/root/shell) with a valid username+hash counts
+        return !SshdSettings.readAllAuthorizedUsers(context).isEmpty();
     }
 
     /**
