@@ -703,8 +703,26 @@ void fill_passwd(const char* username) {
 	ses.authstate.pw_uid = 0;
 	ses.authstate.pw_gid = 0;
 	ses.authstate.pw_name = m_strdup(username);
-	ses.authstate.pw_dir = m_strdup(sshd4a_home_path);
-	ses.authstate.pw_shell = m_strdup(sshd4a_shell_exe);
+
+	{
+		char *role = sshd4a_get_role_for_user(username);
+		if (role != NULL && strcmp(role, SSHD4A_ROLE_ROOT) == 0) {
+			ses.authstate.pw_dir = m_strdup(SSHD4A_ROOT_HOME);
+			ses.authstate.pw_shell = m_strdup(SSHD4A_ROOT_SHELL_EXE);
+		} else if (role != NULL && strcmp(role, SSHD4A_ROLE_SHELL) == 0) {
+			ses.authstate.pw_dir = m_strdup(SSHD4A_SHELL_HOME);
+			ses.authstate.pw_shell = m_strdup(SSHD4A_SHELL_SHELL_EXE);
+		} else {
+			/* SSHD4A_ROLE_USER, or username not found in AUTHORIZED_USERS_FILE
+			 * (e.g. a single-use password login) -> app-sandbox defaults. */
+			ses.authstate.pw_dir = m_strdup(sshd4a_home_path);
+			ses.authstate.pw_shell = m_strdup(sshd4a_shell_exe);
+		}
+		if (role != NULL) {
+			free(role);
+		}
+	}
+
 	if (!ses.authstate.pw_passwd) {
 		ses.authstate.pw_passwd = m_strdup("!!");
 	}

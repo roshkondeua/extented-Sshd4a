@@ -18,7 +18,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -43,12 +45,21 @@ import java.util.stream.Collectors;
 public final class SshdSettings {
 
     /**
-     * File with the fixed user/password.
+     * File with the fixed user/password(s).
      * Stored in {@link SshdSettings#getDropbearDirectory}.
+     * <p>
+     * One line per configured role: "username:sha512base64hash[:role]"
+     * The role field is omitted for the (legacy/default) "user" role for
+     * backwards compatibility with the native code's parsing.
      * <p>
      * I should have named this "smurf_password" ...
      */
     public static final String AUTHORIZED_USERS = "master_password";
+
+    /** Role identifiers - MUST match the SSHD4A_ROLE_* defines in "cpp/jni-dropbear.h". */
+    public static final String ROLE_USER = "user";
+    public static final String ROLE_ROOT = "root";
+    public static final String ROLE_SHELL = "shell";
     /**
      * The traditional OpenSSH key file.
      * Stored in {@link SshdSettings#getDropbearDirectory}.
@@ -116,7 +127,8 @@ public final class SshdSettings {
     }
 
     /**
-     * Read the user + hashed password from the dropbear file.
+     * Read the user + hashed password for the (legacy) default "user" role.
+     * Kept for backwards API compatibility - delegates to {@link #readAuthorizedUser}.
      *
      * @param context Current context
      *
@@ -124,47 +136,66 @@ public final class SshdSettings {
      */
     @Nullable
     public static String[] readPasswordFile(@NonNull final Context context) {
-        final File path = getDropbearDirectory(context);
-        final File file = new File(path, AUTHORIZED_USERS);
-        final List<String> lines;
-        try {
-            lines = Files.readAllLines(file.toPath());
-            if (!lines.isEmpty()) {
-                final String[] up = lines.get(0).split(":");
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "readPasswordFile"
-                               + "|username: " + up[0]
-                               + "|password: " + up[1]);
-                }
-                return up;
-            }
-        } catch (@NonNull final IOException ignore) {
-            // ignore
-        }
-
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "readPasswordFile|null");
-        }
-        return null;
+        return readAuthorizedUser(context, ROLE_USER);
     }
 
     /**
-     * Write credentials to the dropbear file.
+     * Read the username + hashed password for a single role.
      *
-     * <pre>
-     * username pwUpdated   password      file
-     * Not-set  IGNORE      IGNORE        IGNORE      nop/DELETE
+     * @param context Current context
+     * @param role    one of {@link #ROLE_USER}, {@link #ROLE_ROOT}, {@link #ROLE_SHELL}
      *
-     * set      FALSE       Not-set       absent      nop
-     * set      FALSE       set           absent      nop
-     * set      FALSE       Not-set       present     upd user
-     * set      FALSE       set           present     upd user
+     * @return a String array with [0] the username, and [1] the hashed/base64 password,
+     *         or {@code null} if that role has no entry.
+     */
+    @Nullable
+    public static String[] readAuthorizedUser(@NonNull final Context context,
+                                              @NonNull final String role) {
+        final Map<String, String[]> all = readAllAuthorizedUsers(context);
+        final String[] up = all.get(role);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "readAuthorizedUser|role: " + role
+                       + "|username: " + (up != null ? up[0] : null));
+        }
+        return up;
+    }
+
+    /**
+     * Read all configured role entries from the AUTHORIZED_USERS file.
      *
-     * set      TRUE        Not-set       absent      nop
-     * set      TRUE        set           absent      write both
-     * set      TRUE        Not-set       present     DELETE
-     * set      TRUE        set           present     write both
-     * </pre>
+     * @param context Current context
+     *
+     * @return map of role -> [username, hashed/base64 password]; roles without
+     *         a valid line are simply absent from the map.
+     */
+    @NonNull
+    public static Map<String, String[]> readAllAuthorizedUsers(@NonNull final Context context) {
+        final Map<String, String[]> result = new LinkedHashMap<>();
+        final File path = getDropbearDirectory(context);
+        final File file = new File(path, AUTHORIZED_USERS);
+        try {
+            final List<String> lines = Files.readAllLines(file.toPath());
+            for (final String line : lines) {
+                if (line.isBlank()) {
+                    continue;
+                }
+                final String[] parts = line.split(":", 3);
+                if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
+                    continue;
+                }
+                final String role = parts.length >= 3 && !parts[2].isBlank()
+                        ? parts[2] : ROLE_USER;
+                result.put(role, new String[]{parts[0], parts[1]});
+            }
+        } catch (@NonNull final IOException ignore) {
+            // file does not exist (yet) -> empty map
+        }
+        return result;
+    }
+
+    /**
+     * Write credentials to the dropbear file for the (legacy) default "user" role.
+     * Kept for backwards API compatibility - delegates to {@link #writeAuthorizedUser}.
      *
      * @param context         Current context
      * @param username        (optional)
@@ -178,79 +209,123 @@ public final class SshdSettings {
                                          @Nullable final String username,
                                          final boolean passwordUpdated,
                                          @Nullable final String password)
-            throws IOException,
-                   NoSuchAlgorithmException {
-
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "writePasswordFile"
-                       + "|username: " + username
-                       + "|passwordUpdated: " + passwordUpdated
-                       + "|password: " + password);
-        }
-
-        final File path = getDropbearDirectory(context);
-        final File file = new File(path, AUTHORIZED_USERS);
-        final boolean fileExists = file.exists();
-
-        // below code is on purpose NOT simplified/combined for readability.
-
-        // If we have no username,
-        // Remove the credentials file.
-        if (username == null || username.isBlank()) {
-            if (fileExists) {
-                file.delete();
-            }
-            return;
-        }
-
-        // At this point, we always have a non-blank username.
-
-        // If the user explicitly removed the password,
-        // Silently drop the username.
-        // Remove the credentials file.
-        if (passwordUpdated && (password == null || password.isBlank())) {
-            if (fileExists) {
-                file.delete();
-            }
-            return;
-        }
-
-        // If the file does NOT exist, we silently drop the username, and we're done.
-        if (!passwordUpdated && !fileExists) {
-            return;
-        }
-
-        // If the user did NOT change the password
-        if (!passwordUpdated) {
-            // The file exists; we must update the username, but keep the previous password.
-            // Retrieve the previously hashed password,
-            final String[] previous = readPasswordFile(context);
-            // and rewrite the file using the new username
-            // and the retrieved hashed password.
-            // i.e. REPLACE username, KEEP previous password
-            if (previous != null && previous.length == 2) {
-                writeFile(file, username, previous[1]);
-                return;
-            } else {
-                // We failed to read from the existing file? This should not be happening
-                // unless for example the user manually fiddled with the file/permissions.
-                throw new IOException("Could not read previous user/password");
-            }
-        }
-
-        // We have a new user and an updated non-blank password.
-        // Create the file if it does not exist yet.
-        file.createNewFile();
-        // and write the user and hashed password to the file.
-        writeFile(file, username, hash(password));
+            throws IOException, NoSuchAlgorithmException {
+        writeAuthorizedUser(context, ROLE_USER, username, passwordUpdated, password);
     }
 
-    private static void writeFile(@NonNull final File file,
-                                  @NonNull final String username,
-                                  @NonNull final String hash)
+    /**
+     * Write (or remove) credentials for a single role, leaving the other
+     * roles' entries in the file untouched.
+     *
+     * <pre>
+     * username pwUpdated   password      role had entry?   action
+     * Not-set  IGNORE      IGNORE        IGNORE             remove role's entry (if any)
+     *
+     * set      FALSE       Not-set       no                 nop
+     * set      FALSE       set           no                 nop
+     * set      FALSE       Not-set       yes                update username, keep old hash
+     * set      FALSE       set           yes                update username, keep old hash
+     *
+     * set      TRUE        Not-set       no                 nop
+     * set      TRUE        set           no                 write both (new entry)
+     * set      TRUE        Not-set       yes                remove role's entry
+     * set      TRUE        set           yes                write both (new hash)
+     * </pre>
+     *
+     * @param context         Current context
+     * @param role            one of {@link #ROLE_USER}, {@link #ROLE_ROOT}, {@link #ROLE_SHELL}
+     * @param username        (optional)
+     * @param passwordUpdated flag
+     * @param password        (optional)
+     *
+     * @throws IOException              if reading or writing the file failed
+     * @throws NoSuchAlgorithmException if we couldn't hash the password (should never happen)
+     */
+    public static void writeAuthorizedUser(@NonNull final Context context,
+                                           @NonNull final String role,
+                                           @Nullable final String username,
+                                           final boolean passwordUpdated,
+                                           @Nullable final String password)
+            throws IOException, NoSuchAlgorithmException {
+
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "writeAuthorizedUser"
+                       + "|role: " + role
+                       + "|username: " + username
+                       + "|passwordUpdated: " + passwordUpdated);
+        }
+
+        final Map<String, String[]> all = readAllAuthorizedUsers(context);
+        final boolean hadEntry = all.containsKey(role);
+
+        // below code is on purpose NOT simplified/combined for readability;
+        // mirrors the original single-role truth table, now scoped per-role.
+
+        if (username == null || username.isBlank()) {
+            all.remove(role);
+            writeAllAuthorizedUsers(context, all);
+            return;
+        }
+
+        if (!passwordUpdated) {
+            if (!hadEntry) {
+                // nop - no previous entry, and the user isn't setting a password now either.
+                return;
+            }
+            // keep the previous hash, just update the username
+            final String[] previous = all.get(role);
+            all.put(role, new String[]{username, previous[1]});
+            writeAllAuthorizedUsers(context, all);
+            return;
+        }
+
+        // passwordUpdated == true
+        if (password == null || password.isBlank()) {
+            if (!hadEntry) {
+                // nop
+                return;
+            }
+            // explicit password removal -> drop this role's entry entirely
+            all.remove(role);
+            writeAllAuthorizedUsers(context, all);
+            return;
+        }
+
+        // new/updated non-blank password
+        all.put(role, new String[]{username, hash(password)});
+        writeAllAuthorizedUsers(context, all);
+    }
+
+    /**
+     * Rewrite the whole AUTHORIZED_USERS file from the given role->[user,hash] map.
+     * Deletes the file entirely if the map is empty.
+     */
+    private static void writeAllAuthorizedUsers(@NonNull final Context context,
+                                                @NonNull final Map<String, String[]> all)
             throws IOException {
+        final File path = getDropbearDirectory(context);
+        final File file = new File(path, AUTHORIZED_USERS);
+
+        if (all.isEmpty()) {
+            if (file.exists()) {
+                file.delete();
+            }
+            return;
+        }
+
+        file.createNewFile();
         try (FileWriter fw = new FileWriter(file)) {
-            fw.write((username + ":" + hash).toCharArray());
+            for (final Map.Entry<String, String[]> entry : all.entrySet()) {
+                final String role = entry.getKey();
+                final String[] up = entry.getValue();
+                // "user" role is written WITHOUT the role field for backwards
+                // compatibility (native code defaults missing field to ROLE_USER).
+                if (ROLE_USER.equals(role)) {
+                    fw.write(up[0] + ":" + up[1] + "\n");
+                } else {
+                    fw.write(up[0] + ":" + up[1] + ":" + role + "\n");
+                }
+            }
         }
     }
 

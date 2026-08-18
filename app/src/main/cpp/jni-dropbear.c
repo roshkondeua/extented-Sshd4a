@@ -163,7 +163,7 @@ void sshd4a_generate_single_use_password(char **gen_pass) {
 }
 
 int sshd4a_enable_password_file() {
-    /* 3: u:p
+    /* 3: u:p (role field is optional)
      * In reality the Java UI takes care of minimum length.
      * BUT.... if the user opens an ssh shell,
      * they can of course manually edit/replace the password file.
@@ -177,11 +177,17 @@ int sshd4a_enable_password_file() {
 }
 
 /*
- * Get the username and password from the master-password file.
+ * Search the AUTHORIZED_USERS_FILE for a line matching the given username.
+ * File format (one user per line): "username:sha512base64hash:role"
+ * The role field is optional for backwards compatibility; missing -> SSHD4A_ROLE_USER.
  *
- * user/password must be m_free'd by the caller.
+ * password (may be NULL if not found) and role (never NULL if found) must be
+ * free()'d by the caller (they come from strdup, not m_strdup - matches the
+ * previous behaviour of this function).
+ *
+ * Returns 1 if a line for this username was found, 0 otherwise.
  */
-int sshd4a_get_user_password(char **user, char **password) {
+int sshd4a_find_user(const char *username, char **password, char **role) {
     char *fn = sshd4a_conf_file(AUTHORIZED_USERS_FILE);
     FILE *f = fopen(fn, "r");
     m_free(fn); /* match m_malloc from sshd4a_conf_file */
@@ -189,33 +195,53 @@ int sshd4a_get_user_password(char **user, char **password) {
         return 0;
     }
 
-    int ret_value = 0;
-
+    int found = 0;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
 
-    read = getline(&line, &len, f);
-    if (read > 0 && strstr(line, ":") != NULL) {
-        char *p;
+    while ((read = getline(&line, &len, f)) > 0) {
+        /* strip trailing newline(s) */
+        while (read > 0 && (line[read - 1] == '\n' || line[read - 1] == '\r')) {
+            line[--read] = '\0';
+        }
+        if (read == 0 || strstr(line, ":") == NULL) {
+            continue;
+        }
+
         char *saveptr;
-
-        p = strtok_r(line, ":", &saveptr);
-        if (p != NULL) {
-            *user = strdup(p);
+        char *field_user = strtok_r(line, ":", &saveptr);
+        if (field_user == NULL || strcmp(field_user, username) != 0) {
+            continue;
         }
 
-        p = strtok_r(NULL, ":", &saveptr);
-        if (p != NULL) {
-            *password = strdup(p);
-        }
+        char *field_pass = strtok_r(NULL, ":", &saveptr);
+        char *field_role = strtok_r(NULL, ":", &saveptr);
 
-        ret_value = 1;
+        if (field_pass != NULL) {
+            *password = strdup(field_pass);
+        }
+        *role = strdup(field_role != NULL ? field_role : SSHD4A_ROLE_USER);
+
+        found = 1;
+        break;
     }
-    /* match realloc() from getline(..) */
+
     free(line);
     fclose(f);
-    return ret_value;
+    return found;
+}
+
+char *sshd4a_get_role_for_user(const char *username) {
+    char *password = NULL;
+    char *role = NULL;
+    if (sshd4a_find_user(username, &password, &role)) {
+        if (password) {
+            free(password);
+        }
+        return role; /* caller frees */
+    }
+    return strdup(SSHD4A_ROLE_USER);
 }
 
 /*
@@ -224,14 +250,13 @@ int sshd4a_get_user_password(char **user, char **password) {
 void sshd4a_svr_auth_password(const char *password, unsigned int passwordlen,
                               char **passwdcrypt, char **testcrypt) {
 
-    char *sshd4a_username = NULL;
     char *sshd4a_password = NULL;
-    int has_password_file = sshd4a_get_user_password(&sshd4a_username, &sshd4a_password);
+    char *sshd4a_role = NULL;
+    int has_user = sshd4a_find_user(ses.authstate.username, &sshd4a_password, &sshd4a_role);
 
-    /* If we have an AUTHORIZED_USERS_FILE user/pass */
-    if (has_password_file && *sshd4a_username && *sshd4a_password
-        /* and the user name matches */
-        && strcmp(sshd4a_username, ses.authstate.username) == 0) {
+    /* If the authenticating username has a line in the AUTHORIZED_USERS_FILE
+     * with a non-empty password hash... */
+    if (has_user && sshd4a_password && *sshd4a_password) {
         /* then we will expect to receive that password. */
         ses.authstate.pw_passwd = m_strdup(sshd4a_password);
         *passwdcrypt = ses.authstate.pw_passwd;
@@ -256,7 +281,7 @@ void sshd4a_svr_auth_password(const char *password, unsigned int passwordlen,
             *testcrypt = NULL;
         }
     } else {
-        /* Not the password from the authorized_users file, we'll test for a single use password */
+        /* Not a known username/password from the authorized_users file, we'll test for a single use password */
         *passwdcrypt = ses.authstate.pw_passwd;
 
         if (passwordlen == strlen(password)) {
@@ -267,12 +292,11 @@ void sshd4a_svr_auth_password(const char *password, unsigned int passwordlen,
         }
     }
 
-    /* match strdup malloc's from sshd4a_get_user_password */
-    if (sshd4a_username) {
-        m_free(sshd4a_username);
-    }
     if (sshd4a_password) {
-        m_free(sshd4a_password);
+        free(sshd4a_password);
+    }
+    if (sshd4a_role) {
+        free(sshd4a_role);
     }
 }
 
