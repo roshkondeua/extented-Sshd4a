@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name"
-            translatable="false">Sshd4a</string>
+            translatable="false">Sshd4a extented</string>
     <string name="service_name"
-            translatable="false">Sshd4a</string>
+            translatable="false">Sshd4a extented</string>
 
     <!-- Preference category title -->
     <string name="pc_dropbear"
