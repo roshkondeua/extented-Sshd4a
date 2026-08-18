@@ -209,6 +209,13 @@ public class SettingsFragment
                     // but  will return the current unencrypted password
                     // after the user has entered it once during this settings-session
                     p.setDataStore(vm.getUserPassDataStore());
+                    // The library's default "not set" summary logic looks at that
+                    // always-null runtime value, so it would show "Not set" even when
+                    // a password IS persisted. Override with a check against the
+                    // actually-persisted state instead.
+                    p.setSummaryProvider(ctx -> vm.getUserPassDataStore().hasUsername()
+                            ? ctx.getString(R.string.pref_password_set)
+                            : ctx.getString(R.string.pref_not_set));
                 });
 
         factory.header(R.string.pc_login_root, p -> {
@@ -225,6 +232,9 @@ public class SettingsFragment
                          null, p -> {
                     p.setIcon(R.drawable.password_24px);
                     p.setDataStore(vm.getRootPassDataStore());
+                    p.setSummaryProvider(ctx -> vm.getRootPassDataStore().hasUsername()
+                            ? ctx.getString(R.string.pref_password_set)
+                            : ctx.getString(R.string.pref_not_set));
                 });
 
         factory.header(R.string.pc_login_shell, p -> {
@@ -241,6 +251,17 @@ public class SettingsFragment
                          null, p -> {
                     p.setIcon(R.drawable.password_24px);
                     p.setDataStore(vm.getShellPassDataStore());
+                    p.setSummaryProvider(ctx -> vm.getShellPassDataStore().hasUsername()
+                            ? ctx.getString(R.string.pref_password_set)
+                            : ctx.getString(R.string.pref_not_set));
+                });
+
+        factory.header(R.string.pc_su_style);
+        factory.singleChoice(Prefs.SU_COMMAND_STYLE, R.string.pt_su_command_style,
+                             R.array.pe_su_command_style,
+                             R.array.pv_su_command_style,
+                             null, p -> {
+                    p.setSelectedIndex(0);
                 });
 
         // The title is translated, the summary is just the name of the file, untranslated

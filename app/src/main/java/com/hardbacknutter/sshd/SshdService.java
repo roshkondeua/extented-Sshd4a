@@ -230,6 +230,12 @@ public class SshdService
         // kill any stale ssh process lingering around
         stopSshd();
 
+        // Fire-and-forget: create the shared /data/local/tmp/Sshd4a directory tree
+        // and su wrapper scripts needed by the root/shell login roles (if configured).
+        // Deliberately NOT blocking dropbear startup on this - a root/shell login
+        // attempted in the first second or two after boot might simply need a retry.
+        new Thread(() -> RootProvisioner.provisionIfNeeded(this), "RootProvisioner").start();
+
         // See all options: cpp/dropbear/src/svr-runopts.c
         final List<String> argList = new ArrayList<>();
         // the command to run; i.e. args[0]

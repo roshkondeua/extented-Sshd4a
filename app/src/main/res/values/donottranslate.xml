@@ -26,6 +26,16 @@
         <item>2</item>
     </string-array>
 
+    <!-- ListPreference -->
+    <string-array name="pe_su_command_style">
+        <item>@string/pe_su_style_positional</item>
+        <item>@string/pe_su_style_dash_c</item>
+    </string-array>
+    <string-array name="pv_su_command_style">
+        <item>positional</item>
+        <item>dash_c</item>
+    </string-array>
+
     <string name="lbl_github"
             translatable="false">GitHub</string>
     <string name="github_project_url"

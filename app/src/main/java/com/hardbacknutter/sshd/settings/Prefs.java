@@ -50,6 +50,18 @@ public final class Prefs {
     /** boolean. */
     static final String ENABLE_PUBLIC_KEY_LOGIN = "sshd.enable.publickey.login";
 
+    /**
+     * Which `su` invocation style to use when generating the root/shell login
+     * shell wrappers (see {@link com.hardbacknutter.sshd.RootProvisioner}).
+     * Some (mostly older/32-bit) su binaries don't support the standard
+     * "su -c cmd" form and need the positional "su UID sh -c cmd" form instead.
+     */
+    static final String SU_COMMAND_STYLE = "sshd.su.command.style";
+    public static final String SU_STYLE_POSITIONAL = "positional";
+    public static final String SU_STYLE_DASH_C = "dash_c";
+    /** Default matches the device this fork was originally built/tested on. */
+    static final String DEFAULT_SU_COMMAND_STYLE = SU_STYLE_POSITIONAL;
+
     /** The url from which the user last imported keys. */
     static final String IMPORT_URL = "import.url";
 
@@ -276,6 +288,19 @@ public final class Prefs {
             shellCmd = DEFAULT_SHELL;
         }
         return shellCmd;
+    }
+
+    /**
+     * The configured `su` invocation style; see {@link #SU_COMMAND_STYLE}.
+     *
+     * @param prefs to read from
+     *
+     * @return one of {@link #SU_STYLE_POSITIONAL} or {@link #SU_STYLE_DASH_C}
+     */
+    @NonNull
+    public static String getSuCommandStyle(@NonNull final SharedPreferences prefs) {
+        final String style = prefs.getString(SU_COMMAND_STYLE, DEFAULT_SU_COMMAND_STYLE);
+        return style == null ? DEFAULT_SU_COMMAND_STYLE : style;
     }
 
     /**

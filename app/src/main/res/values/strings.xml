@@ -135,6 +135,15 @@
     <!-- Preference option -->
     <string name="pt_authorized_shell_password">Shell password</string>
 
+    <!-- Preference category title -->
+    <string name="pc_su_style">Root/Shell login method (su)</string>
+    <!-- Preference option -->
+    <string name="pt_su_command_style">\'su\' command style</string>
+    <!-- Preference value -->
+    <string name="pe_su_style_positional">su UID sh -c "cmd" (older/32-bit su)</string>
+    <!-- Preference value -->
+    <string name="pe_su_style_dash_c">su -c "cmd" (standard/modern su)</string>
+
     <!-- Preference option -->
     <string name="pt_single_use_passwords">Single use passwords</string>
     <!-- Preference summary/info message. -->
@@ -166,6 +175,7 @@
     <string name="action_help">Help</string>
     <!-- [VERIFIED] -->
     <string name="pref_not_set">Not set</string>
+    <string name="pref_password_set">••••••••</string>
 
     <!-- e.g. some setting is "Enabled", switched on.
         Also used for the Quick settings tile. -->
