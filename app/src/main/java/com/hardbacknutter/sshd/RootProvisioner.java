@@ -24,7 +24,7 @@ import com.hardbacknutter.sshd.settings.Prefs;
  * denied, we simply log a warning. The regular "user" role login is completely
  * unaffected either way.
  */
-final class RootProvisioner {
+public final class RootProvisioner {
 
     private static final String TAG = "RootProvisioner";
 
@@ -54,11 +54,15 @@ final class RootProvisioner {
      * @return {@code true} on success or if nothing needed to be done;
      *         {@code false} if provisioning was needed but failed
      */
-    static boolean provisionIfNeeded(@NonNull final Context context) {
+    public static boolean provisionIfNeeded(@NonNull final Context context) {
         final boolean needRoot =
                 SshdSettings.readAuthorizedUser(context, SshdSettings.ROLE_ROOT) != null;
         final boolean needShell =
                 SshdSettings.readAuthorizedUser(context, SshdSettings.ROLE_SHELL) != null;
+
+        // NOT gated behind BuildConfig.DEBUG - this is cheap and we need it visible
+        // in release builds too while diagnosing on-device.
+        Log.i(TAG, "provisionIfNeeded|ENTER|needRoot=" + needRoot + "|needShell=" + needShell);
 
         if (!needRoot && !needShell) {
             // nothing configured -> nothing to provision, and no need to ever invoke su
@@ -86,12 +90,10 @@ final class RootProvisioner {
         script.append("exit\n");
 
         final boolean ok = runAsSu(script.toString());
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "provisionIfNeeded|needRoot=" + needRoot
-                       + "|needShell=" + needShell
-                       + "|style=" + style
-                       + "|ok=" + ok);
-        }
+        Log.i(TAG, "provisionIfNeeded|DONE|needRoot=" + needRoot
+                   + "|needShell=" + needShell
+                   + "|style=" + style
+                   + "|ok=" + ok);
         return ok;
     }
 

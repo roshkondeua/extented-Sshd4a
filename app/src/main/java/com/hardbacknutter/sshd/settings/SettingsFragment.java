@@ -35,6 +35,7 @@ import com.hardbacknutter.prefslib.SettingsManager;
 import com.hardbacknutter.prefslib.SharedPreferencesDataStore;
 import com.hardbacknutter.prefslib.StringSetting;
 import com.hardbacknutter.sshd.R;
+import com.hardbacknutter.sshd.RootProvisioner;
 import com.hardbacknutter.sshd.SshdSettings;
 import com.hardbacknutter.util.theme.NightMode;
 
@@ -70,6 +71,13 @@ public class SettingsFragment
                     }
 
                     if (vm.hasAtLeastOneAuthMethod(getContext())) {
+                        // Ensure root/shell home dirs + su wrapper scripts exist right away -
+                        // don't make the user manually restart the service after configuring
+                        // credentials for the very first time.
+                        final Context appContext = getContext().getApplicationContext();
+                        new Thread(() -> RootProvisioner.provisionIfNeeded(appContext),
+                                  "RootProvisioner").start();
+
                         getParentFragmentManager().popBackStack();
                     } else {
                         new MaterialAlertDialogBuilder(getContext())

@@ -1,6 +1,7 @@
 package com.hardbacknutter.sshd.settings;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,6 +69,11 @@ class UserPassStorage
             currentUsername = up[0];
             currentPassword = null;
         }
+        // TEMP diagnostic logging (not gated behind BuildConfig.DEBUG on purpose) -
+        // remove once the "Not set after re-entering Settings" bug is confirmed fixed.
+        Log.i("UserPassStorage", "<init>|role=" + role
+                                 + "|foundOnDisk=" + (up != null)
+                                 + "|currentUsername=" + currentUsername);
     }
 
     /**
@@ -76,7 +82,11 @@ class UserPassStorage
      * @return flag
      */
     boolean hasUsername() {
-        return currentUsername != null && !currentUsername.isBlank();
+        final boolean result = currentUsername != null && !currentUsername.isBlank();
+        Log.i("UserPassStorage", "hasUsername|role=" + role
+                                 + "|currentUsername=" + currentUsername
+                                 + "|result=" + result);
+        return result;
     }
 
     /**
