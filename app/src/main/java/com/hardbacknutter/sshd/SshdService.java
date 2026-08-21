@@ -234,6 +234,7 @@ public class SshdService
         // and su wrapper scripts needed by the root/shell login roles (if configured).
         // Deliberately NOT blocking dropbear startup on this - a root/shell login
         // attempted in the first second or two after boot might simply need a retry.
+        FileLogger.log(this, TAG, "startSshd|launching RootProvisioner thread");
         new Thread(() -> RootProvisioner.provisionIfNeeded(this), "RootProvisioner").start();
 
         // See all options: cpp/dropbear/src/svr-runopts.c

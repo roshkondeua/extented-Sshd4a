@@ -144,6 +144,17 @@
     <!-- Preference value -->
     <string name="pe_su_style_dash_c">su -c "cmd" (standard/modern su)</string>
 
+    <!-- Preference category title -->
+    <string name="pc_diagnostics">Diagnostics (temporary)</string>
+    <!-- Preference option -->
+    <string name="pt_enable_file_logging">Write debug log to file</string>
+    <!-- Preference summary/info message. -->
+    <string name="ps_enable_file_logging_info">Temporary, for troubleshooting only. Appends a
+        plain-text log to \'sshd4a-debug.log\' in the directory below (created via su if the
+        app itself can\'t write there directly). Turn this back off once done.</string>
+    <!-- Preference option -->
+    <string name="pt_file_logging_dir">Log directory path</string>
+
     <!-- Preference option -->
     <string name="pt_single_use_passwords">Single use passwords</string>
     <!-- Preference summary/info message. -->

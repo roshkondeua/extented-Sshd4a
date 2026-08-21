@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import com.hardbacknutter.prefslib.SettingsDataStore;
+import com.hardbacknutter.sshd.FileLogger;
 import com.hardbacknutter.sshd.SshdSettings;
 
 /**
@@ -41,6 +42,8 @@ class UserPassStorage
     private final String usernameKey;
     @NonNull
     private final String passwordKey;
+    @NonNull
+    private final Context appContext;
 
     @Nullable
     private String currentUsername;
@@ -63,6 +66,7 @@ class UserPassStorage
         this.role = role;
         this.usernameKey = usernameKey;
         this.passwordKey = passwordKey;
+        this.appContext = context.getApplicationContext();
 
         final String[] up = SshdSettings.readAuthorizedUser(context, role);
         if (up != null) {
@@ -74,6 +78,9 @@ class UserPassStorage
         Log.i("UserPassStorage", "<init>|role=" + role
                                  + "|foundOnDisk=" + (up != null)
                                  + "|currentUsername=" + currentUsername);
+        FileLogger.log(appContext, "UserPassStorage", "<init>|role=" + role
+                                                        + "|foundOnDisk=" + (up != null)
+                                                        + "|currentUsername=" + currentUsername);
     }
 
     /**
@@ -86,6 +93,9 @@ class UserPassStorage
         Log.i("UserPassStorage", "hasUsername|role=" + role
                                  + "|currentUsername=" + currentUsername
                                  + "|result=" + result);
+        FileLogger.log(appContext, "UserPassStorage", "hasUsername|role=" + role
+                                                        + "|currentUsername=" + currentUsername
+                                                        + "|result=" + result);
         return result;
     }
 
@@ -96,6 +106,12 @@ class UserPassStorage
      */
     void storeCredentials(@NonNull final Context context)
             throws IOException, NoSuchAlgorithmException {
+        Log.i("UserPassStorage", "storeCredentials|role=" + role
+                                 + "|currentUsername=" + currentUsername
+                                 + "|passwordUpdated=" + passwordUpdated);
+        FileLogger.log(appContext, "UserPassStorage", "storeCredentials|role=" + role
+                                                        + "|currentUsername=" + currentUsername
+                                                        + "|passwordUpdated=" + passwordUpdated);
         SshdSettings.writeAuthorizedUser(context, role, currentUsername,
                                          passwordUpdated, currentPassword);
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
@@ -61,6 +62,12 @@ public final class Prefs {
     public static final String SU_STYLE_DASH_C = "dash_c";
     /** Default matches the device this fork was originally built/tested on. */
     static final String DEFAULT_SU_COMMAND_STYLE = SU_STYLE_POSITIONAL;
+
+    /**
+     * TEMPORARY diagnostic file logging - see {@link com.hardbacknutter.sshd.FileLogger}.
+     */
+    static final String ENABLE_FILE_LOGGING = "debug.file.logging.enabled";
+    static final String FILE_LOGGING_DIR = "debug.file.logging.dir";
 
     /** The url from which the user last imported keys. */
     static final String IMPORT_URL = "import.url";
@@ -301,6 +308,23 @@ public final class Prefs {
     public static String getSuCommandStyle(@NonNull final SharedPreferences prefs) {
         final String style = prefs.getString(SU_COMMAND_STYLE, DEFAULT_SU_COMMAND_STYLE);
         return style == null ? DEFAULT_SU_COMMAND_STYLE : style;
+    }
+
+    /**
+     * Is temporary file-based debug logging enabled?
+     * See {@link com.hardbacknutter.sshd.FileLogger}.
+     */
+    public static boolean isFileLoggingEnabled(@NonNull final SharedPreferences prefs) {
+        return prefs.getBoolean(ENABLE_FILE_LOGGING, false);
+    }
+
+    /**
+     * The manually-entered directory to write the debug log file to, or
+     * {@code null}/blank if not configured.
+     */
+    @Nullable
+    public static String getFileLoggingDir(@NonNull final SharedPreferences prefs) {
+        return prefs.getString(FILE_LOGGING_DIR, null);
     }
 
     /**

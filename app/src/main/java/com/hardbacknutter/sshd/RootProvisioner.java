@@ -63,6 +63,8 @@ public final class RootProvisioner {
         // NOT gated behind BuildConfig.DEBUG - this is cheap and we need it visible
         // in release builds too while diagnosing on-device.
         Log.i(TAG, "provisionIfNeeded|ENTER|needRoot=" + needRoot + "|needShell=" + needShell);
+        FileLogger.log(context, TAG, "provisionIfNeeded|ENTER|needRoot=" + needRoot
+                                     + "|needShell=" + needShell);
 
         if (!needRoot && !needShell) {
             // nothing configured -> nothing to provision, and no need to ever invoke su
@@ -89,11 +91,15 @@ public final class RootProvisioner {
         }
         script.append("exit\n");
 
-        final boolean ok = runAsSu(script.toString());
+        final boolean ok = runAsSu(context, script.toString());
         Log.i(TAG, "provisionIfNeeded|DONE|needRoot=" + needRoot
                    + "|needShell=" + needShell
                    + "|style=" + style
                    + "|ok=" + ok);
+        FileLogger.log(context, TAG, "provisionIfNeeded|DONE|needRoot=" + needRoot
+                                     + "|needShell=" + needShell
+                                     + "|style=" + style
+                                     + "|ok=" + ok);
         return ok;
     }
 
@@ -155,7 +161,8 @@ public final class RootProvisioner {
      *
      * @return {@code true} if su exited with status 0
      */
-    private static boolean runAsSu(@NonNull final String script) {
+    private static boolean runAsSu(@NonNull final Context context,
+                                   @NonNull final String script) {
         try {
             final Process process = new ProcessBuilder("su")
                     .redirectErrorStream(true)
@@ -177,14 +184,17 @@ public final class RootProvisioner {
             } else if (BuildConfig.DEBUG) {
                 Log.d(TAG, "runAsSu|exit=0|output=" + output);
             }
+            FileLogger.log(context, TAG, "runAsSu|exit=" + exit + "|output=" + output);
             return exit == 0;
 
         } catch (@NonNull final IOException e) {
             Log.w(TAG, "runAsSu|failed - no su binary, or root access denied", e);
+            FileLogger.log(context, TAG, "runAsSu|IOException|" + e);
             return false;
         } catch (@NonNull final InterruptedException e) {
             Thread.currentThread().interrupt();
             Log.w(TAG, "runAsSu|interrupted", e);
+            FileLogger.log(context, TAG, "runAsSu|InterruptedException|" + e);
             return false;
         }
     }

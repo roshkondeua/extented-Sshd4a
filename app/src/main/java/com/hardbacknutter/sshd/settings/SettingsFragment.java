@@ -272,6 +272,16 @@ public class SettingsFragment
                     p.setSelectedIndex(0);
                 });
 
+        factory.header(R.string.pc_diagnostics, p -> {
+            p.setSummary(R.string.ps_enable_file_logging_info);
+        });
+        factory.bool(Prefs.ENABLE_FILE_LOGGING,
+                     R.string.pt_enable_file_logging,
+                     null, null);
+        factory.text(Prefs.FILE_LOGGING_DIR,
+                     R.string.pt_file_logging_dir,
+                     null, null);
+
         // The title is translated, the summary is just the name of the file, untranslated
         factory.header(R.string.pc_key_management, p -> {
             p.setIcon(R.drawable.vpn_key_24px);
