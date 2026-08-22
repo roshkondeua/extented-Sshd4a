@@ -83,6 +83,9 @@ public final class RootProvisioner {
         if (needShell) {
             script.append("echo SSHD4A_STEP mkdir_shell_home\n");
             script.append("mkdir -p '").append(SHELL_HOME).append("'\n");
+            // Owned by root:root by default (created via su) - the real "shell" uid (2000)
+            // can't cd/write there otherwise, even after correctly escalating via su.
+            script.append("chown 2000:2000 '").append(SHELL_HOME).append("'\n");
             script.append("chmod 700 '").append(SHELL_HOME).append("'\n");
         }
 

@@ -889,7 +889,13 @@ target_include_directories(librsync.so PRIVATE
 # executables shipped inside the APK's nativeLibraryDir, rather than a script
 # written to disk at runtime).
 add_executable(libsuroot.so src/main/cpp/su-shell/su-login-shell.c)
-target_compile_definitions(libsuroot.so PRIVATE SSHD4A_SU_TARGET_UID=0)
+target_compile_definitions(libsuroot.so PRIVATE
+        SSHD4A_SU_TARGET_UID=0
+        SSHD4A_HOME_DIR="/data/local/tmp/Sshd4a/root/home"
+        )
 
 add_executable(libsushell.so src/main/cpp/su-shell/su-login-shell.c)
-target_compile_definitions(libsushell.so PRIVATE SSHD4A_SU_TARGET_UID=2000)
+target_compile_definitions(libsushell.so PRIVATE
+        SSHD4A_SU_TARGET_UID=2000
+        SSHD4A_HOME_DIR="/data/local/tmp/Sshd4a/shell/home"
+        )

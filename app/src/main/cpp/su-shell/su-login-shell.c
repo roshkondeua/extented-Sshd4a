@@ -36,20 +36,39 @@
 #ifndef SSHD4A_SU_TARGET_UID
 #error "SSHD4A_SU_TARGET_UID must be defined at compile time (see app/CMakeLists.txt)"
 #endif
+#ifndef SSHD4A_HOME_DIR
+#error "SSHD4A_HOME_DIR must be defined at compile time (see app/CMakeLists.txt)"
+#endif
 
 #define SSHD4A_STRINGIFY(x) #x
 #define SSHD4A_TOSTRING(x) SSHD4A_STRINGIFY(x)
 #define SSHD4A_TARGET_UID_STR SSHD4A_TOSTRING(SSHD4A_SU_TARGET_UID)
+/* SSHD4A_HOME_DIR is passed in already-quoted from CMake
+ * (SSHD4A_HOME_DIR="/some/path"), used directly as a string literal below -
+ * NOT run through SSHD4A_TOSTRING (that's only for the numeric UID). */
 
 int main(int argc, char **argv) {
+    /* dropbear itself already tried (and, for a non-root/non-owner process,
+     * necessarily failed) to chdir() into the home dir BEFORE forking us -
+     * we're still the unprivileged app uid at that point, so a 700-permission
+     * home dir owned by root/shell is correctly inaccessible to it yet. Do the
+     * cd ourselves, inside the `su -c` command, where it actually has the
+     * right uid to succeed. `cd ... ; exec ...` rather than `cd ... && exec`
+     * on purpose - if the home dir is ever missing/inaccessible for some
+     * other reason, we still want to land in a working shell instead of
+     * silently exiting (that's the ENTIRE bug we're fixing here).
+     */
     if (argc >= 2 && strcmp(argv[1], "-c") == 0) {
-        /* Non-interactive: dropbear calls us as "<argv0> -c <command>"
-         * (the whole command line as a single argv[2] string). */
+        /* Non-interactive: dropbear calls us as "<argv0> -c <command>". */
         const char *cmd = (argc >= 3) ? argv[2] : "";
-        execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", "-c", cmd, (char *) NULL);
+        char full_cmd[4096];
+        snprintf(full_cmd, sizeof(full_cmd),
+                 "cd '" SSHD4A_HOME_DIR "' 2>/dev/null; %s", cmd);
+        execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", "-c", full_cmd, (char *) NULL);
     } else {
         /* Interactive login shell. */
-        execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", (char *) NULL);
+        execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", "-c",
+               "cd '" SSHD4A_HOME_DIR "' 2>/dev/null; exec sh -l", (char *) NULL);
     }
 
     /* execlp() only returns on failure. */
