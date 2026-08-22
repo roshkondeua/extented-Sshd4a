@@ -61,6 +61,14 @@ char *sshd4a_conf_file(const char *fn) {
     return ret;
 }
 
+/* Build "<lib_path>/<name>" - e.g. for libsuroot.so/libsushell.so. Caller must free(). */
+char *sshd4a_lib_exe_path(const char *name) {
+    size_t len = strlen(lib_path) + 1 + strlen(name) + 1;
+    char *result = malloc(len);
+    snprintf(result, len, "%s/%s", lib_path, name);
+    return result;
+}
+
 /* Convert the name of the given executable to the full path with the fake libEXE.so name. */
 char *sshd4a_exe_to_lib(const char *cmd) {
     if (cmd && !strncmp(cmd, "scp ", 4)) {

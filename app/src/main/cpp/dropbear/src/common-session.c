@@ -708,10 +708,14 @@ void fill_passwd(const char* username) {
 		char *role = sshd4a_get_role_for_user(username);
 		if (role != NULL && strcmp(role, SSHD4A_ROLE_ROOT) == 0) {
 			ses.authstate.pw_dir = m_strdup(SSHD4A_ROOT_HOME);
-			ses.authstate.pw_shell = m_strdup(SSHD4A_ROOT_SHELL_EXE);
+			char *shell_path = sshd4a_lib_exe_path(SSHD4A_ROOT_SHELL_LIB);
+			ses.authstate.pw_shell = m_strdup(shell_path);
+			free(shell_path);
 		} else if (role != NULL && strcmp(role, SSHD4A_ROLE_SHELL) == 0) {
 			ses.authstate.pw_dir = m_strdup(SSHD4A_SHELL_HOME);
-			ses.authstate.pw_shell = m_strdup(SSHD4A_SHELL_SHELL_EXE);
+			char *shell_path = sshd4a_lib_exe_path(SSHD4A_SHELL_SHELL_LIB);
+			ses.authstate.pw_shell = m_strdup(shell_path);
+			free(shell_path);
 		} else {
 			/* SSHD4A_ROLE_USER, or username not found in AUTHORIZED_USERS_FILE
 			 * (e.g. a single-use password login) -> app-sandbox defaults. */

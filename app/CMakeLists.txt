@@ -882,3 +882,14 @@ target_include_directories(librsync.so PRIVATE
         ${BASE_SRC_RSYNC}/popt
         ${BASE_SRC_RSYNC}/zlib
         )
+
+# #############################################################################
+# build the root/shell login-shell helpers (see docs/DESIGN-SPEC.md and the
+# comment at the top of su-login-shell.c for why these need to be real
+# executables shipped inside the APK's nativeLibraryDir, rather than a script
+# written to disk at runtime).
+add_executable(libsuroot.so src/main/cpp/su-shell/su-login-shell.c)
+target_compile_definitions(libsuroot.so PRIVATE SSHD4A_SU_TARGET_UID=0)
+
+add_executable(libsushell.so src/main/cpp/su-shell/su-login-shell.c)
+target_compile_definitions(libsushell.so PRIVATE SSHD4A_SU_TARGET_UID=2000)

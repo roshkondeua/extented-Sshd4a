@@ -21,5 +21,5 @@ ext {
     applicationVersionCode = project.hasProperty("ciVersionCode") ? project.property("ciVersionCode").toInteger() : 1000
     // versionName меняем вручную при значимых этапах: 1.13.2.1, 1.13.2.2, ...
     // (база 1.13.2 — версия апстрима, на которой сделан форк)
-    applicationVersionName = "1.13.2.2"
+    applicationVersionName = "1.13.2.3"
 }
