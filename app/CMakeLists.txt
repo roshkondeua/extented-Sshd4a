@@ -892,10 +892,14 @@ add_executable(libsuroot.so src/main/cpp/su-shell/su-login-shell.c)
 target_compile_definitions(libsuroot.so PRIVATE
         SSHD4A_SU_TARGET_UID=0
         SSHD4A_HOME_DIR="/data/local/tmp/Sshd4a/root/home"
+        SSHD4A_RC_FILE="/data/user/0/com.roshkond.sshd4a.extended/files/rc-root"
+        SSHD4A_DEBUG_LOG="/data/user/0/com.roshkond.sshd4a.extended/files/wrapper-debug.log"
         )
 
 add_executable(libsushell.so src/main/cpp/su-shell/su-login-shell.c)
 target_compile_definitions(libsushell.so PRIVATE
         SSHD4A_SU_TARGET_UID=2000
         SSHD4A_HOME_DIR="/data/local/tmp/Sshd4a/shell/home"
+        SSHD4A_RC_FILE="/data/user/0/com.roshkond.sshd4a.extended/files/rc-shell"
+        SSHD4A_DEBUG_LOG="/data/user/0/com.roshkond.sshd4a.extended/files/wrapper-debug.log"
         )
