@@ -66,9 +66,17 @@ int main(int argc, char **argv) {
                  "cd '" SSHD4A_HOME_DIR "' 2>/dev/null; %s", cmd);
         execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", "-c", full_cmd, (char *) NULL);
     } else {
-        /* Interactive login shell. */
+        /* Interactive login shell.
+         * Deliberately NOT using "sh -l" here (login-shell flag) - it makes
+         * the shell try to grab session/tty leadership via job-control setup,
+         * which fails ("No controlling tty"/"won't have full job control")
+         * since it's not actually the pty's session leader at this point in
+         * the exec chain. Plain "sh" still inherits the correct cwd from the
+         * `cd` just before it (exec doesn't reset cwd), just without that
+         * extra (and here, harmful) login-shell setup.
+         */
         execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", "-c",
-               "cd '" SSHD4A_HOME_DIR "' 2>/dev/null; exec sh -l", (char *) NULL);
+               "cd '" SSHD4A_HOME_DIR "' 2>/dev/null; exec sh", (char *) NULL);
     }
 
     /* execlp() only returns on failure. */
