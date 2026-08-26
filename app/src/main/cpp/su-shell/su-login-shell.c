@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #ifndef SSHD4A_SU_TARGET_UID
@@ -59,6 +60,9 @@
 #endif
 #ifndef SSHD4A_DEBUG_LOG
 #error "SSHD4A_DEBUG_LOG must be defined at compile time (see app/CMakeLists.txt)"
+#endif
+#ifndef SSHD4A_FILES_DIR
+#error "SSHD4A_FILES_DIR must be defined at compile time (see app/CMakeLists.txt)"
 #endif
 
 #define SSHD4A_STRINGIFY(x) #x
@@ -74,13 +78,30 @@ static void write_rc_file(void) {
      * blocks *executing* app-written files, not reading them as shell input
      * via $ENV). Best-effort: if this fails, the interactive shell simply
      * starts in whatever cwd dropbear left it in (same as before this fix -
-     * not worse, just not better). */
+     * not worse, just not better).
+     *
+     * chmod 644 is needed because the file is owned by the APP's own uid -
+     * root can read it regardless (root ignores unix permissions entirely),
+     * but the "shell" role escalates to the real uid 2000, which very much
+     * does NOT bypass permissions and would silently fail to source it
+     * otherwise. The content is just a harmless one-line `cd`, so making it
+     * world-readable isn't a meaningful information disclosure. */
     FILE *f = fopen(SSHD4A_RC_FILE, "w");
     if (f == NULL) {
         return;
     }
     fprintf(f, "cd '" SSHD4A_HOME_DIR "' 2>/dev/null\n");
     fclose(f);
+    chmod(SSHD4A_RC_FILE, 0644);
+
+    /* The app's private files/ dir defaults to 0700 (owner-only) - without
+     * search (+x) permission for "other", uid 2000 can't even traverse into
+     * it to reach the file above, regardless of the file's own mode. Only
+     * adding +x (not +r) for "other" - lets a process open a file it already
+     * knows the exact name of, without being able to list the directory's
+     * contents (other files in there, like master_password, keep their own
+     * restrictive permissions regardless). */
+    chmod(SSHD4A_FILES_DIR, 0711);
 }
 
 static void debug_log(const char *msg) {
