@@ -922,13 +922,13 @@ set(SSHD4A_BUSYBOX_PREBUILT
         "${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpp/prebuilt/busybox/${ANDROID_ABI}/busybox")
 if (EXISTS ${SSHD4A_BUSYBOX_PREBUILT})
     add_custom_command(
-            OUTPUT "$<TARGET_FILE_DIR:libscp.so>/libbusybox.so"
+            OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libbusybox.so"
             COMMAND ${CMAKE_COMMAND} -E copy
             "${SSHD4A_BUSYBOX_PREBUILT}"
-            "$<TARGET_FILE_DIR:libscp.so>/libbusybox.so"
-            DEPENDS "${SSHD4A_BUSYBOX_PREBUILT}" libscp.so
+            "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libbusybox.so"
+            DEPENDS "${SSHD4A_BUSYBOX_PREBUILT}"
             COMMENT "Copying prebuilt busybox for ${ANDROID_ABI}"
     )
     add_custom_target(sshd4a_busybox ALL
-            DEPENDS "$<TARGET_FILE_DIR:libscp.so>/libbusybox.so")
+            DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libbusybox.so")
 endif ()
