@@ -37,16 +37,27 @@
  * control from our side once we've exec'd into it. So for the interactive
  * case we go back to the known-clean bare invocation, and get the `cd` into
  * the home dir a different way: via $ENV, the standard POSIX mechanism an
- * interactive shell uses to source a startup file on its own - written by
- * US (harmless, since it's read/sourced by an already-running interpreter,
- * not exec'd - the W^X restriction above only blocks execve(), not this).
+ * interactive shell uses to source a startup file on its own.
+ *
+ * WHY THE $ENV RC FILE LIVES UNDER /data/local/tmp/Sshd4a/etc, NOT THE APP'S
+ * OWN PRIVATE FILES DIR:
+ * Originally written by this binary itself into the app's private files/
+ * dir. Worked fine for the "root" role (root bypasses both unix permissions
+ * AND SELinux checks in practice, e.g. via an unconfined su domain), but the
+ * real "shell" uid 2000 is a genuinely restricted SELinux domain and got
+ * denied regardless of unix chmod - Android labels an app's private data
+ * with a per-app SELinux category that only that app's own process may
+ * access, independent of DAC permission bits. /data/local/tmp isn't part of
+ * any app's private sandbox, so it isn't subject to that restriction. The rc
+ * files are now pre-created there by RootProvisioner (which already runs as
+ * root via su for the home-directory setup) - see RootProvisioner.java,
+ * RC_ROOT/RC_SHELL - this binary just points $ENV at the appropriate one.
  */
 
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #ifndef SSHD4A_SU_TARGET_UID
@@ -61,9 +72,6 @@
 #ifndef SSHD4A_DEBUG_LOG
 #error "SSHD4A_DEBUG_LOG must be defined at compile time (see app/CMakeLists.txt)"
 #endif
-#ifndef SSHD4A_FILES_DIR
-#error "SSHD4A_FILES_DIR must be defined at compile time (see app/CMakeLists.txt)"
-#endif
 
 #define SSHD4A_STRINGIFY(x) #x
 #define SSHD4A_TOSTRING(x) SSHD4A_STRINGIFY(x)
@@ -72,39 +80,11 @@
  * (SSHD4A_HOME_DIR="/some/path"), used directly as string literals below -
  * NOT run through SSHD4A_TOSTRING (that's only for the numeric UID). */
 
-static void write_rc_file(void) {
-    /* Written while we're still the unprivileged app uid, into the app's
-     * OWN private files dir - always writable regardless of W^X (which only
-     * blocks *executing* app-written files, not reading them as shell input
-     * via $ENV). Best-effort: if this fails, the interactive shell simply
-     * starts in whatever cwd dropbear left it in (same as before this fix -
-     * not worse, just not better).
-     *
-     * chmod 644 is needed because the file is owned by the APP's own uid -
-     * root can read it regardless (root ignores unix permissions entirely),
-     * but the "shell" role escalates to the real uid 2000, which very much
-     * does NOT bypass permissions and would silently fail to source it
-     * otherwise. The content is just a harmless one-line `cd`, so making it
-     * world-readable isn't a meaningful information disclosure. */
-    FILE *f = fopen(SSHD4A_RC_FILE, "w");
-    if (f == NULL) {
-        return;
-    }
-    fprintf(f, "cd '" SSHD4A_HOME_DIR "' 2>/dev/null\n");
-    fclose(f);
-    chmod(SSHD4A_RC_FILE, 0644);
-
-    /* The app's private files/ dir defaults to 0700 (owner-only) - without
-     * search (+x) permission for "other", uid 2000 can't even traverse into
-     * it to reach the file above, regardless of the file's own mode. Only
-     * adding +x (not +r) for "other" - lets a process open a file it already
-     * knows the exact name of, without being able to list the directory's
-     * contents (other files in there, like master_password, keep their own
-     * restrictive permissions regardless). */
-    chmod(SSHD4A_FILES_DIR, 0711);
-}
-
 static void debug_log(const char *msg) {
+    /* Written to the app's own private files dir - fine here, this is only
+     * ever read back by the app's own process (via adb/su cat), never by
+     * the "shell"-uid shell itself, so the SELinux per-app restriction that
+     * bit us for the rc file above doesn't matter for this. */
     FILE *f = fopen(SSHD4A_DEBUG_LOG, "a");
     if (f == NULL) {
         return;
@@ -128,8 +108,7 @@ int main(int argc, char **argv) {
     } else {
         /* Interactive login: bare "su UID sh" (confirmed clean, no tty
          * issues), cd happens via $ENV instead of "-c". */
-        debug_log("interactive-mode, writing rc file + setenv ENV, about to exec bare su");
-        write_rc_file();
+        debug_log("interactive-mode, setenv ENV, about to exec bare su");
         setenv("ENV", SSHD4A_RC_FILE, 1);
         execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", (char *) NULL);
     }

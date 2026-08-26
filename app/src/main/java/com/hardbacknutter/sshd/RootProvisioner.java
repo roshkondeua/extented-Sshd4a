@@ -40,6 +40,8 @@ public final class RootProvisioner {
     static final String SHELL_HOME = BASE_DIR + "/shell/home";
     static final String BIN_DIR = BASE_DIR + "/bin";
     static final String ETC_DIR = BASE_DIR + "/etc";
+    static final String RC_ROOT = ETC_DIR + "/rc-root";
+    static final String RC_SHELL = ETC_DIR + "/rc-shell";
 
     private RootProvisioner() {
     }
@@ -79,6 +81,16 @@ public final class RootProvisioner {
             script.append("echo SSHD4A_STEP mkdir_root_home\n");
             script.append("mkdir -p '").append(ROOT_HOME).append("'\n");
             script.append("chmod 700 '").append(ROOT_HOME).append("'\n");
+            // $ENV startup file for the su-login-shell wrapper (see su-login-shell.c) -
+            // lives here (not in the app's own private files dir) because that dir's
+            // SELinux per-app category blocks the "shell" uid regardless of unix
+            // permissions; /data/local/tmp isn't subject to that restriction. World
+            // readable is fine, it's just a one-line `cd`.
+            script.append("echo SSHD4A_STEP write_rc_root\n");
+            script.append("cat > '").append(RC_ROOT).append("' <<'SSHD4A_RC_EOF'\n");
+            script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
+            script.append("SSHD4A_RC_EOF\n");
+            script.append("chmod 644 '").append(RC_ROOT).append("'\n");
         }
         if (needShell) {
             script.append("echo SSHD4A_STEP mkdir_shell_home\n");
@@ -87,10 +99,15 @@ public final class RootProvisioner {
             // can't cd/write there otherwise, even after correctly escalating via su.
             script.append("chown 2000:2000 '").append(SHELL_HOME).append("'\n");
             script.append("chmod 700 '").append(SHELL_HOME).append("'\n");
+            script.append("echo SSHD4A_STEP write_rc_shell\n");
+            script.append("cat > '").append(RC_SHELL).append("' <<'SSHD4A_RC_EOF'\n");
+            script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
+            script.append("SSHD4A_RC_EOF\n");
+            script.append("chmod 644 '").append(RC_SHELL).append("'\n");
         }
 
         script.append("echo SSHD4A_STEP verify\n");
-        script.append("ls -la '").append(BASE_DIR).append("'\n");
+        script.append("ls -la '").append(BASE_DIR).append("' '").append(ETC_DIR).append("'\n");
         script.append("echo SSHD4A_STEP done\n");
         script.append("exit\n");
 
