@@ -69,6 +69,29 @@ char *sshd4a_lib_exe_path(const char *name) {
     return result;
 }
 
+/* Append lib_path to $PATH so e.g. "busybox ls" resolves normally in an
+ * interactive shell, without needing the full nativeLibraryDir path typed
+ * out. Safe/harmless to call for every session (root/shell included, even
+ * though they don't ship libbusybox.so themselves - they get their own
+ * toolset via the pkg manager, Этап 4/5, installed straight into
+ * /data/local/tmp/Sshd4a/bin which is already expected to be on their PATH
+ * via HOME/.profile-equivalent setup, not this). */
+void sshd4a_append_lib_to_path() {
+    const char *old_path = getenv("PATH");
+    if (!old_path) {
+        old_path = "";
+    }
+    size_t len = strlen(old_path) + 1 + strlen(lib_path) + 1;
+    char *new_path = malloc(len);
+    if (old_path[0]) {
+        snprintf(new_path, len, "%s:%s", old_path, lib_path);
+    } else {
+        snprintf(new_path, len, "%s", lib_path);
+    }
+    setenv("PATH", new_path, 1);
+    free(new_path);
+}
+
 /* Convert the name of the given executable to the full path with the fake libEXE.so name. */
 char *sshd4a_exe_to_lib(const char *cmd) {
     if (cmd && !strncmp(cmd, "scp ", 4)) {
@@ -84,6 +107,18 @@ char *sshd4a_exe_to_lib(const char *cmd) {
     } else if (cmd && !strncmp(cmd, "sftp-server", 11)) {
         char *t = m_malloc(strlen(lib_path) + 18 + /* '\0' */ 1);
         sprintf(t, "%s/libsftp-server.so", lib_path);
+        return t;
+
+    } else if (cmd && !strncmp(cmd, "busybox ", 8)) {
+        /* the "user" role's own toolset - see app/CMakeLists.txt for how
+         * libbusybox.so gets there (prebuilt binary, not compiled). */
+        char *t = m_malloc(strlen(lib_path) + strlen(cmd) + 32);
+        sprintf(t, "%s/libbusybox.so %s", lib_path, cmd + 8);
+        return t;
+
+    } else if (cmd && !strcmp(cmd, "busybox")) {
+        char *t = m_malloc(strlen(lib_path) + 32);
+        sprintf(t, "%s/libbusybox.so", lib_path);
         return t;
     }
 

@@ -89,6 +89,7 @@ public final class RootProvisioner {
             script.append("echo SSHD4A_STEP write_rc_root\n");
             script.append("cat > '").append(RC_ROOT).append("' <<'SSHD4A_RC_EOF'\n");
             script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
+            script.append("export PS1='$PWD # '\n");
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_ROOT).append("'\n");
         }
@@ -102,6 +103,7 @@ public final class RootProvisioner {
             script.append("echo SSHD4A_STEP write_rc_shell\n");
             script.append("cat > '").append(RC_SHELL).append("' <<'SSHD4A_RC_EOF'\n");
             script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
+            script.append("export PS1='$PWD $ '\n");
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_SHELL).append("'\n");
         }

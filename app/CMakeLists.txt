@@ -903,3 +903,32 @@ target_compile_definitions(libsushell.so PRIVATE
         SSHD4A_RC_FILE="/data/local/tmp/Sshd4a/etc/rc-shell"
         SSHD4A_DEBUG_LOG="/data/user/0/com.roshkond.sshd4a.extended/files/wrapper-debug.log"
         )
+
+# #############################################################################
+# Ship a prebuilt static busybox (meefik/busybox, per-ABI) so the regular
+# ("user" role) login shell has a basic toolset too - a pkg-manager-installed
+# one (Этап 4/5, downloaded at runtime) would NOT be executable for that role:
+# Android 10+ blocks execve() of files an app wrote itself for its own
+# (unprivileged "untrusted_app") process, and the "user" role session IS
+# that process directly, no su escalation involved. Content shipped inside
+# nativeLibraryDir (this file) is exempt, same trick as libscp.so etc above
+# and libsuroot.so/libsushell.so. No x86_64 build (not worth the APK size for
+# an ABI that's essentially emulator-only here).
+# NOT bundled for root/shell - those roles install a full toolset themselves
+# at runtime via the pkg manager once they can execute from
+# /data/local/tmp/Sshd4a/bin directly (root/shell domains aren't subject to
+# the W^X restriction above).
+set(SSHD4A_BUSYBOX_PREBUILT
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpp/prebuilt/busybox/${ANDROID_ABI}/busybox")
+if (EXISTS ${SSHD4A_BUSYBOX_PREBUILT})
+    add_custom_command(
+            OUTPUT "$<TARGET_FILE_DIR:libscp.so>/libbusybox.so"
+            COMMAND ${CMAKE_COMMAND} -E copy
+            "${SSHD4A_BUSYBOX_PREBUILT}"
+            "$<TARGET_FILE_DIR:libscp.so>/libbusybox.so"
+            DEPENDS "${SSHD4A_BUSYBOX_PREBUILT}" libscp.so
+            COMMENT "Copying prebuilt busybox for ${ANDROID_ABI}"
+    )
+    add_custom_target(sshd4a_busybox ALL
+            DEPENDS "$<TARGET_FILE_DIR:libscp.so>/libbusybox.so")
+endif ()

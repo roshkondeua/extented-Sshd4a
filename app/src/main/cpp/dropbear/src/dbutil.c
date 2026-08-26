@@ -419,6 +419,7 @@ void run_command(const char* argv0, char** args, unsigned int maxfd) {
 
     /* SSHD4A_REQUIRED_CHANGE: add/set environment */
     sshd4a_set_env();
+    sshd4a_append_lib_to_path();
 
 	execv(argv0, args);
 }

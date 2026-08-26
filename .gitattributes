@@ -2,3 +2,4 @@
 *.txt text
 *.png binary
 *.jar binary
+app/src/main/cpp/prebuilt/**/busybox binary

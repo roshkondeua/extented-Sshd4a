@@ -46,6 +46,11 @@ void sshd4a_svr_authinitialise();
 void sshd4a_svr_auth_password(const char *password, unsigned int passwordlen,
                               char **passwdcrypt, char **testcrypt);
 
+/* Append lib_path to $PATH, so nativeLibraryDir binaries (libbusybox.so etc)
+ * resolve as plain commands ("busybox ls") in an interactive shell, not just
+ * via sshd4a_exe_to_lib()'s "ssh user@host 'busybox ...'" one-shot form. */
+void sshd4a_append_lib_to_path();
+
 /* Look up the role ("user"/"root"/"shell") for a given login username.
  * Returned string must be free()'d by the caller. Never returns NULL. */
 char *sshd4a_get_role_for_user(const char *username);
