@@ -26,10 +26,19 @@ mkdir -p "$CACHE_DIR" 2>/dev/null
 
 download() {
     # $1 = url, $2 = output path
-    if command -v curl >/dev/null 2>&1; then
+    # busybox wget preferred over curl: some curl builds link against c-ares,
+    # which expects a traditional /etc/resolv.conf - Android doesn't have one
+    # (DNS goes through netd instead), so such curl builds fail to resolve
+    # hostnames even though ping/busybox wget (using Android's own resolver)
+    # work fine. Confirmed on-device: "curl: (6) Could not resolve ... Could
+    # not contact DNS servers" while ping/wget of the same host worked.
+    if command -v busybox >/dev/null 2>&1; then
+        busybox wget -q -O "$2" "$1"
+    elif command -v curl >/dev/null 2>&1; then
         curl -fsSL "$1" -o "$2"
     else
-        busybox wget -q -O "$2" "$1"
+        echo "No downloader available (need busybox or curl)"
+        return 1
     fi
 }
 
