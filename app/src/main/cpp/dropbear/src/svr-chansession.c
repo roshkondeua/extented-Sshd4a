@@ -1066,7 +1066,15 @@ static void execchild(const void *user_data) {
 		if (chdir("/") < 0) {
 			dropbear_exit("chdir(\"/\") failed");
 		}
-		fprintf(stderr, "Failed chdir '%s': %s\n", ses.authstate.pw_dir, strerror(e));
+		/* SSHD4A_REQUIRED_CHANGE: for the root/shell login roles this chdir is
+		 * EXPECTED to fail here - we're still the unprivileged app uid at this
+		 * point, and su-login-shell.c does the real cd itself after
+		 * escalating (see docs/DESIGN-SPEC.md). Don't print a scary-looking
+		 * but harmless warning for that specific known case. */
+		if (strcmp(ses.authstate.pw_dir, SSHD4A_ROOT_HOME) != 0
+		    && strcmp(ses.authstate.pw_dir, SSHD4A_SHELL_HOME) != 0) {
+			fprintf(stderr, "Failed chdir '%s': %s\n", ses.authstate.pw_dir, strerror(e));
+		}
 	}
 
 

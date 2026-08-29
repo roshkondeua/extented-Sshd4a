@@ -5,8 +5,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -42,6 +44,35 @@ public final class RootProvisioner {
     static final String ETC_DIR = BASE_DIR + "/etc";
     static final String RC_ROOT = ETC_DIR + "/rc-root";
     static final String RC_SHELL = ETC_DIR + "/rc-shell";
+    static final String PKG_SCRIPT = BIN_DIR + "/pkg";
+    static final String PKG_REPOS_FILE = ETC_DIR + "/pkg-repos.list";
+    static final String PKG_CACHE_DIR = ETC_DIR + "/pkg-cache";
+    static final String DEFAULT_PKG_REPO =
+            "https://raw.githubusercontent.com/roshkondeua/extented-Sshd4a/main/docs/pkg-index/default.list";
+
+    /**
+     * Read a plain-text asset file fully into a String (UTF-8), with a
+     * trailing newline guaranteed (needed since callers embed this directly
+     * inside a shell heredoc). Returns an empty string on failure (caller's
+     * heredoc would then just be empty - not ideal, but never crashes the
+     * whole provisioning run over one missing/unreadable asset).
+     */
+    @NonNull
+    private static String readAsset(@NonNull final Context context,
+                                    @NonNull final String name) {
+        final StringBuilder sb = new StringBuilder();
+        try (InputStream is = context.getAssets().open(name);
+             BufferedReader br = new BufferedReader(new InputStreamReader(is,
+                     StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+        } catch (@NonNull final IOException e) {
+            Log.w(TAG, "readAsset|failed for '" + name + "'", e);
+        }
+        return sb.toString();
+    }
 
     private RootProvisioner() {
     }
@@ -110,6 +141,22 @@ public final class RootProvisioner {
 
         script.append("echo SSHD4A_STEP verify\n");
         script.append("ls -la '").append(BASE_DIR).append("' '").append(ETC_DIR).append("'\n");
+
+        // pkg manager - written unconditionally whenever this whole block runs (i.e. whenever
+        // at least root or shell is configured), regardless of which specific role triggered it.
+        script.append("echo SSHD4A_STEP write_pkg\n");
+        script.append("cat > '").append(PKG_SCRIPT).append("' <<'SSHD4A_PKG_EOF'\n");
+        script.append(readAsset(context, "pkg"));
+        script.append("SSHD4A_PKG_EOF\n");
+        script.append("chmod 755 '").append(PKG_SCRIPT).append("'\n");
+        script.append("mkdir -p '").append(PKG_CACHE_DIR).append("'\n");
+        // seed the default repo once - idempotent, never overwrites repos the user has since
+        // added/removed via `pkg repo add/remove`.
+        script.append("if [ ! -e '").append(PKG_REPOS_FILE).append("' ]; then\n");
+        script.append("  echo '").append(DEFAULT_PKG_REPO).append("' > '")
+              .append(PKG_REPOS_FILE).append("'\n");
+        script.append("fi\n");
+
         script.append("echo SSHD4A_STEP done\n");
         script.append("exit\n");
 

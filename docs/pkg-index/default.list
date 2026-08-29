@@ -1,0 +1,16 @@
+# Sshd4a extented - default package index
+# Format: name|arch|version|url|sha256|install_name
+#
+# Source for current entries: bnsmb/binaries-for-Android (arm64-v8a only for now).
+# armeabi-v7a coverage is a known gap - add entries here as sources are found.
+#
+htop|arm64-v8a|3.5.3|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/htop_static_3.5.3|4d363d893a439e5dfaf3b77ebd02ac18442f5bbcce4fab81b07ee9acdfce8694|htop
+bash|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/bash-static-stripped|9936b6786af643451dcb01510733cc11684e32604e1015d71cde57d566175730|bash
+nano|arm64-v8a|9.1|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/nano_static_9.1|1b776c6c865aadcb2104d0a603b50b0cc2852393da58cc7d8d03c532230dca15|nano
+tmux|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/tmux_static|c9bcdc1e12a41f14463d7dc794653b77304ddf6724381d43424ac7b4dfd4ce73|tmux
+curl|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/curl|28db75f78a5ba9d962c1a445265a9477de1cfd43b39e52e3eee7af4014478233|curl
+jq|arm64-v8a|1.7.1|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/jq-1.7.1|eb618bb0a17af45785bcc419b8d36378b0b8edd9d58e9d9c496645f626174f6f|jq
+unzip|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/unzip|e74056257adf8a5746cfe329829f52858f3f9456231ac329bf867ad216af0cb6|unzip
+gzip|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/gzip|d5d62f67a3fb2479bc7c11c2e935ffe1f1661468d9114b929836aa36ac556850|gzip
+less|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/less|cc4cf3ab871f5ff3d434e20c8a9a838e345f890e66cf8541fdae7735a2059feb|less
+socat|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/socat|8d65dc2b21f18baf8cbeee610217a3d0d6821f81259caecb043c3ab731b36313|socat
