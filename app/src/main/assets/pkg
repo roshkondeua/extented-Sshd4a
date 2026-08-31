@@ -35,7 +35,12 @@ download() {
     if command -v busybox >/dev/null 2>&1; then
         busybox wget -q -O "$2" "$1"
     elif command -v curl >/dev/null 2>&1; then
-        curl -fsSL "$1" -o "$2"
+        # fallback for devices with no busybox at all: explicitly point curl
+        # at public DNS servers, bypassing the missing /etc/resolv.conf.
+        # Only works if curl was built with c-ares (--dns-servers requires
+        # it) - harmless no-op attempt otherwise, still tries plain curl.
+        curl -fsSL --dns-servers 8.8.8.8,1.1.1.1 "$1" -o "$2" \
+            || curl -fsSL "$1" -o "$2"
     else
         echo "No downloader available (need busybox or curl)"
         return 1
@@ -52,18 +57,32 @@ cmd_update() {
         echo "No repos configured (see: pkg repo list)"
         return 1
     fi
+    total=0
+    failed=0
     while IFS= read -r repo_url; do
         [ -z "$repo_url" ] && continue
         case "$repo_url" in \#*) continue ;; esac
         cf=$(cache_file_for_repo "$repo_url")
-        echo "Updating: $repo_url"
+        printf 'Get: %s\n' "$repo_url"
         if download "$repo_url" "$cf.tmp"; then
             mv "$cf.tmp" "$cf"
+            n=$(grep -vc '^#\|^[[:space:]]*$' "$cf" 2>/dev/null)
+            n=${n:-0}
+            size=$(wc -c < "$cf" 2>/dev/null)
+            printf '  OK  %s packages listed (%s bytes)\n' "$n" "${size:-0}"
+            total=$((total + n))
         else
-            echo "  FAILED to fetch $repo_url"
+            printf '  ERR  could not fetch this repo (network/DNS/HTTP error)\n'
             rm -f "$cf.tmp"
+            failed=$((failed + 1))
         fi
     done < "$REPOS_FILE"
+    echo "----"
+    if [ "$failed" -eq 0 ]; then
+        echo "Done. $total package(s) listed for this device."
+    else
+        echo "Done with errors: $failed repo(s) failed, $total package(s) listed from the rest."
+    fi
 }
 
 all_cache_lines() {
@@ -74,8 +93,14 @@ all_cache_lines() {
 }
 
 cmd_list() {
+    n=$(all_cache_lines | awk -F'|' -v arch="$ARCH" '$2==arch' | wc -l)
+    if [ "$n" -eq 0 ]; then
+        echo "No packages listed for $ARCH yet - run: pkg update"
+        return 0
+    fi
+    echo "Available for $ARCH:"
     all_cache_lines | awk -F'|' -v arch="$ARCH" \
-        '$2==arch {printf "%-14s %-10s (%s)\n", $1, $3, $6}'
+        '$2==arch {printf "  %-14s %-10s (%s)\n", $1, $3, $6}'
 }
 
 cmd_installed() {
@@ -95,31 +120,46 @@ cmd_install() {
     fi
     line=$(find_pkg_line "$name")
     if [ -z "$line" ]; then
-        echo "Package '$name' not found for arch $ARCH (try: pkg update)"
+        echo "E: Package '$name' not found for arch $ARCH (try: pkg update)"
         return 1
     fi
+    version=$(echo "$line" | awk -F'|' '{print $3}')
     url=$(echo "$line" | awk -F'|' '{print $4}')
     sha=$(echo "$line" | awk -F'|' '{print $5}')
     install_name=$(echo "$line" | awk -F'|' '{print $6}')
 
-    tmp="$BIN/.$install_name.download"
-    echo "Downloading $name -> $BIN/$install_name"
-    if ! download "$url" "$tmp"; then
-        echo "Download failed"
-        rm -f "$tmp"
-        return 1
+    if [ -e "$BIN/$install_name" ]; then
+        echo "Note: $install_name is already installed, will be overwritten."
     fi
 
-    got_sha=$(busybox sha256sum "$tmp" | awk '{print $1}')
-    if [ "$got_sha" != "$sha" ]; then
-        echo "sha256 MISMATCH - expected $sha, got $got_sha - aborting"
+    echo "Installing $name ($version) for $ARCH"
+    printf '  Get: %s\n' "$url"
+
+    tmp="$BIN/.$install_name.download"
+    if ! download "$url" "$tmp"; then
+        echo "E: download failed"
         rm -f "$tmp"
         return 1
     fi
+    size=$(wc -c < "$tmp" 2>/dev/null)
+    printf '  Fetched %s (%s bytes)\n' "$name" "${size:-?}"
+
+    printf '  Verifying sha256... '
+    got_sha=$(busybox sha256sum "$tmp" | awk '{print $1}')
+    if [ "$got_sha" != "$sha" ]; then
+        echo "MISMATCH"
+        echo "E: expected $sha"
+        echo "E: got      $got_sha"
+        echo "E: aborting - file NOT installed"
+        rm -f "$tmp"
+        return 1
+    fi
+    echo "OK"
 
     chmod 755 "$tmp"
     mv "$tmp" "$BIN/$install_name"
-    echo "Installed: $BIN/$install_name"
+    echo "Setting up $install_name ..."
+    echo "Done. Installed: $BIN/$install_name"
 }
 
 cmd_remove() {
@@ -130,9 +170,10 @@ cmd_remove() {
     fi
     if [ -e "$BIN/$name" ]; then
         rm -f "$BIN/$name"
-        echo "Removed: $BIN/$name"
+        echo "Removing $name ..."
+        echo "Done. Removed: $BIN/$name"
     else
-        echo "Not installed: $name"
+        echo "E: Not installed: $name"
         return 1
     fi
 }
