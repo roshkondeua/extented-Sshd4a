@@ -155,6 +155,22 @@
     <!-- Preference option -->
     <string name="pt_file_logging_dir">Log directory path</string>
 
+    <!-- Preference category title -->
+    <string name="pc_exec_intent">External command execution</string>
+    <!-- Preference summary/info message. -->
+    <string name="ps_exec_intent_info">Optional. Lets other apps (MacroDroid, Tasker, ADB, ...)
+        run a command directly via a broadcast Intent, without going through SSH. Off by
+        default.</string>
+    <!-- Preference option -->
+    <string name="pt_enable_exec_intent">Allow external command execution</string>
+    <!-- Warning shown when enabling the above. -->
+    <string name="ps_enable_exec_intent_warning">Any app on this device will be able to run
+        commands (optionally as root or shell) by sending a broadcast Intent, unless you also
+        set a token below. This is the same trade-off Termux makes with
+        \'allow-external-apps\' - only enable this if you understand and accept the risk.</string>
+    <!-- Preference option -->
+    <string name="pt_exec_token">Required token (optional, leave blank to disable checking)</string>
+
     <!-- Preference option -->
     <string name="pt_single_use_passwords">Single use passwords</string>
     <!-- Preference summary/info message. -->

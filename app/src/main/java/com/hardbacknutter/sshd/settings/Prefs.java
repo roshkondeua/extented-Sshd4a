@@ -69,6 +69,12 @@ public final class Prefs {
     static final String ENABLE_FILE_LOGGING = "debug.file.logging.enabled";
     static final String FILE_LOGGING_DIR = "debug.file.logging.dir";
 
+    /**
+     * Этап 6: external command execution via {@link com.hardbacknutter.sshd.ExecReceiver}.
+     */
+    static final String ENABLE_EXEC_INTENT = "sshd.exec.intent.enabled";
+    static final String EXEC_TOKEN = "sshd.exec.intent.token";
+
     /** The url from which the user last imported keys. */
     static final String IMPORT_URL = "import.url";
 
@@ -325,6 +331,26 @@ public final class Prefs {
     @Nullable
     public static String getFileLoggingDir(@NonNull final SharedPreferences prefs) {
         return prefs.getString(FILE_LOGGING_DIR, null);
+    }
+
+    /**
+     * Is the {@link com.hardbacknutter.sshd.ExecReceiver} EXEC intent enabled?
+     * Off by default - the user must explicitly opt in (with a warning shown
+     * at that point, see SettingsFragment).
+     */
+    public static boolean isExecIntentEnabled(@NonNull final SharedPreferences prefs) {
+        return prefs.getBoolean(ENABLE_EXEC_INTENT, false);
+    }
+
+    /**
+     * The optional token an external caller must supply (as the "token"
+     * extra) for the EXEC intent to be honoured. Blank/null means no token
+     * is required - by design, the user's explicit choice (see the EXEC
+     * warning dialog in Settings).
+     */
+    @Nullable
+    public static String getExecToken(@NonNull final SharedPreferences prefs) {
+        return prefs.getString(EXEC_TOKEN, null);
     }
 
     /**

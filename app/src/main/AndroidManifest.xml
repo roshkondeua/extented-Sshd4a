@@ -99,6 +99,21 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+
+        <!--
+            Этап 6: lets external apps (MacroDroid, Tasker, ADB, ...) run a command
+            directly. Disabled by default (see Prefs.ENABLE_EXEC_INTENT) - the intent
+            filter is always registered, but ExecReceiver itself checks the setting
+            and ignores everything if it's off. Same "no security unless you opt into
+            a token" model as START/STOP above.
+        -->
+        <receiver
+            android:name=".ExecReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.hardbacknutter.sshd.fg.EXEC" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

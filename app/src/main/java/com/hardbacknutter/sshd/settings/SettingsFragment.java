@@ -282,6 +282,16 @@ public class SettingsFragment
                      R.string.pt_file_logging_dir,
                      null, null);
 
+        factory.header(R.string.pc_exec_intent, p -> {
+            p.setSummary(R.string.ps_exec_intent_info);
+        });
+        factory.bool(Prefs.ENABLE_EXEC_INTENT,
+                     R.string.pt_enable_exec_intent,
+                     this::onExecIntentChange, null);
+        factory.text(Prefs.EXEC_TOKEN,
+                     R.string.pt_exec_token,
+                     null, null);
+
         // The title is translated, the summary is just the name of the file, untranslated
         factory.header(R.string.pc_key_management, p -> {
             p.setIcon(R.drawable.vpn_key_24px);
@@ -536,6 +546,39 @@ public class SettingsFragment
             //noinspection DataFlowIssue
             vm.importAuthKeys(getContext(), uri);
         }
+    }
+
+    /**
+     * Confirmation gate for {@link Prefs#ENABLE_EXEC_INTENT} - turning it OFF is always
+     * allowed silently; turning it ON shows a warning first (same idea as Termux's
+     * "allow-external-apps" - the user is explicitly accepting the reduced security).
+     */
+    private boolean onExecIntentChange(@NonNull final Setting setting,
+                                       @Nullable final Object newValue) {
+        final boolean enabling = Boolean.TRUE.equals(newValue);
+        if (!enabling) {
+            return true;
+        }
+
+        final Context context = getContext();
+        //noinspection DataFlowIssue
+        new MaterialAlertDialogBuilder(context)
+                .setIcon(R.drawable.warning_24px)
+                .setTitle(R.string.pt_enable_exec_intent)
+                .setMessage(R.string.ps_enable_exec_intent_warning)
+                .setCancelable(true)
+                .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    final BooleanSetting s = settingsManager.requireSetting(
+                            Prefs.ENABLE_EXEC_INTENT);
+                    s.setChecked(true);
+                })
+                .create()
+                .show();
+
+        // false = don't apply the checked-state change yet; the dialog above
+        // applies it explicitly on confirm, and simply leaves it off on cancel.
+        return false;
     }
 
     private boolean onDeleteKeys(@NonNull final Setting setting) {
