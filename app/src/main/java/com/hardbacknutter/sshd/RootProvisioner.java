@@ -128,6 +128,20 @@ public final class RootProvisioner {
             script.append("export PS1='$PWD # '\n");
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_ROOT).append("'\n");
+            // bash (if installed) reads ~/.bashrc on its own for a bare interactive
+            // invocation - same content as the rc file above, just also placed where
+            // bash actually looks. See su-login-shell.c for why this isn't done via
+            // "bash --rcfile ... -i" instead (that combo broke the session outright).
+            script.append("echo SSHD4A_STEP write_bashrc_root\n");
+            script.append("cat > '").append(ROOT_HOME).append("/.bashrc' <<'SSHD4A_RC_EOF'\n");
+            script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
+            script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
+            script.append("export HISTSIZE=1000\n");
+            script.append("export HISTFILESIZE=2000\n");
+            script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
+            script.append("export PS1='$PWD # '\n");
+            script.append("SSHD4A_RC_EOF\n");
+            script.append("chmod 644 '").append(ROOT_HOME).append("/.bashrc'\n");
         }
         if (needShell) {
             script.append("echo SSHD4A_STEP mkdir_shell_home\n");
@@ -147,6 +161,24 @@ public final class RootProvisioner {
             script.append("export PS1='$PWD $ '\n");
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_SHELL).append("'\n");
+            script.append("echo SSHD4A_STEP write_bashrc_shell\n");
+            script.append("cat > '").append(SHELL_HOME).append("/.bashrc' <<'SSHD4A_RC_EOF'\n");
+            script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
+            script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
+            script.append("export HISTSIZE=1000\n");
+            script.append("export HISTFILESIZE=2000\n");
+            script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
+            script.append("export PS1='$PWD $ '\n");
+            script.append("SSHD4A_RC_EOF\n");
+            // owned by root (created via su, ownership doesn't inherit from the parent
+            // dir) - the real shell uid 2000 needs read access to actually source it.
+            script.append("chown 2000:2000 '").append(SHELL_HOME).append("/.bashrc'\n");
+            script.append("chmod 644 '").append(SHELL_HOME).append("/.bashrc'\n");
+            // pre-create + chown the history file too - bash creates it lazily itself
+            // otherwise, as root (from THIS script), which the real shell uid then
+            // can't write to.
+            script.append("touch '").append(SHELL_HOME).append("/.bash_history'\n");
+            script.append("chown 2000:2000 '").append(SHELL_HOME).append("/.bash_history'\n");
         }
 
         script.append("echo SSHD4A_STEP verify\n");
