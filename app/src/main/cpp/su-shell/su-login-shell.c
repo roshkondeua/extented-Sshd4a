@@ -111,27 +111,37 @@ int main(int argc, char **argv) {
 
     } else {
         /* Interactive login: bare "su UID <shell>" (confirmed clean, no tty
-         * issues). HOME is exported here so it survives into su's child
-         * regardless of which shell ends up running.
+         * issues, no crashes). HOME is exported best-effort (some su forks
+         * reset it regardless when switching user - harmless either way
+         * now, see below).
          *
-         * Prefer bash if the pkg manager has installed one to BIN_DIR/bash -
-         * gives real command history (POSIX /system/bin/sh here has none)
-         * and is a prerequisite for tmux, which several sessions want.
+         * IMPORTANT - HISTORY OF WHAT DOESN'T WORK HERE, so nobody re-tries
+         * these: both "bash --rcfile <rc> -i" AND "bash --rcfile <rc>"
+         * (without -i) were tried and BOTH broke the session outright
+         * (immediate disconnect) on-device. Since execlp() only returns if
+         * exec() itself fails to *start* the program, a crash/incompatible
+         * flag *inside* bash after a successful exec is invisible to us and
+         * can't be caught here to fall back from - so this particular
+         * static/stripped bash build's --rcfile support (or lack of it) is
+         * simply not usable for us. Bash is now invoked completely BARE -
+         * no flags of any kind - mirroring the plain "su UID sh" form that
+         * IS confirmed reliable.
          *
-         * IMPORTANT: invoke bash completely BARE - no --rcfile/-i flags.
-         * An earlier version used "bash --rcfile <rc> -i", which on-device
-         * testing showed breaks the session outright (immediate
-         * disconnect) for reasons that were never pinned down - since
-         * execlp() only returns if exec() itself fails to *start* the
-         * program, a crash/bad-argument-combo *inside* bash after a
-         * successful exec is invisible to us and can't be caught here to
-         * fall back from. A bare "su UID <bash_path>" with no arguments at
-         * all mirrors the plain "su UID sh" interactive form that IS
-         * confirmed reliable, and lets bash pick up cd/PATH/PS1/history
-         * from ~/.bashrc on its own (standard behaviour for an interactive
-         * non-login shell) - RootProvisioner writes that file alongside the
-         * home directory itself. Falls back to plain sh (via $ENV) if bash
-         * isn't installed - nothing breaks either way. */
+         * The "starts in the right directory" problem this used to solve
+         * via --rcfile is instead fixed at the permission level:
+         * RootProvisioner chmods the home dirs 701 (execute-only for
+         * "other"), which lets dropbear's OWN pre-escalation chdir()
+         * attempt succeed even before su - so the process cwd is already
+         * correct by the time anything here runs, inherited automatically
+         * across every exec() in this chain, bash included. See
+         * RootProvisioner.java for the permission comment.
+         *
+         * Trade-off accepted for now: bash's ~/.bashrc / $HISTFILE default
+         * still depend on $HOME, which may or may not survive su - so
+         * aliases/prompt/history *persistence* may not apply inside bash
+         * specifically (in-session history still works regardless - that's
+         * bash's own in-memory feature, unaffected). Revisit if that turns
+         * out to matter in practice. */
         setenv("HOME", SSHD4A_HOME_DIR, 1);
 
         char bash_path[512];
@@ -139,18 +149,8 @@ int main(int argc, char **argv) {
 
         struct stat st;
         if (stat(bash_path, &st) == 0) {
-            debug_log("interactive-mode, bash found, about to exec su -> bash --rcfile (no -i)");
-            /* --rcfile explicitly names the startup file, sidestepping su's
-             * own HOME-reset behaviour entirely (confirmed by testing: su
-             * overrides our setenv("HOME", ...) with something of its own,
-             * "cd ~" landed at "/" instead of the intended home dir - so
-             * bash's OWN "~/.bashrc" auto-discovery can't work here either).
-             * Deliberately NOT passing "-i" this time - that combination
-             * (with -i) was the one that broke the session outright earlier;
-             * bash should still auto-detect interactivity fine from the
-             * inherited pty (isatty(0)) without it. */
-            execlp("su", "su", SSHD4A_TARGET_UID_STR, bash_path,
-                   "--rcfile", SSHD4A_RC_FILE, (char *) NULL);
+            debug_log("interactive-mode, bash found, exec bare su -> bare bash (no flags)");
+            execlp("su", "su", SSHD4A_TARGET_UID_STR, bash_path, (char *) NULL);
             /* if THIS particular exec failed (e.g. bash_path stopped existing
              * between the stat() and here), fall through to plain sh below
              * rather than giving up entirely. */

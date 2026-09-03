@@ -129,7 +129,13 @@ public final class RootProvisioner {
         if (needRoot) {
             script.append("echo SSHD4A_STEP mkdir_root_home\n");
             script.append("mkdir -p '").append(ROOT_HOME).append("'\n");
-            script.append("chmod 700 '").append(ROOT_HOME).append("'\n");
+            // 701, not 700: dropbear itself tries to chdir() here BEFORE su
+            // escalation happens (still the unprivileged app uid at that
+            // point) - execute-only for "other" lets that succeed (so the
+            // session starts in the right cwd from the very start, no rc-file
+            // tricks needed) while still blocking listing (no r) or writing
+            // (no w) by anyone but root.
+            script.append("chmod 701 '").append(ROOT_HOME).append("'\n");
             // $ENV startup file for plain sh, and --rcfile for bash (see
             // su-login-shell.c) - lives here (not in the app's own private files
             // dir) because that dir's SELinux per-app category blocks the "shell"
@@ -154,7 +160,8 @@ public final class RootProvisioner {
             // Owned by root:root by default (created via su) - the real "shell" uid (2000)
             // can't cd/write there otherwise, even after correctly escalating via su.
             script.append("chown 2000:2000 '").append(SHELL_HOME).append("'\n");
-            script.append("chmod 700 '").append(SHELL_HOME).append("'\n");
+            // see the ROOT_HOME comment above - same reasoning.
+            script.append("chmod 701 '").append(SHELL_HOME).append("'\n");
             script.append("echo SSHD4A_STEP write_rc_shell\n");
             script.append("cat > '").append(RC_SHELL).append("' <<'SSHD4A_RC_EOF'\n");
             script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
