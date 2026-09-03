@@ -3,3 +3,4 @@
 *.png binary
 *.jar binary
 app/src/main/jniLibs/**/libbusybox.so binary
+docs/pkg-index/binaries/* binary

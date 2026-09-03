@@ -1,11 +1,18 @@
 # Sshd4a extented - default package index
 # Format: name|arch|version|url|sha256|install_name
 #
-# Source for current entries: bnsmb/binaries-for-Android (arm64-v8a only for now).
-# armeabi-v7a coverage is a known gap - add entries here as sources are found.
+# Most entries: bnsmb/binaries-for-Android (arm64-v8a only for now).
+# bash: self-hosted in this repo (docs/pkg-index/binaries/) - the bnsmb
+# bash-static-stripped build crashed "su-login-shell" outright when started
+# with --rcfile, confirmed by repeated on-device testing; these two, provided
+# by the user, are known-good (32-bit ARM, works natively on armeabi-v7a and
+# via compat layer on arm64-v8a).
 #
 htop|arm64-v8a|3.5.3|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/htop_static_3.5.3|4d363d893a439e5dfaf3b77ebd02ac18442f5bbcce4fab81b07ee9acdfce8694|htop
-bash|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/bash-static-stripped|9936b6786af643451dcb01510733cc11684e32604e1015d71cde57d566175730|bash
+bash|arm64-v8a|4.1.0|https://raw.githubusercontent.com/roshkondeua/extented-Sshd4a/main/docs/pkg-index/binaries/bash|8b803c697c1e2494070a4145f9fd6f5929a64ce1fc239707d55e457c8d6f0c6f|bash
+bash|armeabi-v7a|4.1.0|https://raw.githubusercontent.com/roshkondeua/extented-Sshd4a/main/docs/pkg-index/binaries/bash|8b803c697c1e2494070a4145f9fd6f5929a64ce1fc239707d55e457c8d6f0c6f|bash
+bash-legacy|arm64-v8a|3.2.0|https://raw.githubusercontent.com/roshkondeua/extented-Sshd4a/main/docs/pkg-index/binaries/bash-legacy|a60335c40ec3cc1b7aa6d73015220b65d0b6aa49df14d743a32862d9ac39d823|bash-legacy
+bash-legacy|armeabi-v7a|3.2.0|https://raw.githubusercontent.com/roshkondeua/extented-Sshd4a/main/docs/pkg-index/binaries/bash-legacy|a60335c40ec3cc1b7aa6d73015220b65d0b6aa49df14d743a32862d9ac39d823|bash-legacy
 nano|arm64-v8a|9.1|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/nano_static_9.1|1b776c6c865aadcb2104d0a603b50b0cc2852393da58cc7d8d03c532230dca15|nano
 tmux|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/tmux_static|c9bcdc1e12a41f14463d7dc794653b77304ddf6724381d43424ac7b4dfd4ce73|tmux
 curl|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/curl|28db75f78a5ba9d962c1a445265a9477de1cfd43b39e52e3eee7af4014478233|curl
