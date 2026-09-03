@@ -139,8 +139,18 @@ int main(int argc, char **argv) {
 
         struct stat st;
         if (stat(bash_path, &st) == 0) {
-            debug_log("interactive-mode, bash found, about to exec bare su -> bare bash");
-            execlp("su", "su", SSHD4A_TARGET_UID_STR, bash_path, (char *) NULL);
+            debug_log("interactive-mode, bash found, about to exec su -> bash --rcfile (no -i)");
+            /* --rcfile explicitly names the startup file, sidestepping su's
+             * own HOME-reset behaviour entirely (confirmed by testing: su
+             * overrides our setenv("HOME", ...) with something of its own,
+             * "cd ~" landed at "/" instead of the intended home dir - so
+             * bash's OWN "~/.bashrc" auto-discovery can't work here either).
+             * Deliberately NOT passing "-i" this time - that combination
+             * (with -i) was the one that broke the session outright earlier;
+             * bash should still auto-detect interactivity fine from the
+             * inherited pty (isatty(0)) without it. */
+            execlp("su", "su", SSHD4A_TARGET_UID_STR, bash_path,
+                   "--rcfile", SSHD4A_RC_FILE, (char *) NULL);
             /* if THIS particular exec failed (e.g. bash_path stopped existing
              * between the stat() and here), fall through to plain sh below
              * rather than giving up entirely. */

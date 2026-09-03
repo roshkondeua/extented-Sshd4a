@@ -44,6 +44,7 @@ public final class RootProvisioner {
     static final String ETC_DIR = BASE_DIR + "/etc";
     static final String RC_ROOT = ETC_DIR + "/rc-root";
     static final String RC_SHELL = ETC_DIR + "/rc-shell";
+    static final String COMMON_RC = ETC_DIR + "/bashrc-common";
     static final String PKG_SCRIPT = BIN_DIR + "/pkg";
     static final String PKG_REPOS_FILE = ETC_DIR + "/pkg-repos.list";
     static final String PKG_CACHE_DIR = ETC_DIR + "/pkg-cache";
@@ -108,17 +109,35 @@ public final class RootProvisioner {
         script.append("chmod 755 '").append(BASE_DIR).append("' '")
               .append(BIN_DIR).append("' '").append(ETC_DIR).append("'\n");
 
+        // Common config sourced by BOTH rc-root and rc-shell (real-Linux style
+        // /etc/bash.bashrc equivalent) - aliases/settings shared by every
+        // privileged role. Seeded once with a starter example; never
+        // overwritten afterward so the user's own edits stick (same pattern
+        // as pkg-repos.list below).
+        script.append("if [ ! -e '").append(COMMON_RC).append("' ]; then\n");
+        script.append("  cat > '").append(COMMON_RC).append("' <<'SSHD4A_RC_EOF'\n");
+        script.append("# Sshd4a extented - shared config for ALL privileged roles (root + shell).\n");
+        script.append("# Sourced by both etc/rc-root and etc/rc-shell before their own per-role\n");
+        script.append("# settings (home dir, prompt) are applied. Edit freely - never overwritten\n");
+        script.append("# by the app once this file exists.\n");
+        script.append("alias ll='ls -la'\n");
+        script.append("alias la='ls -A'\n");
+        script.append("SSHD4A_RC_EOF\n");
+        script.append("  chmod 644 '").append(COMMON_RC).append("'\n");
+        script.append("fi\n");
+
         if (needRoot) {
             script.append("echo SSHD4A_STEP mkdir_root_home\n");
             script.append("mkdir -p '").append(ROOT_HOME).append("'\n");
             script.append("chmod 700 '").append(ROOT_HOME).append("'\n");
-            // $ENV startup file for the su-login-shell wrapper (see su-login-shell.c) -
-            // lives here (not in the app's own private files dir) because that dir's
-            // SELinux per-app category blocks the "shell" uid regardless of unix
-            // permissions; /data/local/tmp isn't subject to that restriction. World
-            // readable is fine, it's just a one-line `cd`.
+            // $ENV startup file for plain sh, and --rcfile for bash (see
+            // su-login-shell.c) - lives here (not in the app's own private files
+            // dir) because that dir's SELinux per-app category blocks the "shell"
+            // uid regardless of unix permissions; /data/local/tmp isn't subject
+            // to that restriction. World readable is fine, no secrets in it.
             script.append("echo SSHD4A_STEP write_rc_root\n");
             script.append("cat > '").append(RC_ROOT).append("' <<'SSHD4A_RC_EOF'\n");
+            script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
             script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(ROOT_HOME).append("'\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
@@ -128,20 +147,6 @@ public final class RootProvisioner {
             script.append("export PS1='$PWD # '\n");
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_ROOT).append("'\n");
-            // bash (if installed) reads ~/.bashrc on its own for a bare interactive
-            // invocation - same content as the rc file above, just also placed where
-            // bash actually looks. See su-login-shell.c for why this isn't done via
-            // "bash --rcfile ... -i" instead (that combo broke the session outright).
-            script.append("echo SSHD4A_STEP write_bashrc_root\n");
-            script.append("cat > '").append(ROOT_HOME).append("/.bashrc' <<'SSHD4A_RC_EOF'\n");
-            script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
-            script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
-            script.append("export HISTSIZE=1000\n");
-            script.append("export HISTFILESIZE=2000\n");
-            script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
-            script.append("export PS1='$PWD # '\n");
-            script.append("SSHD4A_RC_EOF\n");
-            script.append("chmod 644 '").append(ROOT_HOME).append("/.bashrc'\n");
         }
         if (needShell) {
             script.append("echo SSHD4A_STEP mkdir_shell_home\n");
@@ -152,6 +157,7 @@ public final class RootProvisioner {
             script.append("chmod 700 '").append(SHELL_HOME).append("'\n");
             script.append("echo SSHD4A_STEP write_rc_shell\n");
             script.append("cat > '").append(RC_SHELL).append("' <<'SSHD4A_RC_EOF'\n");
+            script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
             script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(SHELL_HOME).append("'\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
@@ -161,20 +167,7 @@ public final class RootProvisioner {
             script.append("export PS1='$PWD $ '\n");
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_SHELL).append("'\n");
-            script.append("echo SSHD4A_STEP write_bashrc_shell\n");
-            script.append("cat > '").append(SHELL_HOME).append("/.bashrc' <<'SSHD4A_RC_EOF'\n");
-            script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
-            script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
-            script.append("export HISTSIZE=1000\n");
-            script.append("export HISTFILESIZE=2000\n");
-            script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
-            script.append("export PS1='$PWD $ '\n");
-            script.append("SSHD4A_RC_EOF\n");
-            // owned by root (created via su, ownership doesn't inherit from the parent
-            // dir) - the real shell uid 2000 needs read access to actually source it.
-            script.append("chown 2000:2000 '").append(SHELL_HOME).append("/.bashrc'\n");
-            script.append("chmod 644 '").append(SHELL_HOME).append("/.bashrc'\n");
-            // pre-create + chown the history file too - bash creates it lazily itself
+            // pre-create + chown the history file - bash creates it lazily itself
             // otherwise, as root (from THIS script), which the real shell uid then
             // can't write to.
             script.append("touch '").append(SHELL_HOME).append("/.bash_history'\n");
