@@ -110,50 +110,49 @@ int main(int argc, char **argv) {
         execlp("su", "su", SSHD4A_TARGET_UID_STR, "sh", "-c", full_cmd, (char *) NULL);
 
     } else {
-        /* Interactive login: bare "su UID <shell>" (confirmed clean, no tty
-         * issues, no crashes). HOME is exported best-effort (some su forks
-         * reset it regardless when switching user - harmless either way
-         * now, see below).
+        /* Interactive login: try candidates in order of preference, most
+         * capable/verified first, falling back progressively to what's
+         * definitely safe.
          *
-         * IMPORTANT - HISTORY OF WHAT DOESN'T WORK HERE, so nobody re-tries
-         * these: both "bash --rcfile <rc> -i" AND "bash --rcfile <rc>"
-         * (without -i) were tried and BOTH broke the session outright
-         * (immediate disconnect) on-device. Since execlp() only returns if
-         * exec() itself fails to *start* the program, a crash/incompatible
-         * flag *inside* bash after a successful exec is invisible to us and
-         * can't be caught here to fall back from - so this particular
-         * static/stripped bash build's --rcfile support (or lack of it) is
-         * simply not usable for us. Bash is now invoked completely BARE -
-         * no flags of any kind - mirroring the plain "su UID sh" form that
-         * IS confirmed reliable.
+         * IMPORTANT - HISTORY, so nobody re-tries blindly:
+         * - "bash --rcfile <rc> -i" and "bash --rcfile <rc>" (no -i) BOTH
+         *   broke the session outright on the bnsmb bash-static-stripped
+         *   build that used to be our default pkg-index entry - confirmed
+         *   by two separate on-device tests. Since execlp() only returns if
+         *   exec() itself fails to *start* the program, a crash *inside*
+         *   bash after a successful exec is invisible to us here.
+         * - On-device testing later confirmed "/system/bin/bash --rcfile
+         *   <rc>" (no -i) DOES work correctly on devices that have a full
+         *   Magisk-provided bash (GNU bash 5.0, native arch) - so that
+         *   specific combination is safe to use WHEN that binary is
+         *   present. Not every device will have it.
+         * - Our own self-hosted pkg-index bash (BIN_DIR/bash, user-supplied
+         *   32-bit static builds) has NOT been verified with --rcfile - so
+         *   it's invoked bare, same as before, until someone confirms it.
          *
-         * The "starts in the right directory" problem this used to solve
-         * via --rcfile is instead fixed at the permission level:
-         * RootProvisioner chmods the home dirs 701 (execute-only for
-         * "other"), which lets dropbear's OWN pre-escalation chdir()
-         * attempt succeed even before su - so the process cwd is already
-         * correct by the time anything here runs, inherited automatically
-         * across every exec() in this chain, bash included. See
-         * RootProvisioner.java for the permission comment.
-         *
-         * Trade-off accepted for now: bash's ~/.bashrc / $HISTFILE default
-         * still depend on $HOME, which may or may not survive su - so
-         * aliases/prompt/history *persistence* may not apply inside bash
-         * specifically (in-session history still works regardless - that's
-         * bash's own in-memory feature, unaffected). Revisit if that turns
-         * out to matter in practice. */
+         * "Starts in the right directory" is handled independently at the
+         * permission level regardless of which of these runs (see
+         * RootProvisioner.java: home dirs are chmod 701 so dropbear's own
+         * pre-escalation chdir() already succeeds before any of this). HOME
+         * is exported best-effort for whichever shell ends up running.
+         */
         setenv("HOME", SSHD4A_HOME_DIR, 1);
+
+        struct stat st;
+
+        static const char *SYSTEM_BASH = "/system/bin/bash";
+        if (stat(SYSTEM_BASH, &st) == 0) {
+            debug_log("interactive-mode, /system/bin/bash found, exec su -> bash --rcfile");
+            execlp("su", "su", SSHD4A_TARGET_UID_STR, SYSTEM_BASH,
+                   "--rcfile", SSHD4A_RC_FILE, (char *) NULL);
+            /* falls through to the next candidate if this exec failed to start */
+        }
 
         char bash_path[512];
         snprintf(bash_path, sizeof(bash_path), "%s/bash", SSHD4A_BIN_DIR);
-
-        struct stat st;
         if (stat(bash_path, &st) == 0) {
-            debug_log("interactive-mode, bash found, exec bare su -> bare bash (no flags)");
+            debug_log("interactive-mode, BIN_DIR bash found, exec bare su -> bare bash (no flags)");
             execlp("su", "su", SSHD4A_TARGET_UID_STR, bash_path, (char *) NULL);
-            /* if THIS particular exec failed (e.g. bash_path stopped existing
-             * between the stat() and here), fall through to plain sh below
-             * rather than giving up entirely. */
         }
 
         debug_log("interactive-mode, setenv ENV, about to exec bare su -> sh");

@@ -141,9 +141,15 @@ find_pkg_line() {
 }
 
 cmd_install() {
+    force=0
+    if [ "$1" = "--force" ] || [ "$1" = "-f" ]; then
+        force=1
+        shift
+    fi
+
     name="$1"
     if [ -z "$name" ]; then
-        echo "Usage: pkg install <name>"
+        echo "Usage: pkg install [--force] <name>"
         return 1
     fi
     line=$(find_pkg_line "$name")
@@ -156,9 +162,25 @@ cmd_install() {
     sha=$(echo "$line" | awk -F'|' '{print $5}')
     install_name=$(echo "$line" | awk -F'|' '{print $6}')
 
-    if [ -e "$BIN/$install_name" ]; then
-        echo "Note: $install_name is already installed, will be overwritten."
-    fi
+    status=$(pkg_status "$install_name")
+    case "$status" in
+        installed)
+            echo "Note: $install_name is already installed here, will be overwritten."
+            ;;
+        system:*)
+            sys_path="${status#system:}"
+            if [ "$force" -ne 1 ]; then
+                echo "Skipping: $install_name is already provided by the system, at $sys_path"
+                echo "  Our own copy might be an older/less complete build, and installing it"
+                echo "  would only shadow the system one within this app's PATH (root/shell),"
+                echo "  not replace it system-wide - usually not worth doing by default."
+                echo "  If you specifically want our version anyway: pkg install --force $name"
+                return 0
+            fi
+            echo "Note: $install_name exists on the system at $sys_path - installing our own"
+            echo "  copy anyway (--force), it will take priority within this app's PATH."
+            ;;
+    esac
 
     echo "Installing $name ($version) for $ARCH"
     printf '  Get: %s\n' "$url"
@@ -233,11 +255,11 @@ case "$1" in
     update)    cmd_update ;;
     list)      cmd_list ;;
     installed) cmd_installed ;;
-    install)   shift; cmd_install "$1" ;;
+    install)   shift; cmd_install "$@" ;;
     remove)    shift; cmd_remove "$1" ;;
     repo)      shift; cmd_repo "$@" ;;
     *)
         echo "Sshd4a extented package manager"
-        echo "Usage: pkg [update|list|installed|install <name>|remove <name>|repo ...]"
+        echo "Usage: pkg [update|list|installed|install [--force] <name>|remove <name>|repo ...]"
         ;;
 esac
