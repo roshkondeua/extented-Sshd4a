@@ -45,6 +45,8 @@ public final class RootProvisioner {
     static final String RC_ROOT = ETC_DIR + "/rc-root";
     static final String RC_SHELL = ETC_DIR + "/rc-shell";
     static final String COMMON_RC = ETC_DIR + "/bashrc-common";
+    static final String CUSTOM_ROOT = ETC_DIR + "/custom-root";
+    static final String CUSTOM_SHELL = ETC_DIR + "/custom-shell";
     static final String PKG_SCRIPT = BIN_DIR + "/pkg";
     static final String PKG_REPOS_FILE = ETC_DIR + "/pkg-repos.list";
     static final String PKG_CACHE_DIR = ETC_DIR + "/pkg-cache";
@@ -161,6 +163,33 @@ public final class RootProvisioner {
         script.append("  chmod 644 '").append(COMMON_RC).append("'\n");
         script.append("fi\n");
 
+        // Same idea, but per-role - lets you have a different alias/PS1/whatever
+        // for root vs shell specifically, on top of the shared common file above.
+        // Sourced near the end of rc-root/rc-shell (see below), so it can override
+        // anything the app itself set, and persists across every provisioning run
+        // exactly like bashrc-common does.
+        if (needRoot) {
+            script.append("if [ ! -e '").append(CUSTOM_ROOT).append("' ]; then\n");
+            script.append("  cat > '").append(CUSTOM_ROOT).append("' <<'SSHD4A_RC_EOF'\n");
+            script.append("# Sshd4a extented - your OWN settings for the root role specifically.\n");
+            script.append("# Sourced near the end of etc/rc-root (after PATH/PS1/HOME are set, before\n");
+            script.append("# handing off to bash) - never overwritten by the app once this exists.\n");
+            script.append("SSHD4A_RC_EOF\n");
+            script.append("  chmod 644 '").append(CUSTOM_ROOT).append("'\n");
+            script.append("fi\n");
+        }
+        if (needShell) {
+            script.append("if [ ! -e '").append(CUSTOM_SHELL).append("' ]; then\n");
+            script.append("  cat > '").append(CUSTOM_SHELL).append("' <<'SSHD4A_RC_EOF'\n");
+            script.append("# Sshd4a extented - your OWN settings for the shell (ADB) role specifically.\n");
+            script.append("# Sourced near the end of etc/rc-shell (after PATH/PS1/HOME are set, before\n");
+            script.append("# handing off to bash) - never overwritten by the app once this exists.\n");
+            script.append("SSHD4A_RC_EOF\n");
+            script.append("  chown 2000:2000 '").append(CUSTOM_SHELL).append("'\n");
+            script.append("  chmod 644 '").append(CUSTOM_SHELL).append("'\n");
+            script.append("fi\n");
+        }
+
         if (needRoot) {
             script.append("echo SSHD4A_STEP mkdir_root_home\n");
             script.append("mkdir -p '").append(ROOT_HOME).append("'\n");
@@ -186,6 +215,7 @@ public final class RootProvisioner {
             script.append("export HISTFILESIZE=2000\n");
             script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
             script.append("export PS1='$PWD # '\n");
+            script.append(". '").append(CUSTOM_ROOT).append("' 2>/dev/null\n");
             appendBashHandoff(script, RC_ROOT);
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_ROOT).append("'\n");
@@ -208,6 +238,7 @@ public final class RootProvisioner {
             script.append("export HISTFILESIZE=2000\n");
             script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
             script.append("export PS1='$PWD $ '\n");
+            script.append(". '").append(CUSTOM_SHELL).append("' 2>/dev/null\n");
             appendBashHandoff(script, RC_SHELL);
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_SHELL).append("'\n");
