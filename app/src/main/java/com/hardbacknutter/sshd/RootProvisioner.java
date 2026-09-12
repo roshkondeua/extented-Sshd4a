@@ -75,6 +75,41 @@ public final class RootProvisioner {
         return sb.toString();
     }
 
+    /**
+     * Appends the "hand off to bash if a good one is available" tail end of
+     * an rc file (rc-root/rc-shell), sourced via $ENV by the always-bare
+     * "su UID sh" invocation in su-login-shell.c.
+     * <p>
+     * This - NOT asking su itself to run bash - is deliberate: on-device
+     * testing showed "su UID <path-to-bash>" doesn't actually run bash as
+     * the shell at all (su's positional form only recognises known shell
+     * *names* like "sh", silently falling back to its own default for an
+     * arbitrary file path); and going through su's "-c" mode to work around
+     * that loses the controlling tty. A plain `exec` from inside an
+     * already-running (and already tty-safe) sh has neither problem.
+     * <p>
+     * Prefers a full system-provided /system/bin/bash (e.g. a Magisk
+     * module's) with --rcfile - confirmed working on-device (GNU bash 5.0,
+     * full --rcfile support). Falls back to our own pkg-installed
+     * BIN_DIR/bash bare (its --rcfile support is unverified). If neither
+     * exists, the rc file simply ends here and plain sh continues as-is.
+     */
+    private static void appendBashHandoff(@NonNull final StringBuilder script,
+                                          @NonNull final String rcFilePath) {
+        // Guarded by SSHD4A_SHELL_UPGRADED - without it, bash re-reads this SAME
+        // file via --rcfile and would hit this very block again, re-exec'ing
+        // itself forever. The exported guard survives the exec (env vars always
+        // do), so the second read (by bash itself) just skips straight past.
+        script.append("if [ -z \"$SSHD4A_SHELL_UPGRADED\" ]; then\n");
+        script.append("    export SSHD4A_SHELL_UPGRADED=1\n");
+        script.append("    if [ -x /system/bin/bash ]; then\n");
+        script.append("        exec /system/bin/bash --rcfile '").append(rcFilePath).append("'\n");
+        script.append("    elif [ -x '").append(BIN_DIR).append("/bash' ]; then\n");
+        script.append("        exec '").append(BIN_DIR).append("/bash'\n");
+        script.append("    fi\n");
+        script.append("fi\n");
+    }
+
     private RootProvisioner() {
     }
 
@@ -151,6 +186,7 @@ public final class RootProvisioner {
             script.append("export HISTFILESIZE=2000\n");
             script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
             script.append("export PS1='$PWD # '\n");
+            appendBashHandoff(script, RC_ROOT);
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_ROOT).append("'\n");
         }
@@ -172,6 +208,7 @@ public final class RootProvisioner {
             script.append("export HISTFILESIZE=2000\n");
             script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
             script.append("export PS1='$PWD $ '\n");
+            appendBashHandoff(script, RC_SHELL);
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_SHELL).append("'\n");
             // pre-create + chown the history file - bash creates it lazily itself
