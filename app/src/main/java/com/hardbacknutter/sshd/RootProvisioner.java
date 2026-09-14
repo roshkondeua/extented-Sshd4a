@@ -49,6 +49,9 @@ public final class RootProvisioner {
     static final String CUSTOM_ROOT = ETC_DIR + "/custom-root";
     static final String CUSTOM_SHELL = ETC_DIR + "/custom-shell";
     static final String PKG_SCRIPT = BIN_DIR + "/pkg";
+    static final String SSHD4A_CLI_SCRIPT = BIN_DIR + "/sshd4a";
+    static final String VERSION_SCRIPT = BIN_DIR + "/version";
+    static final String APP_VERSION_FILE = ETC_DIR + "/app-version";
     static final String PKG_REPOS_FILE = ETC_DIR + "/pkg-repos.list";
     static final String PKG_CACHE_DIR = ETC_DIR + "/pkg-cache";
     static final String DEFAULT_PKG_REPO =
@@ -279,6 +282,26 @@ public final class RootProvisioner {
         script.append("  echo '").append(DEFAULT_PKG_REPO).append("' > '")
               .append(PKG_REPOS_FILE).append("'\n");
         script.append("fi\n");
+
+        // sshd4a CLI + version - always regenerated (infrastructure, not user
+        // customization), same reasoning as rc-root/rc-shell.
+        script.append("echo SSHD4A_STEP write_sshd4a_cli\n");
+        script.append("echo '").append(BuildConfig.VERSION_NAME)
+              .append(" (").append(BuildConfig.VERSION_CODE).append(")' > '")
+              .append(APP_VERSION_FILE).append("'\n");
+        script.append("chmod 644 '").append(APP_VERSION_FILE).append("'\n");
+        script.append("cat > '").append(SSHD4A_CLI_SCRIPT).append("' <<'SSHD4A_CLI_EOF'\n");
+        script.append(readAsset(context, "sshd4a"));
+        script.append("SSHD4A_CLI_EOF\n");
+        script.append("chmod 755 '").append(SSHD4A_CLI_SCRIPT).append("'\n");
+        // short "version" alias - a separate tiny script rather than a shell
+        // alias, so it also works from ssh's one-shot command form
+        // (ssh user@host version), not just inside an interactive session.
+        script.append("cat > '").append(VERSION_SCRIPT).append("' <<'SSHD4A_CLI_EOF'\n");
+        script.append("#!/system/bin/sh\n");
+        script.append("exec '").append(SSHD4A_CLI_SCRIPT).append("' --version\n");
+        script.append("SSHD4A_CLI_EOF\n");
+        script.append("chmod 755 '").append(VERSION_SCRIPT).append("'\n");
 
         script.append("echo SSHD4A_STEP done\n");
         script.append("exit\n");
