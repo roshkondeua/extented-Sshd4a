@@ -42,6 +42,7 @@ public final class RootProvisioner {
     static final String SHELL_HOME = BASE_DIR + "/shell/home";
     static final String BIN_DIR = BASE_DIR + "/bin";
     static final String ETC_DIR = BASE_DIR + "/etc";
+    static final String TMP_DIR = BASE_DIR + "/tmp";
     static final String RC_ROOT = ETC_DIR + "/rc-root";
     static final String RC_SHELL = ETC_DIR + "/rc-shell";
     static final String COMMON_RC = ETC_DIR + "/bashrc-common";
@@ -142,9 +143,17 @@ public final class RootProvisioner {
 
         final StringBuilder script = new StringBuilder();
         script.append("echo SSHD4A_STEP mkdir_base\n");
-        script.append("mkdir -p '").append(BIN_DIR).append("' '").append(ETC_DIR).append("'\n");
+        script.append("mkdir -p '").append(BIN_DIR).append("' '").append(ETC_DIR)
+              .append("' '").append(TMP_DIR).append("'\n");
         script.append("chmod 755 '").append(BASE_DIR).append("' '")
               .append(BIN_DIR).append("' '").append(ETC_DIR).append("'\n");
+        // Real /tmp equivalent - many unix tools (tmux, various daemons/sockets)
+        // assume it exists and fail cryptically otherwise ("no suitable socket
+        // path" etc. - Android has no /tmp at all). Sticky bit (the leading 1),
+        // same as a real /tmp, so root and shell (different uids) can both
+        // create their own tmux-$UID/whatever subdirs here without being able
+        // to delete each other's.
+        script.append("chmod 1777 '").append(TMP_DIR).append("'\n");
 
         // Common config sourced by BOTH rc-root and rc-shell (real-Linux style
         // /etc/bash.bashrc equivalent) - aliases/settings shared by every
@@ -210,6 +219,7 @@ public final class RootProvisioner {
             script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
             script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(ROOT_HOME).append("'\n");
+            script.append("export TMPDIR='").append(TMP_DIR).append("'\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
             script.append("export HISTSIZE=1000\n");
             script.append("export HISTFILESIZE=2000\n");
@@ -233,6 +243,7 @@ public final class RootProvisioner {
             script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
             script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(SHELL_HOME).append("'\n");
+            script.append("export TMPDIR='").append(TMP_DIR).append("'\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
             script.append("export HISTSIZE=1000\n");
             script.append("export HISTFILESIZE=2000\n");
