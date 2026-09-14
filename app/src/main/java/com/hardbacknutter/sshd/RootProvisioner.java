@@ -220,6 +220,7 @@ public final class RootProvisioner {
             script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(ROOT_HOME).append("'\n");
             script.append("export TMPDIR='").append(TMP_DIR).append("'\n");
+            script.append("export TMUX_TMPDIR='").append(TMP_DIR).append("'\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
             script.append("export HISTSIZE=1000\n");
             script.append("export HISTFILESIZE=2000\n");
@@ -244,6 +245,7 @@ public final class RootProvisioner {
             script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(SHELL_HOME).append("'\n");
             script.append("export TMPDIR='").append(TMP_DIR).append("'\n");
+            script.append("export TMUX_TMPDIR='").append(TMP_DIR).append("'\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
             script.append("export HISTSIZE=1000\n");
             script.append("export HISTFILESIZE=2000\n");
