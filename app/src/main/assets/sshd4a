@@ -30,87 +30,11 @@ cmd_env() {
 cmd_help() {
     printf 'Sshd4a extented  '
     cmd_version
-    cat <<'HELP_EOF'
-
-This is a fork of the Sshd4a Android SSH server (dropbear + rsync + sftp-server)
-with extra login roles, a small package manager and helper commands.
-
-COMMANDS
-  help, sshd4a help       this text
-  version, ver            print the app version
-  sshd4a env [--file]     print shell code that adds Sshd4a's bin dir to PATH
-                          (--file: print the path of the equivalent file)
-  pkg                     package manager (see below)
-  termux, tmx             enter the Termux environment (see below)
-  tmux                    terminal multiplexer, per-role alias (see below)
-
-LOGIN ROLES (set a login/password per role in the app's Settings)
-  user    the app's own sandbox uid; prompt ends with  $
-  shell   uid 2000 (adb shell), via su;                 prompt ends with  şҥ
-  root    uid 0, via su;                                prompt ends with  #
-
-SWITCHING USERS (inside a session; uses the system su)
-  su, su root, su r       become root
-  su shell, su s          become shell (uid 2000)
-  su user, su u           become the app's own user (sandbox)
-  su <uid> ...            anything else goes to the system su unchanged
-
-FILES AND FOLDERS (/data/local/tmp/Sshd4a)
-  bin/                    pkg-installed tools and the commands above
-  etc/                    configuration (below)      tmp/   shared /tmp (1777)
-  root/home, shell/home   home folders of the root and shell roles
-  etc/bashrc-common       edit freely: aliases for root AND shell (created once)
-  etc/custom-root         edit freely: extras for root only (created once)
-  etc/custom-shell        edit freely: extras for shell only (created once)
-  etc/tmux.conf           shared tmux config (created once)
-  etc/pkg-repos.list      package repo list (created once; use `pkg repo`)
-  etc/rc-root rc-shell rc-user rc-lib rc-termux env termux-info
-                          regenerated on every service start / settings save:
-                          do not edit (put your changes in the files above;
-                          the user role also reads  ~/.shrc-user  if present)
-
-TMUX
-  `tmux` is an alias that always passes a per-role socket (tmux-root.sock,
-  tmux-shell.sock, tmux-user.sock) and etc/tmux.conf. Roles do not share
-  sessions: a session started as root is not visible to shell.
-
-AUTOSTART
-  Every role has a folder  ~/autostart.d  (root/home, shell/home, and the
-  app's own home for the user role). Each time the service starts, the files
-  in it are run in name order, in the background, as that role, with
-  `sh <file>` (so they need no exec permission). Output is appended to
-  ~/autostart.log. Scripts run again on every service restart, so make them
-  safe to run twice (check whether the daemon is already running).
-
-TERMUX
-  `termux` or `tmx` enters Termux's own login environment (needs root/su for
-  now). If Termux is not installed, or comes from Google Play (a separate,
-  unsupported build), it says so and points to F-Droid / GitHub. Termux is
-  detected at service start; restart the service after installing it.
-  Not implemented yet: non-root access (Termux RUN_COMMAND).
-
-EXTERNAL TERMINALS / APPS
-  . /data/local/tmp/Sshd4a/etc/env      add Sshd4a's tools to PATH
-  eval "$(sshd4a env)"                  the same, without sourcing a file
-  It only changes PATH (it will not break Termux's own HOME/TMPDIR).
-  The calling app must be able to read and execute files there.
-
-PACKAGE MANAGER (pkg)
-  pkg update                  refresh the package index from all repos
-  pkg list                    packages available for this device's CPU
-  pkg installed               installed packages
-  pkg install [--force] NAME  download, verify sha256, install into bin/
-                              (without --force it will not shadow a tool the
-                              system already provides)
-  pkg remove NAME             remove an installed package
-  pkg repo list               configured repos
-  pkg repo add URL            add your own repo (an index file URL)
-  pkg repo remove URL         remove a repo
-  Index line format (one per package, '#' = comment):
-    name|arch|version|url|sha256|install_name
-  The default repo is built from bnsmb/binaries-for-Android (arm64 only) plus
-  this project's own bash builds. Downloads use busybox wget.
-HELP_EOF
+    if [ -r "$BASE/etc/help.txt" ]; then
+        cat "$BASE/etc/help.txt"
+    else
+        echo "(help text missing - re-run provisioning: save Settings or restart the service)"
+    fi
 }
 
 case "$1" in

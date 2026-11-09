@@ -518,6 +518,26 @@ public final class RootProvisioner {
         script.append("SSHD4A_CLI_EOF\n");
         script.append("chmod 755 '").append(HELP_SCRIPT).append("'\n");
 
+        // help text, in the app's UI language (Russian when the app locale is ru, else English)
+        final String lang = context.getResources().getConfiguration().getLocales().get(0).getLanguage();
+        script.append("cat > '").append(ETC_DIR).append("/help.txt' <<'SSHD4A_HELP_EOF'\n");
+        script.append(readAsset(context, "ru".equals(lang) ? "help-ru" : "help-en"));
+        script.append("SSHD4A_HELP_EOF\n");
+        script.append("chmod 644 '").append(ETC_DIR).append("/help.txt'\n");
+
+        // short `busybox` name for every role (the real binary is libbusybox.so in the
+        // app's native library dir). Never replaces a real busybox installed via pkg.
+        script.append("if [ ! -e '").append(BIN_DIR).append("/busybox' ] || grep -q SSHD4A_BUSYBOX_WRAPPER '")
+              .append(BIN_DIR).append("/busybox' 2>/dev/null; then\n");
+        script.append("cat > '").append(BIN_DIR).append("/busybox' <<'SSHD4A_BB_EOF'\n");
+        script.append("#!/system/bin/sh\n");
+        script.append("# SSHD4A_BUSYBOX_WRAPPER - regenerated on every provisioning run\n");
+        script.append("exec '").append(context.getApplicationInfo().nativeLibraryDir)
+              .append("/libbusybox.so' \"$@\"\n");
+        script.append("SSHD4A_BB_EOF\n");
+        script.append("chmod 755 '").append(BIN_DIR).append("/busybox'\n");
+        script.append("fi\n");
+
         // per-role autostart folders (scripts run when the service starts)
         if (needRoot) {
             script.append("mkdir -p '").append(ROOT_HOME).append('/').append(AUTOSTART_DIR_NAME).append("'\n");
