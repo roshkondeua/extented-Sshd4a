@@ -90,6 +90,11 @@ void sshd4a_append_lib_to_path() {
     }
     setenv("PATH", new_path, 1);
     free(new_path);
+    /* "user" role profile (PATH to the pkg-installed tools, tmux alias, prompt).
+     * overwrite=0: root/shell logins get their own ENV from su-login-shell. The
+     * file only exists once root/shell provisioning has run; a missing $ENV file
+     * is silently ignored by sh. */
+    setenv("ENV", "/data/local/tmp/Sshd4a/etc/rc-user", 0);
 }
 
 /* Convert the name of the given executable to the full path with the fake libEXE.so name. */

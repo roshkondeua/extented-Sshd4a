@@ -235,7 +235,11 @@ public class SshdService
         // Deliberately NOT blocking dropbear startup on this - a root/shell login
         // attempted in the first second or two after boot might simply need a retry.
         FileLogger.log(this, TAG, "startSshd|launching RootProvisioner thread");
-        new Thread(() -> RootProvisioner.provisionIfNeeded(this), "RootProvisioner").start();
+        new Thread(() -> {
+            RootProvisioner.provisionIfNeeded(this);
+            RootProvisioner.runAutostart(this, Prefs.getHomePath(this, prefs));
+        }, "RootProvisioner").start();
+        new Thread(() -> ExitReasonLogger.logNew(this), "ExitReasonLogger").start();
 
         // See all options: cpp/dropbear/src/svr-runopts.c
         final List<String> argList = new ArrayList<>();

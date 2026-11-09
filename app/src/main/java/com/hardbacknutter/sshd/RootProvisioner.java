@@ -59,6 +59,17 @@ public final class RootProvisioner {
     static final String SSHD4A_CLI_SCRIPT = BIN_DIR + "/sshd4a";
     static final String VERSION_SCRIPT = BIN_DIR + "/version";
     static final String APP_VERSION_FILE = ETC_DIR + "/app-version";
+    static final String RC_USER = ETC_DIR + "/rc-user";
+    static final String RC_LIB = ETC_DIR + "/rc-lib";
+    static final String RC_TERMUX = ETC_DIR + "/rc-termux";
+    static final String ENV_FILE = ETC_DIR + "/env";
+    static final String TERMUX_INFO = ETC_DIR + "/termux-info";
+    static final String TERMUX_SCRIPT = BIN_DIR + "/termux";
+    static final String TMX_SCRIPT = BIN_DIR + "/tmx";
+    static final String VER_SCRIPT = BIN_DIR + "/ver";
+    static final String HELP_SCRIPT = BIN_DIR + "/help";
+    static final String TMUX_SOCK_USER = TMP_DIR + "/tmux-user.sock";
+    static final String AUTOSTART_DIR_NAME = "autostart.d";
     static final String PKG_REPOS_FILE = ETC_DIR + "/pkg-repos.list";
     static final String PKG_CACHE_DIR = ETC_DIR + "/pkg-cache";
     static final String DEFAULT_PKG_REPO =
@@ -121,6 +132,93 @@ public final class RootProvisioner {
         script.append("        exec '").append(BIN_DIR).append("/bash'\n");
         script.append("    fi\n");
         script.append("fi\n");
+    }
+
+    /** Snapshot of the Termux installation, as shell variable assignments. */
+    @NonNull
+    private static String termuxInfo(@NonNull final Context context) {
+        final android.content.pm.PackageManager pm = context.getPackageManager();
+        try {
+            final android.content.pm.PackageInfo pi = pm.getPackageInfo("com.termux", 0);
+            String installer = "unknown";
+            try {
+                final String n = pm.getInstallSourceInfo("com.termux").getInstallingPackageName();
+                if (n != null) {
+                    installer = n;
+                }
+            } catch (@NonNull final Exception ignored) {
+                // keep "unknown"
+            }
+            final String ver = pi.versionName != null ? pi.versionName.replace("'", "") : "unknown";
+            return "TERMUX_INSTALLED=1\n"
+                   + "TERMUX_VERSION='" + ver + "'\n"
+                   + "TERMUX_SOURCE='" + installer.replace("'", "") + "'\n"
+                   + "TERMUX_UID=" + pi.applicationInfo.uid + "\n";
+        } catch (@NonNull final android.content.pm.PackageManager.NameNotFoundException e) {
+            return "TERMUX_INSTALLED=0\n";
+        }
+    }
+
+    /**
+     * Run the per-role autostart scripts ({@code <home>/autostart.d/*}). Called
+     * on every service start, after provisioning. Scripts are started detached,
+     * in name order, via {@code sh <file>} (so no exec permission is needed),
+     * with output appended to {@code <home>/autostart.log}.
+     * MUST be called from a background thread.
+     */
+    public static void runAutostart(@NonNull final Context context,
+                                    @NonNull final String userHomePath) {
+        final boolean needRoot =
+                SshdSettings.readAuthorizedUser(context, SshdSettings.ROLE_ROOT) != null;
+        final boolean needShell =
+                SshdSettings.readAuthorizedUser(context, SshdSettings.ROLE_SHELL) != null;
+
+        if (needRoot || needShell) {
+            final StringBuilder sc = new StringBuilder();
+            if (needRoot) {
+                final String d = ROOT_HOME + "/" + AUTOSTART_DIR_NAME;
+                sc.append("for f in '").append(d).append("'/*; do [ -f \"$f\" ] && ")
+                  .append("( sh \"$f\" >> '").append(ROOT_HOME).append("/autostart.log' 2>&1 </dev/null & ); done\n");
+            }
+            if (needShell) {
+                final String d = SHELL_HOME + "/" + AUTOSTART_DIR_NAME;
+                sc.append("su 2000 sh <<'SSHD4A_AUTO_EOF'\n");
+                sc.append("for f in '").append(d).append("'/*; do [ -f \"$f\" ] && ")
+                  .append("( sh \"$f\" >> '").append(SHELL_HOME).append("/autostart.log' 2>&1 </dev/null & ); done\n");
+                sc.append("SSHD4A_AUTO_EOF\n");
+            }
+            sc.append("exit\n");
+            final boolean ok = runAsSu(context, sc.toString());
+            FileLogger.log(context, TAG, "runAutostart|root/shell|ok=" + ok);
+        }
+
+        // plain app user: in-process, no su involved
+        try {
+            final java.io.File home = new java.io.File(userHomePath);
+            final java.io.File dir = new java.io.File(home, AUTOSTART_DIR_NAME);
+            //noinspection ResultOfMethodCallIgnored
+            dir.mkdirs();
+            final java.io.File[] files = dir.listFiles();
+            if (files == null) {
+                return;
+            }
+            java.util.Arrays.sort(files);
+            final java.io.File log = new java.io.File(home, "autostart.log");
+            for (final java.io.File f : files) {
+                if (!f.isFile()) {
+                    continue;
+                }
+                new ProcessBuilder("/system/bin/sh", f.getPath())
+                        .directory(home)
+                        .redirectErrorStream(true)
+                        .redirectOutput(ProcessBuilder.Redirect.appendTo(log))
+                        .start();
+                FileLogger.log(context, TAG, "runAutostart|user|started " + f.getName());
+            }
+        } catch (@NonNull final Exception e) {
+            Log.w(TAG, "runAutostart|user failed", e);
+            FileLogger.log(context, TAG, "runAutostart|user failed|" + e);
+        }
     }
 
     private RootProvisioner() {
@@ -240,6 +338,7 @@ public final class RootProvisioner {
             script.append("echo SSHD4A_STEP write_rc_root\n");
             script.append("cat > '").append(RC_ROOT).append("' <<'SSHD4A_RC_EOF'\n");
             script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
+            script.append(". '").append(RC_LIB).append("' 2>/dev/null\n");
             script.append("cd '").append(ROOT_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(ROOT_HOME).append("'\n");
             script.append("export TMPDIR='").append(TMP_DIR).append("'\n");
@@ -268,6 +367,7 @@ public final class RootProvisioner {
             script.append("echo SSHD4A_STEP write_rc_shell\n");
             script.append("cat > '").append(RC_SHELL).append("' <<'SSHD4A_RC_EOF'\n");
             script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
+            script.append(". '").append(RC_LIB).append("' 2>/dev/null\n");
             // Nested `su` from inside a shell-role session: the root sh it spawns
             // inherits ENV=rc-shell and would otherwise get shell's prompt, home and
             // tmux socket while being uid 0. Detect that and apply the root profile.
@@ -336,6 +436,98 @@ public final class RootProvisioner {
         script.append("exec '").append(SSHD4A_CLI_SCRIPT).append("' --version\n");
         script.append("SSHD4A_CLI_EOF\n");
         script.append("chmod 755 '").append(VERSION_SCRIPT).append("'\n");
+
+        // ---- 1.13.2.29 additions ----
+        script.append("echo SSHD4A_STEP write_extras\n");
+        final int appUid = context.getApplicationInfo().uid;
+
+        // rc-lib: su-switching function + help - always regenerated, sourced by
+        // rc-root / rc-shell / rc-user.
+        script.append("cat > '").append(RC_LIB).append("' <<'SSHD4A_LIB_EOF'\n");
+        script.append("# Sshd4a extented - shared functions (regenerated on every provisioning run).\n");
+        script.append("# su            -> root          su root|r\n");
+        script.append("# su shell|s    -> shell (2000)\n");
+        script.append("# su user|u     -> the app's own uid (sandbox)\n");
+        script.append("# anything else is passed to the system su unchanged (e.g. su 2000).\n");
+        script.append("su() {\n");
+        script.append("  case \"$1\" in\n");
+        script.append("    ''|root|r)  SSHD4A_SHELL_UPGRADED= ENV='").append(RC_ROOT)
+              .append("' command su 0 sh ;;\n");
+        script.append("    shell|s)    SSHD4A_SHELL_UPGRADED= ENV='").append(RC_SHELL)
+              .append("' command su 2000 sh ;;\n");
+        script.append("    user|u)     SSHD4A_SHELL_UPGRADED= ENV='").append(RC_USER)
+              .append("' command su ").append(appUid).append(" sh ;;\n");
+        script.append("    *)          command su \"$@\" ;;\n");
+        script.append("  esac\n");
+        script.append("}\n");
+        script.append("help() { '").append(SSHD4A_CLI_SCRIPT).append("' help \"$@\"; }\n");
+        script.append("SSHD4A_LIB_EOF\n");
+        script.append("chmod 644 '").append(RC_LIB).append("'\n");
+
+        // rc-user: profile for the plain app-sandbox user (read via $ENV by sh).
+        script.append("cat > '").append(RC_USER).append("' <<'SSHD4A_USERRC_EOF'\n");
+        script.append(". '").append(RC_LIB).append("' 2>/dev/null\n");
+        script.append("case \":$PATH:\" in *':").append(BIN_DIR).append(":'*) ;; *) export PATH=\"$PATH:")
+              .append(BIN_DIR).append("\" ;; esac\n");
+        script.append("export TMPDIR='").append(TMP_DIR).append("'\n");
+        script.append("export TMUX_TMPDIR='").append(TMP_DIR).append("'\n");
+        script.append("export TERMINFO=/system/usr/share/terminfo\n");
+        script.append("alias tmux=\"'").append(BIN_DIR).append("/tmux' -S '").append(TMUX_SOCK_USER)
+              .append("' -f '").append(TMUX_CONF).append("'\"\n");
+        script.append("export PS1='$PWD $ '\n");
+        script.append("[ -r \"$HOME/.shrc-user\" ] && . \"$HOME/.shrc-user\"\n");
+        script.append("SSHD4A_USERRC_EOF\n");
+        script.append("chmod 644 '").append(RC_USER).append("'\n");
+
+        // env: for external terminals/apps ( . etc/env ) - PATH only, deliberately
+        // does not touch TMPDIR/TERMINFO/HOME so it cannot break e.g. Termux.
+        script.append("cat > '").append(ENV_FILE).append("' <<'SSHD4A_ENV_EOF'\n");
+        script.append("# Sshd4a extented - environment for external terminals/apps.\n");
+        script.append("# Use:  . ").append(ENV_FILE).append("\n");
+        script.append("SSHD4A_BASE='").append(BASE_DIR).append("'; export SSHD4A_BASE\n");
+        script.append("case \":$PATH:\" in *':").append(BIN_DIR).append(":'*) ;; *) PATH=\"$PATH:")
+              .append(BIN_DIR).append("\"; export PATH ;; esac\n");
+        script.append("SSHD4A_ENV_EOF\n");
+        script.append("chmod 644 '").append(ENV_FILE).append("'\n");
+
+        // Termux: info snapshot (from PackageManager), login profile, commands.
+        script.append("cat > '").append(TERMUX_INFO).append("' <<'SSHD4A_INFO_EOF'\n");
+        script.append(termuxInfo(context));
+        script.append("SSHD4A_INFO_EOF\n");
+        script.append("chmod 644 '").append(TERMUX_INFO).append("'\n");
+        script.append("cat > '").append(RC_TERMUX).append("' <<'SSHD4A_TMXRC_EOF'\n");
+        script.append(readAsset(context, "rc-termux"));
+        script.append("SSHD4A_TMXRC_EOF\n");
+        script.append("chmod 644 '").append(RC_TERMUX).append("'\n");
+        script.append("cat > '").append(TERMUX_SCRIPT).append("' <<'SSHD4A_TMX_EOF'\n");
+        script.append(readAsset(context, "termux"));
+        script.append("SSHD4A_TMX_EOF\n");
+        script.append("chmod 755 '").append(TERMUX_SCRIPT).append("'\n");
+        script.append("cat > '").append(TMX_SCRIPT).append("' <<'SSHD4A_TMX_EOF'\n");
+        script.append("#!/system/bin/sh\nexec '").append(TERMUX_SCRIPT).append("' \"$@\"\n");
+        script.append("SSHD4A_TMX_EOF\n");
+        script.append("chmod 755 '").append(TMX_SCRIPT).append("'\n");
+
+        // ver / help one-shot scripts (work from `ssh host ver` too)
+        script.append("cat > '").append(VER_SCRIPT).append("' <<'SSHD4A_CLI_EOF'\n");
+        script.append("#!/system/bin/sh\nexec '").append(SSHD4A_CLI_SCRIPT).append("' --version\n");
+        script.append("SSHD4A_CLI_EOF\n");
+        script.append("chmod 755 '").append(VER_SCRIPT).append("'\n");
+        script.append("cat > '").append(HELP_SCRIPT).append("' <<'SSHD4A_CLI_EOF'\n");
+        script.append("#!/system/bin/sh\nexec '").append(SSHD4A_CLI_SCRIPT).append("' help \"$@\"\n");
+        script.append("SSHD4A_CLI_EOF\n");
+        script.append("chmod 755 '").append(HELP_SCRIPT).append("'\n");
+
+        // per-role autostart folders (scripts run when the service starts)
+        if (needRoot) {
+            script.append("mkdir -p '").append(ROOT_HOME).append('/').append(AUTOSTART_DIR_NAME).append("'\n");
+            script.append("chmod 700 '").append(ROOT_HOME).append('/').append(AUTOSTART_DIR_NAME).append("'\n");
+        }
+        if (needShell) {
+            script.append("mkdir -p '").append(SHELL_HOME).append('/').append(AUTOSTART_DIR_NAME).append("'\n");
+            script.append("chown 2000:2000 '").append(SHELL_HOME).append('/').append(AUTOSTART_DIR_NAME).append("'\n");
+            script.append("chmod 700 '").append(SHELL_HOME).append('/').append(AUTOSTART_DIR_NAME).append("'\n");
+        }
 
         script.append("echo SSHD4A_STEP done\n");
         script.append("exit\n");
