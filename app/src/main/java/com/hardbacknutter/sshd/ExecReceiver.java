@@ -60,6 +60,7 @@ public class ExecReceiver extends BroadcastReceiver {
 
         if (!Prefs.isExecIntentEnabled(prefs)) {
             Log.w(TAG, "onReceive|EXEC intent received but disabled in Settings - ignoring");
+            report(3, "disabled: enable 'Allow external command execution'");
             return;
         }
 
@@ -68,6 +69,7 @@ public class ExecReceiver extends BroadcastReceiver {
             final String givenToken = intent.getStringExtra("token");
             if (!configuredToken.equals(givenToken)) {
                 Log.w(TAG, "onReceive|EXEC intent token mismatch - ignoring");
+                report(6, "refused: token mismatch");
                 return;
             }
         }
@@ -75,6 +77,7 @@ public class ExecReceiver extends BroadcastReceiver {
         final String cmd = intent.getStringExtra("cmd");
         if (cmd == null || cmd.isBlank()) {
             Log.w(TAG, "onReceive|EXEC intent missing 'cmd' extra - ignoring");
+            report(7, "refused: missing 'cmd' extra");
             return;
         }
 
@@ -87,6 +90,15 @@ public class ExecReceiver extends BroadcastReceiver {
         // BroadcastReceiver.onReceive() must return quickly - do the actual
         // (potentially slow, e.g. waiting on su) work on a background thread.
         new Thread(() -> runExec(appContext, cmd, finalExecAs), "ExecReceiver").start();
+        report(1, "accepted: running as " + finalExecAs + " (output goes to the debug log)");
+    }
+
+    /** Result code/data shown by {@code am broadcast} (ordered broadcasts only). */
+    private void report(final int code, @NonNull final String message) {
+        if (isOrderedBroadcast()) {
+            setResultCode(code);
+            setResultData(message);
+        }
     }
 
     private static void runExec(@NonNull final Context context,

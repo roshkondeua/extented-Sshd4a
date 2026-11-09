@@ -69,9 +69,12 @@ TERMUX
 ЗАПУСК И ОСТАНОВКА ИЗВНЕ (adb shell, Termux, скрипты)
   Сначала включите в настройках «Allow starting the service by an external Intent».
   Пакет — com.roshkond.sshd4a.extended; оригинальный Sshd4a отзывается на те же
-  действия, поэтому всегда указывайте компонент:
+  действия, поэтому всегда указывайте компонент. В фоне (без окна приложения):
+    am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.START
+    (то же с ...fg.STOP)  -> печатает result=<код>, data="<сообщение>":
+    1 выполнено, 2 делать нечего, 3 опция выключена, 4 не удалось (см. data), 5 стоп отклонён
+  С окном приложения (activity):
     am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START
-    (то же с ...fg.STOP)
   Выполнение команды (нужна опция «Allow external command execution»; exec_as =
   root|shell|user, необязательный --es token):
     am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root

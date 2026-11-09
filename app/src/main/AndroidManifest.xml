@@ -118,6 +118,21 @@
                 <action android:name="com.hardbacknutter.sshd.fg.EXEC" />
             </intent-filter>
         </receiver>
+
+        <!--
+            Headless START/STOP (no UI comes to the foreground). Same setting and the
+            same "no security" model as the activity variant above; the actions are the
+            same, so use an explicit component (-n) because the original Sshd4a answers
+            these actions too.
+        -->
+        <receiver
+            android:name=".ControlReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.hardbacknutter.sshd.fg.START" />
+                <action android:name="com.hardbacknutter.sshd.fg.STOP" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

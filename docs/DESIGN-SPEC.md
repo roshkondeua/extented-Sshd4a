@@ -1,6 +1,6 @@
 # Sshd4a extented — техническая спецификация
 
-Актуально для версии **1.13.2.30**. Документ описывает то, что реализовано и проверено
+Актуально для версии **1.13.2.31**. Документ описывает то, что реализовано и проверено
 на устройстве, отдельно от планов (раздел 13). Пометки: **[проверено]** — подтверждено
 на устройстве владельца; **[не проверено]** — реализовано, но ещё не подтверждено.
 
@@ -163,14 +163,20 @@ root и shell — из одного `su`-скрипта (shell через вло
 ставится рядом и слушает те же действия, команды нужно давать с явным компонентом:
 
 ```
+am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.START|STOP
 am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START|STOP
 am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
 ```
 
-- START/STOP обрабатывает `MainActivity` (`singleTask`); включается опцией «Allow starting the service by an external Intent».
+- **`ControlReceiver`** (с 1.13.2.31): запуск и остановка службы без UI. Ответ в виде result-кода и сообщения
+  (`am broadcast` их печатает). Те же настройка и модель безопасности, что у activity-варианта.
+  Запуск из фона зависит от ограничения Android 12+ на foreground-сервисы; при отказе возвращается result=4 с причиной.
+- START/STOP через `MainActivity` (`singleTask`) оставлены как в апстриме; всплывает окно приложения.
+  Включается опцией «Allow starting the service by an external Intent».
 - **EXEC-интент** (`ExecReceiver`): extras `cmd`, `exec_as` = `root|shell|user` (по умолчанию `user`),
   необязательный `token`. По умолчанию выключен, при включении показывается предупреждение. Токен необязателен —
-  решение владельца. Команда выполняется через `su <uid> sh -c`, результат не возвращается (только лог).
+  решение владельца. Команда выполняется через `su <uid> sh -c`; результат команды не возвращается (только лог),
+  принятие запроса видно в result-коде.
 - Формы с `-n` **[не проверены]** на устройстве.
 
 ## 10. Команды CLI
