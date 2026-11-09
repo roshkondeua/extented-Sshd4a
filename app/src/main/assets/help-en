@@ -71,9 +71,11 @@ EXTERNAL TERMINALS / APPS
 STARTING / STOPPING FROM OUTSIDE (adb shell, Termux, scripts)
   Enable "Allow starting the service by an external Intent" in Settings first.
   The package is com.roshkond.sshd4a.extended; the original Sshd4a answers the
-  same actions, so always name the component. Headless (no app window):
-    am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.START
-    (same with ...fg.STOP)  -> prints result=<code>, data="<message>":
+  same actions, so always name the component. No app window (invisible activity):
+    am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.QuickStartActivity -a com.hardbacknutter.sshd.fg.START
+    (same with ...fg.STOP; the outcome is in logcat: logcat -d -s ExternalControl)
+  STOP (and START while Android allows it) via broadcast; prints result=<code>:
+    am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.STOP
     1 done, 2 nothing to do, 3 option disabled, 4 failed (see data), 5 stop refused
   With the app window (activity):
     am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START

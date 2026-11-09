@@ -1,6 +1,6 @@
 # Внешний запуск, остановка и выполнение команд
 
-Справка для Sshd4a extented (версия 1.13.2.31 и новее). Команды ниже выполняются из `adb shell`,
+Справка для Sshd4a extented (версия 1.13.2.32 и новее). Команды ниже выполняются из `adb shell`,
 из любой оболочки на самом устройстве (SSH-сессия, Termux, скрипт, root) — синтаксис одинаков.
 С компьютера перед командой добавляется `adb shell`.
 
@@ -38,29 +38,46 @@
 запустить или остановить сервис (и выполнить команду, если включён EXEC) может любое приложение
 на устройстве.
 
-## Запуск и остановка службы в фоне (рекомендуется, версия 1.13.2.31+)
+## Запуск и остановка без окна (рекомендуется, версия 1.13.2.32+)
 
-Приёмник `ControlReceiver` запускает и останавливает сервер **без открытия окна приложения**:
+Невидимая activity `QuickStartActivity` запускает или останавливает сервер и сразу закрывается; окна приложения
+на экране не появляется:
 
 ```
-am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.START
+am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.QuickStartActivity -a com.hardbacknutter.sshd.fg.START
+am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.QuickStartActivity -a com.hardbacknutter.sshd.fg.STOP
+```
+
+С компьютера добавьте `adb shell` в начало. Результат `am start` не показывает: смотрите
+`logcat -d -s ExternalControl` (там строка `quick-activity|start|result=<код>|<сообщение>`), а при включённой
+записи лога — `sshd4a-debug.log`.
+
+**Почему именно activity.** Начиная с Android 12 приложение в фоне не может запустить foreground-сервис.
+Приёмник широковещательных сообщений остановленного приложения под это не подпадает: система отвечает
+`ForegroundServiceStartNotAllowedException` (проверено логом на устройстве: `uidState: RCVR … DENIED`,
+исключение от батареи не помогло). Activity, запущенная из adb/shell, на мгновение переводит приложение в
+состояние «на экране», и запуск сервиса разрешается.
+
+## Остановка и запуск через приёмник (без activity)
+
+```
 am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.STOP
+am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.START
 ```
 
-С компьютера добавьте `adb shell` в начало. `am broadcast` печатает результат:
-`Broadcast completed: result=<код>, data="<сообщение>"`.
+Приёмник печатает результат: `Broadcast completed: result=<код>, data="<сообщение>"`.
 
 | result | Значение |
 |---|---|
 | 1 | выполнено (сервис запущен / остановлен) |
 | 2 | делать нечего (уже работает / не работает) |
 | 3 | выключена опция «Allow starting the service by an external Intent» |
-| 4 | не удалось (в data причина, например ограничение запуска foreground-сервиса из фона Android 12+) |
-| 5 | STOP отклонён: сервис запущен не внешним интентом (как и в варианте через activity, останавливать можно только то, что запущено интентом) |
+| 4 | не удалось (в data причина) |
+| 5 | STOP отклонён: сервис запущен не внешним интентом (как и в апстриме, останавливать можно только то, что запущено интентом) |
 
-Если запуск из фона не разрешён системой (result=4, `ForegroundServiceStartNotAllowedException`), пришлите
-текст из data: приложение должно быть исключено из оптимизации батареи (это исключение снимает
-ограничение), иначе придётся искать другой способ.
+**STOP через приёмник работает всегда. START через приёмник** сработает только пока Android разрешает запуск
+сервиса из фона (приложение на экране или в разрешённом состоянии); для остановленного приложения вернётся
+`result=4` с `ForegroundServiceStartNotAllowedException`, поэтому для START используйте `QuickStartActivity`.
 
 ## Запуск и остановка с открытием окна (вариант через activity)
 

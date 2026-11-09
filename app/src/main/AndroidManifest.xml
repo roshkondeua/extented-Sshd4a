@@ -125,6 +125,18 @@
             same, so use an explicit component (-n) because the original Sshd4a answers
             these actions too.
         -->
+        <!--
+            Invisible trampoline for START/STOP: see QuickStartActivity. Explicit
+            component only (no intent filter) - the original Sshd4a answers the same actions.
+        -->
+        <activity
+            android:name=".QuickStartActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
+
         <receiver
             android:name=".ControlReceiver"
             android:exported="true">

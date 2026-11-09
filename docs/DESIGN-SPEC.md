@@ -1,6 +1,6 @@
 # Sshd4a extented — техническая спецификация
 
-Актуально для версии **1.13.2.31**. Документ описывает то, что реализовано и проверено
+Актуально для версии **1.13.2.32**. Документ описывает то, что реализовано и проверено
 на устройстве, отдельно от планов (раздел 13). Пометки: **[проверено]** — подтверждено
 на устройстве владельца; **[не проверено]** — реализовано, но ещё не подтверждено.
 
@@ -52,6 +52,10 @@
 В конце rc-файла стоит передача управления в bash, защищённая переменной `SSHD4A_SHELL_UPGRADED`
 (иначе bash, перечитав тот же файл, зациклится): сначала `/system/bin/bash --rcfile <rc>`
 (Magisk bash 5.0.16 **[проверено]**), иначе `bin/bash` голым (его `--rcfile` **[не проверен]**).
+Если `/system/bin/bash` нет (так на части устройств), стартует наш `bin/bash` 4.1.0 **без** `--rcfile`; он читает
+не `$ENV`, а `~/.bashrc`, поэтому провижининг создаёт `root/home/.bashrc` и `shell/home/.bashrc`, которые подключают
+`rc-root` / `rc-shell` (файл с пометкой `SSHD4A_GENERATED` пересоздаётся; без пометки — считается вашим и не трогается).
+Без этого в такой сессии не было алиаса `tmux`, функции `su` и т. д. **[найдено на устройстве: `$0` = `bin/bash`, `$BASH_VERSION` = 4.1.0, `alias` пуст]**.
 Урезанный bash от bnsmb на `--rcfile` роняет сессию — не использовать. Собственные сборки
 bash 4.1.0 и 3.2.0 лежат в `docs/pkg-index/binaries/`.
 
@@ -163,16 +167,21 @@ root и shell — из одного `su`-скрипта (shell через вло
 ставится рядом и слушает те же действия, команды нужно давать с явным компонентом:
 
 ```
-am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.START|STOP
-am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START|STOP
-am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
+am start     -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.QuickStartActivity -a com.hardbacknutter.sshd.fg.START|STOP
+am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver     -a com.hardbacknutter.sshd.fg.STOP|START
+am start     -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity        -a com.hardbacknutter.sshd.fg.START|STOP
+am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver        -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
 ```
 
-- **`ControlReceiver`** (с 1.13.2.31): запуск и остановка службы без UI. Ответ в виде result-кода и сообщения
-  (`am broadcast` их печатает). Те же настройка и модель безопасности, что у activity-варианта.
-  Запуск из фона зависит от ограничения Android 12+ на foreground-сервисы; при отказе возвращается result=4 с причиной.
+- **`QuickStartActivity`** (с 1.13.2.32): невидимая (`Theme.NoDisplay`) activity без intent-filter, запускает или останавливает
+  службу и закрывается. Нужна потому, что с Android 12 foreground-сервис нельзя стартовать из фона, а приёмник
+  остановленного приложения под исключения не попадает **[подтверждено логом: `Background started FGS: Disallowed … DENIED`]**;
+  activity из shell переводит приложение в состояние «на экране». Результат пишется в logcat (тег `ExternalControl`) и в файловый лог.
+  Работа без окна **[не проверена]**.
+- **`ControlReceiver`**: возвращает result-код и сообщение (`am broadcast` их печатает). STOP работает всегда,
+  START — только когда Android разрешает старт из фона (иначе result=4). Общая логика обоих входов — `ExternalControl`.
 - START/STOP через `MainActivity` (`singleTask`) оставлены как в апстриме; всплывает окно приложения.
-  Включается опцией «Allow starting the service by an external Intent».
+  Включается опцией «Allow starting the service by an external Intent» (она же нужна и для двух вариантов выше).
 - **EXEC-интент** (`ExecReceiver`): extras `cmd`, `exec_as` = `root|shell|user` (по умолчанию `user`),
   необязательный `token`. По умолчанию выключен, при включении показывается предупреждение. Токен необязателен —
   решение владельца. Команда выполняется через `su <uid> sh -c`; результат команды не возвращается (только лог),
