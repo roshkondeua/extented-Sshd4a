@@ -208,7 +208,8 @@ public final class RootProvisioner {
                   .append("( sh \"$f\" >> '").append(SHELL_HOME).append("/autostart.log' 2>&1 </dev/null & ); done\n");
                 sc.append("SSHD4A_AUTO_EOF\n");
             }
-            sc.append("exit\n");
+            // explicit 0: the last `[ -f ] && ...` of an empty folder would otherwise leave status 1
+            sc.append("exit 0\n");
             final boolean ok = runAsSu(context, sc.toString());
             FileLogger.log(context, TAG, "runAutostart|root/shell|ok=" + ok);
         }
