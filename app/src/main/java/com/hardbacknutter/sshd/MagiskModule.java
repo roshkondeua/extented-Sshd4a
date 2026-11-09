@@ -18,8 +18,8 @@ import java.util.zip.ZipOutputStream;
 /**
  * Builds and installs a small, conservative Magisk module (id {@value #MODULE_ID}).
  * <p>
- * v1 content: ONE new file, {@code /system/bin/sshd4a} (the app's CLI: start / stop /
- * status / env / help), so the commands work in {@code adb shell} and in any terminal
+ * Content: two new files, {@code /system/bin/sshd4a} (the app's CLI: start / stop /
+ * status / shell / env / help) and its short alias {@code /system/bin/sshd}, so the commands work in {@code adb shell} and in any terminal
  * app, root or not. It replaces nothing, installs no boot scripts and no SELinux
  * rules. Installation goes through Magisk's own installer
  * ({@code magisk --install-module}); it only takes effect after a reboot.
@@ -51,17 +51,23 @@ public final class MagiskModule {
             + "install_module\n"
             + "exit 0\n";
 
+    /** Names added to /system/bin: the CLI itself and a short alias. */
+    private static final String ALIAS_NAME = "sshd";
+
     private static final String CUSTOMIZE =
             "ui_print \"- Sshd4a extended: shell commands\"\n"
             + "if [ \"$API\" -lt 30 ]; then\n"
             + "  abort \"! Android 11 or newer is required\"\n"
             + "fi\n"
-            + "# Never shadow something that is already there (an update of this module is fine).\n"
-            + "if [ ! -d " + MODULE_DIR + " ] && [ -e /system/bin/" + CLI_NAME + " ]; then\n"
-            + "  abort \"! /system/bin/" + CLI_NAME + " already exists - refusing to shadow it\"\n"
-            + "fi\n"
-            + "set_perm $MODPATH/system/bin/" + CLI_NAME + " 0 2000 0755 u:object_r:system_file:s0\n"
-            + "ui_print \"- Adds: /system/bin/" + CLI_NAME + " (start|stop|status|env|help)\"\n"
+            + "# Never shadow something that is already there (re-installing our own file is fine).\n"
+            + "for n in " + CLI_NAME + " " + ALIAS_NAME + "; do\n"
+            + "  if [ -e /system/bin/$n ] && [ ! -e " + MODULE_DIR + "/system/bin/$n ]; then\n"
+            + "    abort \"! /system/bin/$n already exists - refusing to shadow it\"\n"
+            + "  fi\n"
+            + "  set_perm $MODPATH/system/bin/$n 0 2000 0755 u:object_r:system_file:s0\n"
+            + "done\n"
+            + "ui_print \"- Adds: /system/bin/" + CLI_NAME + " and /system/bin/" + ALIAS_NAME + "\"\n"
+            + "ui_print \"  (start|stop|status|shell|env|help)\"\n"
             + "ui_print \"- Replaces nothing, no boot scripts, no SELinux changes\"\n"
             + "ui_print \"- Reboot to activate. Remove: Magisk app, or the app's Settings\"\n";
 
@@ -71,7 +77,7 @@ public final class MagiskModule {
     /** Human-readable summary shown in the confirmation dialog's log / docs. */
     @NonNull
     static String describe() {
-        return "module id: " + MODULE_ID + "\nadds: /system/bin/" + CLI_NAME;
+        return "module id: " + MODULE_ID + "\nadds: /system/bin/" + CLI_NAME + ", /system/bin/" + ALIAS_NAME;
     }
 
     @NonNull
@@ -110,7 +116,7 @@ public final class MagiskModule {
                             + "version=" + versionName + "\n"
                             + "versionCode=" + versionCode + "\n"
                             + "author=Sshd4a extented\n"
-                            + "description=Adds the sshd4a command (start/stop/status/env/help) "
+                            + "description=Adds the sshd4a and sshd commands (start/stop/status/shell/env/help) "
                             + "to /system/bin. Replaces nothing.\n";
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -122,6 +128,9 @@ public final class MagiskModule {
             put(zos, "module.prop", prop.getBytes(StandardCharsets.UTF_8));
             put(zos, "customize.sh", CUSTOMIZE.getBytes(StandardCharsets.UTF_8));
             put(zos, "system/bin/" + CLI_NAME, readAsset(context, CLI_NAME));
+            put(zos, "system/bin/" + ALIAS_NAME,
+                ("#!/system/bin/sh\nexec /system/bin/" + CLI_NAME + " \"$@\"\n")
+                        .getBytes(StandardCharsets.UTF_8));
         }
 
         final File zip = new File(context.getCacheDir(), MODULE_ID + ".zip");

@@ -1,6 +1,6 @@
 # Внешний запуск, остановка и выполнение команд
 
-Справка для Sshd4a extented (версия 1.13.2.33 и новее). Команды ниже выполняются из `adb shell`,
+Справка для Sshd4a extented (версия 1.13.2.35 и новее). Команды ниже выполняются из `adb shell`,
 из любой оболочки на самом устройстве (SSH-сессия, Termux, скрипт, root) — синтаксис одинаков.
 С компьютера перед командой добавляется `adb shell`.
 
@@ -145,3 +145,17 @@ am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceive
 полный путь, либо один раз выполните `. /data/local/tmp/Sshd4a/etc/env`. `status` проверяет, слушается ли порт из
 настроек (файл `etc/sshd-port`, обновляется при старте службы). Нужна опция «Allow starting the service by an
 external Intent». Короткие имена прямо в `adb shell` без `. etc/env` — задача для будущего Magisk-модуля.
+
+## С Magisk-модулем (Настройки → «Magisk module»)
+
+Модуль кладёт в `/system/bin` команды `sshd4a` и `sshd`, поэтому полный путь не нужен ни в `adb shell`, ни в других терминалах:
+
+```
+sshd start       # или sshd4a start
+sshd stop
+sshd status      # без root проверяет баннер SSH через nc, с root/shell — читает /proc/net/tcp
+sshd shell       # оболочка с окружением приложения для текущего пользователя
+```
+
+`sshd shell` запускает новую вложенную оболочку (родительскую изменить нельзя): под root подключается профиль root, под shell (uid 2000) —
+профиль shell, под остальными — профиль обычного пользователя; `exit` возвращает в прежнюю оболочку.

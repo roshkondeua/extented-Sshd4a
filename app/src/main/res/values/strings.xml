@@ -175,15 +175,15 @@
     <!-- Preference category title -->
     <string name="pc_magisk_module">Magisk module (optional)</string>
     <!-- Preference summary/info message. -->
-    <string name="ps_magisk_module_info">Needs a rooted device with Magisk. Adds the \'sshd4a\'
-        command (start, stop, status, env, help) to /system/bin so it works in adb shell and in
+    <string name="ps_magisk_module_info">Needs a rooted device with Magisk. Adds the \'sshd4a\' command
+        and its short alias \'sshd\' (start, stop, status, shell, env, help) to /system/bin so it works in adb shell and in
         any terminal app. Replaces nothing in the system; takes effect after a reboot.</string>
     <string name="lbl_magisk_install">Install or update the module</string>
     <string name="lbl_magisk_remove">Remove the module</string>
     <string name="pt_magisk_install_confirm">The module will be installed through Magisk\'s own
-        installer and activated at the next reboot.\n\nIt adds one file, /system/bin/sshd4a. It
+        installer and activated at the next reboot.\n\nIt adds two files, /system/bin/sshd4a and /system/bin/sshd. It
         replaces no system file, installs no boot scripts and changes no SELinux rules. If
-        /system/bin/sshd4a already exists, the installation is refused.\n\nYou can remove it
+        either name already exists, the installation is refused.\n\nYou can remove it
         here or in the Magisk app at any time.</string>
     <string name="pt_magisk_remove_confirm">Mark the module for removal at the next reboot?</string>
     <string name="pt_magisk_working">Working... (waiting for su)</string>

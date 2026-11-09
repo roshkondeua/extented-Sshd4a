@@ -9,6 +9,11 @@ COMMANDS
                           (works from adb shell too: use the full path
                           /data/local/tmp/Sshd4a/bin/sshd4a, or `. etc/env` first)
   sshd4a status           is the SSH port listening?
+  sshd4a shell            start a shell with this app's environment (PATH, tmux
+                          alias, prompt) for the current user - handy in adb shell
+                          or another terminal app
+  With the Magisk module (Settings) the command is in /system/bin, and `sshd` is an
+  alias: sshd start | stop | status | shell
   sshd4a env [--file]     print shell code that adds Sshd4a's bin dir to PATH
                           (--file: print the path of the equivalent file)
   pkg                     package manager (see below)
