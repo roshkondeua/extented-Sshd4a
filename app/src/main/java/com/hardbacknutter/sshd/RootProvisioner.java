@@ -44,7 +44,12 @@ public final class RootProvisioner {
     static final String ETC_DIR = BASE_DIR + "/etc";
     static final String TMP_DIR = BASE_DIR + "/tmp";
     static final String TMUX_CONF = ETC_DIR + "/tmux.conf";
-    static final String TMUX_SOCK = TMP_DIR + "/tmux.sock";
+    // One socket per role: tmux creates the socket owned by the calling uid with
+    // mode 700, so root and shell cannot share a single path ("Permission denied").
+    static final String TMUX_SOCK_ROOT = TMP_DIR + "/tmux-root.sock";
+    static final String TMUX_SOCK_SHELL = TMP_DIR + "/tmux-shell.sock";
+    // Pre-1.13.2.27 shared socket; removed during provisioning if present.
+    static final String TMUX_SOCK_OLD = TMP_DIR + "/tmux.sock";
     static final String RC_ROOT = ETC_DIR + "/rc-root";
     static final String RC_SHELL = ETC_DIR + "/rc-shell";
     static final String COMMON_RC = ETC_DIR + "/bashrc-common";
@@ -159,6 +164,7 @@ public final class RootProvisioner {
         // create their own tmux-$UID/whatever subdirs here without being able
         // to delete each other's.
         script.append("chmod 1777 '").append(TMP_DIR).append("'\n");
+        script.append("rm -f '").append(TMUX_SOCK_OLD).append("'\n");
 
         // Common config sourced by BOTH rc-root and rc-shell (real-Linux style
         // /etc/bash.bashrc equivalent) - aliases/settings shared by every
@@ -240,7 +246,7 @@ public final class RootProvisioner {
             script.append("export TMUX_TMPDIR='").append(TMP_DIR).append("'\n");
             script.append("export TERMINFO=/system/usr/share/terminfo\n");
             script.append("alias tmux=\"'").append(BIN_DIR).append("/tmux' -S '")
-                  .append(TMUX_SOCK).append("' -f '").append(TMUX_CONF).append("'\"\n");
+                  .append(TMUX_SOCK_ROOT).append("' -f '").append(TMUX_CONF).append("'\"\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
             script.append("export HISTSIZE=1000\n");
             script.append("export HISTFILESIZE=2000\n");
@@ -268,7 +274,7 @@ public final class RootProvisioner {
             script.append("export TMUX_TMPDIR='").append(TMP_DIR).append("'\n");
             script.append("export TERMINFO=/system/usr/share/terminfo\n");
             script.append("alias tmux=\"'").append(BIN_DIR).append("/tmux' -S '")
-                  .append(TMUX_SOCK).append("' -f '").append(TMUX_CONF).append("'\"\n");
+                  .append(TMUX_SOCK_SHELL).append("' -f '").append(TMUX_CONF).append("'\"\n");
             script.append("export HISTFILE=\"$HOME/.bash_history\"\n");
             script.append("export HISTSIZE=1000\n");
             script.append("export HISTFILESIZE=2000\n");
