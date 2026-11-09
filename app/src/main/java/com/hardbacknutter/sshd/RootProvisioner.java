@@ -268,6 +268,13 @@ public final class RootProvisioner {
             script.append("echo SSHD4A_STEP write_rc_shell\n");
             script.append("cat > '").append(RC_SHELL).append("' <<'SSHD4A_RC_EOF'\n");
             script.append(". '").append(COMMON_RC).append("' 2>/dev/null\n");
+            // Nested `su` from inside a shell-role session: the root sh it spawns
+            // inherits ENV=rc-shell and would otherwise get shell's prompt, home and
+            // tmux socket while being uid 0. Detect that and apply the root profile.
+            script.append("if [ \"$(id -u 2>/dev/null)\" = 0 ] && [ -f '").append(RC_ROOT).append("' ]; then\n");
+            script.append("  unset SSHD4A_SHELL_UPGRADED\n");
+            script.append("  . '").append(RC_ROOT).append("'\n");
+            script.append("else\n");
             script.append("cd '").append(SHELL_HOME).append("' 2>/dev/null\n");
             script.append("export HOME='").append(SHELL_HOME).append("'\n");
             script.append("export TMPDIR='").append(TMP_DIR).append("'\n");
@@ -279,9 +286,10 @@ public final class RootProvisioner {
             script.append("export HISTSIZE=1000\n");
             script.append("export HISTFILESIZE=2000\n");
             script.append("export PATH=\"$PATH:").append(BIN_DIR).append("\"\n");
-            script.append("export PS1='$PWD $ '\n");
+            script.append("export PS1='$PWD şҥ '\n");
             script.append(". '").append(CUSTOM_SHELL).append("' 2>/dev/null\n");
             appendBashHandoff(script, RC_SHELL);
+            script.append("fi\n");
             script.append("SSHD4A_RC_EOF\n");
             script.append("chmod 644 '").append(RC_SHELL).append("'\n");
             // pre-create + chown the history file - bash creates it lazily itself
