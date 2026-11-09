@@ -243,6 +243,50 @@ public final class RootProvisioner {
         }
     }
 
+    /** Exit status and combined stdout/stderr of a script run via su. */
+    static final class SuResult {
+        final int exit;
+        @NonNull
+        final String output;
+
+        SuResult(final int exit, @NonNull final String output) {
+            this.exit = exit;
+            this.output = output;
+        }
+    }
+
+    /**
+     * Like {@link #runAsSu} but returns the output. {@code exit == -1} means su could not
+     * be run at all (no su binary, or root access denied).
+     * MUST be called from a background thread.
+     */
+    @NonNull
+    static SuResult runAsSuCapture(@NonNull final Context context,
+                                   @NonNull final String script) {
+        try {
+            final Process process = new ProcessBuilder("su")
+                    .redirectErrorStream(true)
+                    .start();
+            try (OutputStream os = process.getOutputStream()) {
+                os.write(script.getBytes(StandardCharsets.UTF_8));
+                os.flush();
+            }
+            final String output;
+            try (InputStream is = process.getInputStream()) {
+                output = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            }
+            final int exit = process.waitFor();
+            FileLogger.log(context, TAG, "runAsSuCapture|exit=" + exit + "|output=" + output);
+            return new SuResult(exit, output);
+        } catch (@NonNull final IOException e) {
+            FileLogger.log(context, TAG, "runAsSuCapture|IOException|" + e);
+            return new SuResult(-1, "su failed: " + e);
+        } catch (@NonNull final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return new SuResult(-1, "interrupted");
+        }
+    }
+
     private RootProvisioner() {
     }
 

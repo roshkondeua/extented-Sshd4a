@@ -400,36 +400,83 @@ public class SshdService
      * Must run BEFORE the listener is killed (afterwards the children are re-parented).
      */
     private void terminateSessions(final int listenerPid) {
-        int count = 0;
-        final java.io.File[] procs = new java.io.File("/proc").listFiles();
-        if (procs != null) {
-            for (final java.io.File proc : procs) {
-                final String name = proc.getName();
-                if (name.isEmpty() || !Character.isDigit(name.charAt(0))) {
-                    continue;
-                }
-                try {
-                    final String stat = new String(
-                            java.nio.file.Files.readAllBytes(
-                                    new java.io.File(proc, "stat").toPath()),
-                            java.nio.charset.StandardCharsets.UTF_8);
-                    // "pid (comm) S ppid ..." - comm may contain spaces/parentheses
-                    final int close = stat.lastIndexOf(')');
-                    if (close < 0) {
-                        continue;
-                    }
-                    final String[] f = stat.substring(close + 2).split(" ");
-                    if (f.length > 1 && listenerPid == Integer.parseInt(f[1])) {
-                        android.os.Process.sendSignal(Integer.parseInt(name), 15);
-                        count++;
-                    }
-                } catch (@NonNull final Exception ignored) {
-                    // process vanished or not readable (other uid): skip
+        final java.util.Set<Integer> children = new java.util.LinkedHashSet<>();
+        final StringBuilder diag = new StringBuilder();
+
+        // Tier 1: the kernel's own list of the listener's children (no /proc listing needed).
+        try {
+            final String c = new String(java.nio.file.Files.readAllBytes(
+                    new java.io.File("/proc/" + listenerPid + "/task/" + listenerPid + "/children")
+                            .toPath()), java.nio.charset.StandardCharsets.UTF_8).trim();
+            for (final String t : c.split("\\s+")) {
+                if (!t.isEmpty()) {
+                    children.add(Integer.parseInt(t));
                 }
             }
+            diag.append("children-file=").append(children.size());
+        } catch (@NonNull final Exception e) {
+            diag.append("children-file=err:").append(e.getClass().getSimpleName());
+        }
+
+        // Tier 2: scan /proc for processes whose parent is the listener.
+        if (children.isEmpty()) {
+            final java.io.File[] procs = new java.io.File("/proc").listFiles();
+            if (procs == null) {
+                diag.append("|proc-list=null");
+            } else {
+                int readable = 0;
+                for (final java.io.File proc : procs) {
+                    final String name = proc.getName();
+                    if (name.isEmpty() || !Character.isDigit(name.charAt(0))) {
+                        continue;
+                    }
+                    try {
+                        final String stat = new String(java.nio.file.Files.readAllBytes(
+                                new java.io.File(proc, "stat").toPath()),
+                                java.nio.charset.StandardCharsets.UTF_8);
+                        readable++;
+                        // "pid (comm) S ppid ..." - comm may contain spaces/parentheses
+                        final int close = stat.lastIndexOf(')');
+                        if (close < 0) {
+                            continue;
+                        }
+                        final String[] f = stat.substring(close + 2).split(" ");
+                        if (f.length > 1 && listenerPid == Integer.parseInt(f[1])) {
+                            children.add(Integer.parseInt(name));
+                        }
+                    } catch (@NonNull final Exception ignored) {
+                        // process vanished or not readable: skip
+                    }
+                }
+                diag.append("|proc-scan=").append(procs.length).append('/').append(readable);
+            }
+        }
+
+        // Tier 3: ps (an app sees only its own uid's processes, which is all we need).
+        if (children.isEmpty()) {
+            try {
+                final Process ps = new ProcessBuilder("ps", "-A", "-o", "PID,PPID")
+                        .redirectErrorStream(true).start();
+                final String out = new String(ps.getInputStream().readAllBytes(),
+                                              java.nio.charset.StandardCharsets.UTF_8);
+                ps.waitFor();
+                for (final String line : out.split("\n")) {
+                    final String[] f = line.trim().split("\\s+");
+                    if (f.length == 2 && f[1].equals(String.valueOf(listenerPid))) {
+                        children.add(Integer.parseInt(f[0]));
+                    }
+                }
+                diag.append("|ps=").append(children.size());
+            } catch (@NonNull final Exception e) {
+                diag.append("|ps=err:").append(e.getClass().getSimpleName());
+            }
+        }
+
+        for (final int child : children) {
+            android.os.Process.sendSignal(child, 15);
         }
         FileLogger.log(this, TAG, "terminateSessions|listener=" + listenerPid
-                                  + "|signalled=" + count);
+                                  + "|signalled=" + children.size() + "|" + diag);
     }
 
     @Override

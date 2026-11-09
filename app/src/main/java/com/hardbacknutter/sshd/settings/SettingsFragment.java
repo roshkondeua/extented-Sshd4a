@@ -292,6 +292,14 @@ public class SettingsFragment
                      R.string.pt_exec_token,
                      null, null);
 
+        factory.header(R.string.pc_magisk_module, p -> {
+            p.setSummary(R.string.ps_magisk_module_info);
+        });
+        factory.action("magisk_install", R.string.lbl_magisk_install,
+                       this::onMagiskInstall, null);
+        factory.action("magisk_remove", R.string.lbl_magisk_remove,
+                       this::onMagiskRemove, null);
+
         // The title is translated, the summary is just the name of the file, untranslated
         factory.header(R.string.pc_key_management, p -> {
             p.setIcon(R.drawable.vpn_key_24px);
@@ -579,6 +587,55 @@ public class SettingsFragment
         // false = don't apply the checked-state change yet; the dialog above
         // applies it explicitly on confirm, and simply leaves it off on cancel.
         return false;
+    }
+
+    private boolean onMagiskInstall(@NonNull final Setting setting) {
+        confirmAndRunMagisk(R.string.lbl_magisk_install,
+                            R.string.pt_magisk_install_confirm, true);
+        return true;
+    }
+
+    private boolean onMagiskRemove(@NonNull final Setting setting) {
+        confirmAndRunMagisk(R.string.lbl_magisk_remove,
+                            R.string.pt_magisk_remove_confirm, false);
+        return true;
+    }
+
+    /** Confirm, run su work in the background, then show the outcome in a dialog. */
+    private void confirmAndRunMagisk(final int title,
+                                     final int message,
+                                     final boolean install) {
+        final Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        final Context appContext = context.getApplicationContext();
+        new MaterialAlertDialogBuilder(context)
+                .setIcon(R.drawable.warning_24px)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(true)
+                .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    Snackbar.make(requireView(), R.string.pt_magisk_working,
+                                  Snackbar.LENGTH_LONG).show();
+                    new Thread(() -> {
+                        final String result = install
+                                              ? com.hardbacknutter.sshd.MagiskModule.install(appContext)
+                                              : com.hardbacknutter.sshd.MagiskModule.remove(appContext);
+                        final androidx.fragment.app.FragmentActivity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(() ->
+                                    new MaterialAlertDialogBuilder(activity)
+                                            .setTitle(title)
+                                            .setMessage(result)
+                                            .setPositiveButton(R.string.ok, null)
+                                            .show());
+                        }
+                    }, "MagiskModule").start();
+                })
+                .create()
+                .show();
     }
 
     private boolean onDeleteKeys(@NonNull final Setting setting) {
