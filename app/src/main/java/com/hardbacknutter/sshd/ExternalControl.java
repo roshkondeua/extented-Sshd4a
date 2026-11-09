@@ -79,8 +79,10 @@ final class ExternalControl {
                     "refused: service was not started by an external intent"));
         }
         try {
-            SshdService.stopService(context);
-            return log(context, via, "stop", new Result(RESULT_OK_DONE, "stopped"));
+            // explicit external stop: also end the sessions (detached jobs survive)
+            SshdService.stopService(context, true);
+            return log(context, via, "stop", new Result(RESULT_OK_DONE,
+                    "stopped (listener closed, sessions terminated)"));
         } catch (@NonNull final Exception e) {
             Log.w(TAG, "stop|failed", e);
             return log(context, via, "stop", new Result(RESULT_FAILED, "failed: " + e));

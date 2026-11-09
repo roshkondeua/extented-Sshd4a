@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.hardbacknutter.sshd.settings.Prefs;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -536,6 +538,11 @@ public final class RootProvisioner {
         script.append("#!/system/bin/sh\nexec '").append(SSHD4A_CLI_SCRIPT).append("' help \"$@\"\n");
         script.append("SSHD4A_CLI_EOF\n");
         script.append("chmod 755 '").append(HELP_SCRIPT).append("'\n");
+
+        // listening port, for `sshd4a status`
+        script.append("echo '").append(Prefs.getPort(Prefs.getSharedPreferences(context)))
+              .append("' > '").append(ETC_DIR).append("/sshd-port'\n");
+        script.append("chmod 644 '").append(ETC_DIR).append("/sshd-port'\n");
 
         // help text, in the app's UI language (Russian when the app locale is ru, else English)
         final String lang = context.getResources().getConfiguration().getLocales().get(0).getLanguage();

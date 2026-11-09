@@ -1,6 +1,6 @@
 # Внешний запуск, остановка и выполнение команд
 
-Справка для Sshd4a extented (версия 1.13.2.32 и новее). Команды ниже выполняются из `adb shell`,
+Справка для Sshd4a extented (версия 1.13.2.33 и новее). Команды ниже выполняются из `adb shell`,
 из любой оболочки на самом устройстве (SSH-сессия, Termux, скрипт, root) — синтаксис одинаков.
 С компьютера перед командой добавляется `adb shell`.
 
@@ -75,6 +75,12 @@ am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlRece
 | 4 | не удалось (в data причина) |
 | 5 | STOP отклонён: сервис запущен не внешним интентом (как и в апстриме, останавливать можно только то, что запущено интентом) |
 
+**Что делает STOP.** Закрывает приём новых подключений **и завершает активные SSH-сессии**: каждому процессу
+сессии посылается SIGTERM, оболочки получают hangup. Процессы, отвязанные намеренно (`nohup`, `setsid`, сервер
+tmux, задания из `autostart.d`), продолжают работать. (Остановка кнопкой в приложении ведёт себя как в апстриме:
+закрывается только приём подключений, текущие сессии остаются.) Остановка самого приложения как процесса — отдельная
+вещь и этой командой не делается.
+
 **STOP через приёмник работает всегда. START через приёмник** сработает только пока Android разрешает запуск
 сервиса из фона (приложение на экране или в разрешённом состоянии); для остановленного приложения вернётся
 `result=4` с `ForegroundServiceStartNotAllowedException`, поэтому для START используйте `QuickStartActivity`.
@@ -124,3 +130,18 @@ am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceive
 2. Запустите команду с `-W` (для `am start`) и посмотрите вывод; при ошибке компонента `am` напишет
    `Error type 3` или `does not exist`.
 3. Включите Diagnostics и смотрите `sshd4a-debug.log`.
+
+## Короткие команды: `sshd4a start | stop | status`
+
+Скрипт `sshd4a` лежит в `/data/local/tmp/Sshd4a/bin` и вызывает `QuickStartActivity` за вас:
+
+```
+/data/local/tmp/Sshd4a/bin/sshd4a start
+/data/local/tmp/Sshd4a/bin/sshd4a stop
+/data/local/tmp/Sshd4a/bin/sshd4a status
+```
+
+В `adb shell` короткое имя `sshd4a` не находится, потому что `PATH` оболочки adb не содержит `bin/`; либо пишите
+полный путь, либо один раз выполните `. /data/local/tmp/Sshd4a/etc/env`. `status` проверяет, слушается ли порт из
+настроек (файл `etc/sshd-port`, обновляется при старте службы). Нужна опция «Allow starting the service by an
+external Intent». Короткие имена прямо в `adb shell` без `. etc/env` — задача для будущего Magisk-модуля.

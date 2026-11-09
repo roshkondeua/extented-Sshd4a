@@ -5,6 +5,10 @@
 КОМАНДЫ
   help, sshd4a help       эта справка
   version, ver            версия приложения
+  sshd4a start|stop       запустить/остановить SSH-службу без окна приложения
+                          (работает и из adb shell: полный путь
+                          /data/local/tmp/Sshd4a/bin/sshd4a или сначала `. etc/env`)
+  sshd4a status           слушается ли SSH-порт
   sshd4a env [--file]     вывести код оболочки, добавляющий bin-папку Sshd4a в PATH
                           (--file: путь к файлу с тем же содержимым)
   pkg                     пакетный менеджер (см. ниже)
@@ -75,6 +79,9 @@ TERMUX
   Остановка (и запуск, пока Android это разрешает) через широковещательный запрос; печатает result=<код>:
     am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ControlReceiver -a com.hardbacknutter.sshd.fg.STOP
     1 выполнено, 2 делать нечего, 3 опция выключена, 4 не удалось (см. data), 5 стоп отклонён
+  STOP закрывает приём подключений И завершает активные SSH-сессии (их оболочки получают
+  hangup). Процессы, которые вы отвязали намеренно (nohup, setsid, tmux, задания из
+  autostart.d), продолжают работать.
   С окном приложения (activity):
     am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START
   Выполнение команды (нужна опция «Allow external command execution»; exec_as =

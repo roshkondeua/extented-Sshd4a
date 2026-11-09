@@ -185,6 +185,19 @@ public class SshdService
         startMode = null;
     }
 
+    /**
+     * Stop the service; with {@code killSessions} also terminate the active SSH sessions
+     * (detached processes such as tmux or nohup jobs keep running).
+     */
+    static void stopService(@NonNull final Context context,
+                            final boolean killSessions) {
+        killSessionsOnStop = killSessions;
+        stopService(context);
+    }
+
+    /** Consumed by onDestroy. */
+    private static volatile boolean killSessionsOnStop;
+
     public static native String getDropbearVersion();
 
     public static native String getOpensshVersion();
@@ -355,6 +368,15 @@ public class SshdService
      * Stop/kill the native code.
      */
     private void stopSshd() {
+        stopSshd(false);
+    }
+
+    /**
+     * @param killSessions if {@code true}, first terminate the per-connection dropbear
+     *                     processes (children of the listener); otherwise they survive
+     *                     the listener, as in upstream.
+     */
+    private void stopSshd(final boolean killSessions) {
         synchronized (lock) {
             final int pid = sshdPid;
             sshdPid = 0;
@@ -362,10 +384,52 @@ public class SshdService
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG + "|stopSshd", "killing pid=" + pid);
                 }
+                if (killSessions) {
+                    terminateSessions(pid);
+                }
                 kill(pid);
             }
         }
         updateUI();
+    }
+
+    /**
+     * SIGTERM every direct child of the dropbear listener (one per SSH connection).
+     * Their ptys close, so each login shell gets a hangup; anything the user detached
+     * on purpose (nohup, setsid, tmux server, ...) keeps running.
+     * Must run BEFORE the listener is killed (afterwards the children are re-parented).
+     */
+    private void terminateSessions(final int listenerPid) {
+        int count = 0;
+        final java.io.File[] procs = new java.io.File("/proc").listFiles();
+        if (procs != null) {
+            for (final java.io.File proc : procs) {
+                final String name = proc.getName();
+                if (name.isEmpty() || !Character.isDigit(name.charAt(0))) {
+                    continue;
+                }
+                try {
+                    final String stat = new String(
+                            java.nio.file.Files.readAllBytes(
+                                    new java.io.File(proc, "stat").toPath()),
+                            java.nio.charset.StandardCharsets.UTF_8);
+                    // "pid (comm) S ppid ..." - comm may contain spaces/parentheses
+                    final int close = stat.lastIndexOf(')');
+                    if (close < 0) {
+                        continue;
+                    }
+                    final String[] f = stat.substring(close + 2).split(" ");
+                    if (f.length > 1 && listenerPid == Integer.parseInt(f[1])) {
+                        android.os.Process.sendSignal(Integer.parseInt(name), 15);
+                        count++;
+                    }
+                } catch (@NonNull final Exception ignored) {
+                    // process vanished or not readable (other uid): skip
+                }
+            }
+        }
+        FileLogger.log(this, TAG, "terminateSessions|listener=" + listenerPid
+                                  + "|signalled=" + count);
     }
 
     @Override
@@ -458,7 +522,9 @@ public class SshdService
         if (BuildConfig.DEBUG) {
             Log.d(TAG + "|onDestroy", "ENTER");
         }
-        stopSshd();
+        final boolean killSessions = killSessionsOnStop;
+        killSessionsOnStop = false;
+        stopSshd(killSessions);
         if (runInForeground) {
             stopForeground(STOP_FOREGROUND_REMOVE);
         }
