@@ -66,6 +66,17 @@ TERMUX
   Меняется только PATH (собственные HOME/TMPDIR Termux не ломаются).
   Вызывающее приложение должно иметь право читать и запускать эти файлы.
 
+ЗАПУСК И ОСТАНОВКА ИЗВНЕ (adb shell, Termux, скрипты)
+  Сначала включите в настройках «Allow starting the service by an external Intent».
+  Пакет — com.roshkond.sshd4a.extended; оригинальный Sshd4a отзывается на те же
+  действия, поэтому всегда указывайте компонент:
+    am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START
+    (то же с ...fg.STOP)
+  Выполнение команды (нужна опция «Allow external command execution»; exec_as =
+  root|shell|user, необязательный --es token):
+    am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
+  Подробнее: docs/EXTERNAL-RUN.md в репозитории.
+
 ПАКЕТНЫЙ МЕНЕДЖЕР (pkg)
   pkg update                  обновить индекс пакетов из всех репозиториев
   pkg list                    пакеты, доступные для процессора этого устройства

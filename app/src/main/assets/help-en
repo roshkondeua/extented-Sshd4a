@@ -68,6 +68,17 @@ EXTERNAL TERMINALS / APPS
   It only changes PATH (it will not break Termux's own HOME/TMPDIR).
   The calling app must be able to read and execute files there.
 
+STARTING / STOPPING FROM OUTSIDE (adb shell, Termux, scripts)
+  Enable "Allow starting the service by an external Intent" in Settings first.
+  The package is com.roshkond.sshd4a.extended; the original Sshd4a answers the
+  same actions, so always name the component:
+    am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START
+    (same with ...fg.STOP)
+  Running a command (needs "Allow external command execution"; exec_as =
+  root|shell|user, optional --es token):
+    am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
+  More: docs/EXTERNAL-RUN.md in the repository.
+
 PACKAGE MANAGER (pkg)
   pkg update                  refresh the package index from all repos
   pkg list                    packages available for this device's CPU

@@ -156,14 +156,22 @@ root и shell — из одного `su`-скрипта (shell через вло
 
 ## 9. Внешнее управление
 
-Интенты START/STOP остались как в апстриме:
-`am start -a com.hardbacknutter.sshd.fg.START|STOP` (включается опцией внешнего интента).
+Полная справка: [`EXTERNAL-RUN.md`](EXTERNAL-RUN.md).
 
-**EXEC-интент** (`ExecReceiver`, действие `com.hardbacknutter.sshd.fg.EXEC`):
+Действия интентов остались как в апстриме (`com.hardbacknutter.sshd.fg.START|STOP|EXEC`), а пакет у форка
+другой (`com.roshkond.sshd4a.extended`; классы остались в namespace `com.hardbacknutter.sshd`). Так как оригинал
+ставится рядом и слушает те же действия, команды нужно давать с явным компонентом:
 
-- extras: `cmd`, `exec_as` = `root|shell|user`, необязательный `token`;
-- по умолчанию выключен, при включении показывается предупреждение;
-- токен необязателен — решение владельца (риск на свой страх).
+```
+am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START|STOP
+am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
+```
+
+- START/STOP обрабатывает `MainActivity` (`singleTask`); включается опцией «Allow starting the service by an external Intent».
+- **EXEC-интент** (`ExecReceiver`): extras `cmd`, `exec_as` = `root|shell|user` (по умолчанию `user`),
+  необязательный `token`. По умолчанию выключен, при включении показывается предупреждение. Токен необязателен —
+  решение владельца. Команда выполняется через `su <uid> sh -c`, результат не возвращается (только лог).
+- Формы с `-n` **[не проверены]** на устройстве.
 
 ## 10. Команды CLI
 
