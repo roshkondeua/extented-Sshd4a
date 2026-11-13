@@ -6,6 +6,8 @@
   help, sshd4a help       эта справка
   version, ver            версия приложения
   sshd4a start|stop       запустить/остановить SSH-службу без окна приложения
+                          (нужен `am`: adb shell или root; в терминале обычного приложения
+                          при наличии su используется он)
                           (работает и из adb shell: полный путь
                           /data/local/tmp/Sshd4a/bin/sshd4a или сначала `. etc/env`)
   sshd4a status           слушается ли SSH-порт

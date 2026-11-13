@@ -6,6 +6,8 @@ COMMANDS
   help, sshd4a help       this text
   version, ver            print the app version
   sshd4a start|stop       start/stop the SSH service without an app window
+                          (needs `am`: adb shell or root; in an ordinary app terminal
+                          it falls back to su when available)
                           (works from adb shell too: use the full path
                           /data/local/tmp/Sshd4a/bin/sshd4a, or `. etc/env` first)
   sshd4a status           is the SSH port listening?

@@ -127,7 +127,17 @@ public final class MagiskModule {
                 "#MAGISK\n".getBytes(StandardCharsets.UTF_8));
             put(zos, "module.prop", prop.getBytes(StandardCharsets.UTF_8));
             put(zos, "customize.sh", CUSTOMIZE.getBytes(StandardCharsets.UTF_8));
-            put(zos, "system/bin/" + CLI_NAME, readAsset(context, CLI_NAME));
+            // Thin shim: the real CLI lives in bin/ and is refreshed by every provisioning run,
+            // so the module itself rarely needs reinstalling. Executing it from an ordinary
+            // app works (verified with tmux in the same directory).
+            put(zos, "system/bin/" + CLI_NAME,
+                ("#!/system/bin/sh\n"
+                 + "CLI=" + RootProvisioner.SSHD4A_CLI_SCRIPT + "\n"
+                 + "if [ ! -x \"$CLI\" ]; then\n"
+                 + "  echo \"Sshd4a: $CLI not found - run the Sshd4a service once (with a root/shell role set up)\"\n"
+                 + "  exit 1\n"
+                 + "fi\n"
+                 + "exec \"$CLI\" \"$@\"\n").getBytes(StandardCharsets.UTF_8));
             put(zos, "system/bin/" + ALIAS_NAME,
                 ("#!/system/bin/sh\nexec /system/bin/" + CLI_NAME + " \"$@\"\n")
                         .getBytes(StandardCharsets.UTF_8));

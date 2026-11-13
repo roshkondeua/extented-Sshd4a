@@ -19,9 +19,24 @@ cmd_version() {
 }
 
 # start/stop need the app's "Allow starting the service by an external Intent" option.
+# `am` only works for adb shell and root; an ordinary app uid cannot use it, so fall back
+# to su when there is one.
 cmd_control() {
-    am start -n "$ACTIVITY" -a "com.hardbacknutter.sshd.fg.$1" >/dev/null 2>&1 \
-        || { echo "am start failed (is 'am' available in this shell?)"; return 1; }
+    act="com.hardbacknutter.sshd.fg.$1"
+    out=$(am start -n "$ACTIVITY" -a "$act" 2>&1); rc=$?
+    case "$out" in *Exception*|*Error*|*Denial*) rc=1 ;; esac
+    if [ "$rc" -ne 0 ] && command -v su >/dev/null 2>&1; then
+        echo "'am' is not usable as uid $(id -u); retrying through su (a root prompt may appear)..."
+        out=$(su -c "am start -n '$ACTIVITY' -a '$act'" 2>&1); rc=$?
+        case "$out" in *Exception*|*Error*|*Denial*) rc=1 ;; esac
+    fi
+    if [ "$rc" -ne 0 ]; then
+        echo "Could not send the request:"
+        echo "$out" | head -3
+        echo "Without root an ordinary app cannot send it: use adb shell, su, or another app"
+        echo "(Tasker, MacroDroid, ...) that can send the intent."
+        return 1
+    fi
     echo "Request sent: $1  (outcome: logcat -d -s ExternalControl)"
 }
 
