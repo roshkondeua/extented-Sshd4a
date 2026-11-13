@@ -4,3 +4,6 @@
 *.jar binary
 app/src/main/jniLibs/**/libbusybox.so binary
 docs/pkg-index/binaries/* binary
+
+# Windows helper scripts must keep CRLF line endings
+tools/windows/* text eol=crlf
