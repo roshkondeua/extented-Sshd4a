@@ -69,6 +69,8 @@ TERMUX
   Если Termux не установлен или стоит из Google Play (отдельная, не поддерживаемая
   сборка), команда сообщит об этом и подскажет F-Droid / GitHub. Termux определяется
   при запуске службы; после установки Termux перезапустите службу.
+  tmx -c 'команда'       выполнить одну команду в окружении Termux (нужен su)
+  eval "$(tmx env)"      поставить инструменты Termux в начало PATH текущей (root) оболочки
   Пока не реализовано: доступ без root (Termux RUN_COMMAND).
 
 ВНЕШНИЕ ТЕРМИНАЛЫ И ПРИЛОЖЕНИЯ
@@ -92,7 +94,8 @@ TERMUX
   С окном приложения (activity):
     am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START
   Выполнение команды (нужна опция «Allow external command execution»; exec_as =
-  root|shell|user, необязательный --es token):
+  root|shell|user, необязательный --es token). Вызывающий получает вывод обратно
+  (result=1 data="exit=N ..."; result=8 — ещё работает; --ez nowait true — без ожидания):
     am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
   Подробнее: docs/EXTERNAL-RUN.md в репозитории.
 

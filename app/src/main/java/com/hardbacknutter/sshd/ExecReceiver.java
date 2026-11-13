@@ -34,13 +34,13 @@ import com.hardbacknutter.sshd.settings.Prefs;
  * - cmd (required)      the command to run
  * - exec_as (optional)  "root" | "shell" | "user" (default: "user")
  * - token (optional)    only checked if a token is configured in Settings
+ * - nowait (optional)   true = do not wait for the command (fire and forget)
  * <p>
- * Fire-and-forget for now: the command's output goes to the debug log (see
- * FileLogger) if file logging is enabled, and to logcat either way. There is
- * deliberately no synchronous result delivery yet (Android doesn't support
- * that well for plain broadcasts) - a future iteration could add a
- * PendingIntent/ResultReceiver-based callback for callers that want the
- * output back, or write it to a fixed result file.
+ * The caller of an ordered broadcast ({@code am broadcast} is one) gets the command's
+ * output back: result=1 data="exit=N\n<output>" when it finished within 8 s, result=8
+ * when it is still running (the full output then goes to the debug log), 9 when it
+ * could not be started. Extra {@code nowait=true} (--ez nowait true) restores
+ * fire-and-forget. Output also goes to logcat, and to the debug log if enabled.
  */
 public class ExecReceiver extends BroadcastReceiver {
 
@@ -87,10 +87,45 @@ public class ExecReceiver extends BroadcastReceiver {
         }
         final String finalExecAs = execAs;
 
-        // BroadcastReceiver.onReceive() must return quickly - do the actual
-        // (potentially slow, e.g. waiting on su) work on a background thread.
-        new Thread(() -> runExec(appContext, cmd, finalExecAs), "ExecReceiver").start();
-        report(1, "accepted: running as " + finalExecAs + " (output goes to the debug log)");
+        // Default: wait up to WAIT_MS for the command and hand its output back to the caller
+        // (am broadcast prints it as data="..."). A longer-running command keeps running in the
+        // background; its full output then goes to the log. Extra "nowait" = fire and forget.
+        final boolean nowait = intent.getBooleanExtra("nowait", false);
+        final PendingResult pending = (nowait || !isOrderedBroadcast()) ? null : goAsync();
+        if (pending == null) {
+            new Thread(() -> {
+                try {
+                    runExec(appContext, cmd, finalExecAs, 0);
+                } catch (@NonNull final Exception e) {
+                    FileLogger.log(appContext, TAG, "runExec|failed|" + e);
+                }
+            }, "ExecReceiver").start();
+            report(1, "accepted: running as " + finalExecAs + " (output goes to the debug log)");
+            return;
+        }
+        new Thread(() -> {
+            try {
+                final Outcome o = runExec(appContext, cmd, finalExecAs, WAIT_MS);
+                String out = o.output;
+                if (out.length() > MAX_RESULT_CHARS) {
+                    out = out.substring(0, MAX_RESULT_CHARS) + "\n[truncated]";
+                }
+                if (o.finished) {
+                    pending.setResultCode(1);
+                    pending.setResultData("exit=" + o.exit + "\n" + out);
+                } else {
+                    pending.setResultCode(8);
+                    pending.setResultData("still running after " + (WAIT_MS / 1000)
+                                          + " s (full output goes to the debug log)\n" + out);
+                }
+            } catch (@NonNull final Exception e) {
+                FileLogger.log(appContext, TAG, "runExec|failed|" + e);
+                pending.setResultCode(9);
+                pending.setResultData("failed to run: " + e);
+            } finally {
+                pending.finish();
+            }
+        }, "ExecReceiver").start();
     }
 
     /** Result code/data shown by {@code am broadcast} (ordered broadcasts only). */
@@ -101,40 +136,83 @@ public class ExecReceiver extends BroadcastReceiver {
         }
     }
 
-    private static void runExec(@NonNull final Context context,
-                                @NonNull final String cmd,
-                                @NonNull final String execAs) {
-        try {
-            final Process process;
-            if ("root".equals(execAs) || "shell".equals(execAs)) {
-                final String uid = "root".equals(execAs) ? "0" : "2000";
-                // same positional "su UID sh -c cmd" form used everywhere else
-                // in this fork - see su-login-shell.c for why.
-                process = new ProcessBuilder("su", uid, "sh", "-c", cmd)
-                        .redirectErrorStream(true).start();
-            } else {
-                process = new ProcessBuilder("sh", "-c", cmd)
-                        .redirectErrorStream(true).start();
-            }
+    private static final long WAIT_MS = 8000;
+    private static final int MAX_RESULT_CHARS = 20000;
 
-            final String output;
+    private static final class Outcome {
+        final boolean finished;
+        final int exit;
+        @NonNull
+        final String output;
+
+        Outcome(final boolean finished, final int exit, @NonNull final String output) {
+            this.finished = finished;
+            this.exit = exit;
+            this.output = output;
+        }
+    }
+
+    /**
+     * Start the command; wait at most {@code waitMs} (0 = do not wait). A separate reader
+     * thread always collects the output and logs it when the process ends.
+     */
+    @NonNull
+    private static Outcome runExec(@NonNull final Context context,
+                                   @NonNull final String cmd,
+                                   @NonNull final String execAs,
+                                   final long waitMs) throws IOException, InterruptedException {
+        final Process process;
+        if ("root".equals(execAs) || "shell".equals(execAs)) {
+            final String uid = "root".equals(execAs) ? "0" : "2000";
+            // same positional "su UID sh -c cmd" form used everywhere else
+            // in this fork - see su-login-shell.c for why.
+            process = new ProcessBuilder("su", uid, "sh", "-c", cmd)
+                    .redirectErrorStream(true).start();
+        } else {
+            process = new ProcessBuilder("sh", "-c", cmd)
+                    .redirectErrorStream(true).start();
+        }
+
+        final java.io.ByteArrayOutputStream collected = new java.io.ByteArrayOutputStream();
+        final Thread reader = new Thread(() -> {
             try (InputStream is = process.getInputStream()) {
-                output = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                final byte[] buf = new byte[4096];
+                int n;
+                while ((n = is.read(buf)) > 0) {
+                    synchronized (collected) {
+                        collected.write(buf, 0, n);
+                    }
+                }
+            } catch (@NonNull final IOException ignored) {
+                // stream closed
             }
-            final int exit = process.waitFor();
-
-            Log.i(TAG, "runExec|execAs=" + execAs + "|exit=" + exit + "|output=" + output);
+            int exit = -1;
+            try {
+                exit = process.waitFor();
+            } catch (@NonNull final InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            final String out;
+            synchronized (collected) {
+                out = new String(collected.toByteArray(), StandardCharsets.UTF_8);
+            }
+            Log.i(TAG, "runExec|execAs=" + execAs + "|exit=" + exit + "|output=" + out);
             FileLogger.log(context, TAG, "runExec|execAs=" + execAs
                                          + "|cmd=" + cmd
                                          + "|exit=" + exit
-                                         + "|output=" + output);
+                                         + "|output=" + out);
+        }, "ExecReader");
+        reader.start();
 
-        } catch (@NonNull final IOException e) {
-            Log.w(TAG, "runExec|failed", e);
-            FileLogger.log(context, TAG, "runExec|IOException|" + e);
-        } catch (@NonNull final InterruptedException e) {
-            Thread.currentThread().interrupt();
-            Log.w(TAG, "runExec|interrupted", e);
+        final boolean finished = waitMs > 0
+                                 && process.waitFor(waitMs, java.util.concurrent.TimeUnit.MILLISECONDS);
+        if (finished) {
+            reader.join(1000);
         }
+        final String out;
+        synchronized (collected) {
+            out = new String(collected.toByteArray(), StandardCharsets.UTF_8);
+        }
+        return new Outcome(finished, finished ? process.exitValue() : -1, out);
     }
 }

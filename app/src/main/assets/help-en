@@ -71,6 +71,8 @@ TERMUX
   now). If Termux is not installed, or comes from Google Play (a separate,
   unsupported build), it says so and points to F-Droid / GitHub. Termux is
   detected at service start; restart the service after installing it.
+  tmx -c 'cmd'           run one command in the Termux environment (needs su)
+  eval "$(tmx env)"      put Termux's tools first in the current (root) shell's PATH
   Not implemented yet: non-root access (Termux RUN_COMMAND).
 
 EXTERNAL TERMINALS / APPS
@@ -94,7 +96,8 @@ STARTING / STOPPING FROM OUTSIDE (adb shell, Termux, scripts)
   With the app window (activity):
     am start -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.MainActivity -a com.hardbacknutter.sshd.fg.START
   Running a command (needs "Allow external command execution"; exec_as =
-  root|shell|user, optional --es token):
+  root|shell|user, optional --es token). The caller gets the output back
+  (result=1 data="exit=N ..."; result=8 = still running; --ez nowait true = fire and forget):
     am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceiver -a com.hardbacknutter.sshd.fg.EXEC --es cmd "id" --es exec_as root
   More: docs/EXTERNAL-RUN.md in the repository.
 

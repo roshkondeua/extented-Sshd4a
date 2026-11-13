@@ -5,7 +5,9 @@
 # Works from any role (user/shell/root) as long as the system `su` is usable:
 # it starts a bare `su <termux uid> sh` whose $ENV (etc/rc-termux) sets up
 # Termux's HOME/PREFIX/PATH and execs Termux's own login.
-# Non-root operation (via Termux's RUN_COMMAND intent) is NOT implemented yet.
+# Also: `tmx -c 'cmd'` runs one command in the Termux environment, `eval "$(tmx env)"` adds
+# Termux's tools to the current (root) shell. Non-root operation (via Termux's RUN_COMMAND
+# intent) is NOT implemented yet.
 
 BASE=/data/local/tmp/Sshd4a
 INFO=$BASE/etc/termux-info
@@ -33,6 +35,28 @@ if ! command -v su >/dev/null 2>&1; then
     echo "the com.termux.permission.RUN_COMMAND permission) is planned but not implemented yet."
     exit 1
 fi
+
+T=/data/data/com.termux/files
+
+case "$1" in
+    env)
+        # Code for the CURRENT shell (use: eval "$(tmx env)") that puts Termux's tools first in PATH.
+        # Only useful for root (other uids cannot execute Termux's files).
+        echo "export PREFIX='$T/usr'; export TERMUX_HOME='$T/home'"
+        echo "export PATH=\"$T/usr/bin:\$PATH\""
+        exit 0
+        ;;
+    -c)
+        # One command inside the Termux environment, as Termux's own uid. Needs su.
+        shift
+        [ -n "$1" ] || { echo "Usage: tmx -c 'command'"; exit 2; }
+        setup="export HOME=$T/home PREFIX=$T/usr PATH=$T/usr/bin TMPDIR=$T/usr/tmp LANG=en_US.UTF-8"
+        setup="$setup; [ -f $T/usr/lib/libtermux-exec.so ] && export LD_PRELOAD=$T/usr/lib/libtermux-exec.so"
+        setup="$setup; cd $T/home 2>/dev/null"
+        printf '%s\n%s\n' "$setup" "$*" | su "$TERMUX_UID" sh
+        exit $?
+        ;;
+esac
 
 echo "Entering Termux ($TERMUX_VERSION, uid $TERMUX_UID, source: $TERMUX_SOURCE) ..."
 SSHD4A_SHELL_UPGRADED=1 ENV="$BASE/etc/rc-termux" exec su "$TERMUX_UID" sh
