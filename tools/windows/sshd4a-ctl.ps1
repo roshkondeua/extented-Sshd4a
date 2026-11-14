@@ -185,7 +185,16 @@ function Find-Working {
             Write-Host ('  [нет ] {0,-26} {1}:{2}' -f $c.Name, $c.Host, $c.Port) -ForegroundColor DarkGray
         }
     }
-    return , $working
+    return $working
+}
+
+# Показать, откуда взяты адреса (файл / телефон по adb), чтобы было видно, что нашлось.
+function Show-Sources {
+    param([int]$DefaultPort)
+    $cfg = @(Get-ConfiguredTargets -DefaultPort $DefaultPort)
+    $ph = @(Get-PhoneAddresses)
+    Write-Host ('Адреса из файла: {0}; адреса телефона по adb: {1}' -f $cfg.Count, $ph.Count)
+    foreach ($a in $ph) { Write-Host ('    {0}  {1}' -f $a.Name, $a.Host) -ForegroundColor DarkGray }
 }
 
 function Send-Control {
@@ -221,6 +230,7 @@ if (-not (Test-AdbPresent)) { exit 1 }
 
 $devPort = Get-DevicePort
 Write-Host "Порт SSH: $devPort"
+Show-Sources -DefaultPort $devPort
 
 if ($Action -eq 'status' -or $Action -eq 'scan') {
     $cands = @(Get-Candidates -DefaultPort $devPort)
