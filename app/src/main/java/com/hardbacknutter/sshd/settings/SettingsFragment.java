@@ -418,6 +418,8 @@ public class SettingsFragment
         final BooleanSetting foreground = settingsManager.requireSetting(Prefs.RUN_IN_FOREGROUND);
         if (boot.isChecked() && !foreground.isChecked()) {
             foreground.setChecked(true);
+            // setChecked() only changes the in-memory state; persist it (and refresh the row)
+            settingsManager.save(foreground);
         }
         return true;
     }
@@ -580,6 +582,9 @@ public class SettingsFragment
                     final BooleanSetting s = settingsManager.requireSetting(
                             Prefs.ENABLE_EXEC_INTENT);
                     s.setChecked(true);
+                    // BUG FIX: setChecked() alone is not persisted - the switch looked ON
+                    // but was OFF again after the app was restarted.
+                    settingsManager.save(s);
                 })
                 .create()
                 .show();
