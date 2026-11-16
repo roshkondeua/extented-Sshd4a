@@ -12,22 +12,25 @@
     Адреса для перебора берутся из двух источников:
       1) файл sshd4a-targets.txt рядом со скриптом (локальная сеть, ZeroTier, FRP на VDS и т. д.);
       2) адреса самого телефона, которые скрипт узнаёт через adb (wlan0, zt*, и т. п.).
-    Порт по умолчанию читается с телефона (файл etc/sshd-port), его можно задать ключом -Port.
     Адрес считается рабочим, только если в ответ на подключение пришёл баннер "SSH-..."
     (FRP принимает соединение, даже когда сервер на телефоне выключен).
+
+    Если adb не видит телефон, START/STOP отправить нельзя; скрипт всё равно проверит и покажет
+    адреса из файла. Какой adb использовать и как к нему подключиться — ключи -AdbPath и -Connect
+    или строки adb-path и adb-connect в sshd4a-targets.txt.
 
 .EXAMPLE
     sshd4a-ctl.bat start
     sshd4a-ctl.bat stop
     sshd4a-ctl.bat status -Device R58M123ABC
-    sshd4a-ctl.bat start -Port 2222 -Wait 40
+    sshd4a-ctl.bat start -AdbPath "C:\Tools\platform-tools\adb.exe" -Connect 192.168.1.50:5555
 #>
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
     [ValidateSet('start', 'stop', 'status', 'scan', 'help')]
     [string]$Action = 'help',
-    # серийный номер устройства для adb -s (если подключено несколько)
+    # серийный номер устройства для adb -s (если подключено несколько; для Wi-Fi это адрес:порт)
     [string]$Device = '',
     # файл со списком адресов (по умолчанию sshd4a-targets.txt рядом со скриптом)
     [string]$Targets = '',
@@ -37,20 +40,27 @@ param(
     [int]$Wait = 25,
     # таймаут проверки одного адреса, секунд
     [int]$ProbeTimeout = 2,
+    # полный путь к adb.exe (например, к тому, что использует программа AYA)
+    [string]$AdbPath = '',
+    # выполнить "adb connect адрес:порт" перед работой (беспроводная отладка)
+    [string]$Connect = '',
     # не вызывать adb (только проверить адреса из файла)
     [switch]$NoAdb
 )
 
 $ErrorActionPreference = 'Continue'
+$ScriptVersion = '1.2 (2026-11-14)'
 $Pkg = 'com.roshkond.sshd4a.extended'
 $Activity = "$Pkg/com.hardbacknutter.sshd.QuickStartActivity"
 $ActionBase = 'com.hardbacknutter.sshd.fg'
 $DeviceBase = '/data/local/tmp/Sshd4a'
-$ScriptVersion = '1.1 (2026-11-14)'
+$script:Adb = 'adb'
+$script:AdbFailed = $false
 if (-not $Targets) { $Targets = Join-Path $PSScriptRoot 'sshd4a-targets.txt' }
+$ReservedKeys = @('adb-path', 'adb-connect')
 
 function Show-Help {
-    Write-Host 'Использование: sshd4a-ctl.bat <start|stop|status|scan> [-Device серийник] [-Port N] [-Wait сек] [-NoAdb]'
+    Write-Host 'Использование: sshd4a-ctl.bat <start|stop|status|scan> [-Device серийник] [-Port N] [-Wait сек] [-AdbPath adb.exe] [-Connect адрес:порт] [-NoAdb]'
     Write-Host ''
     Write-Host '  start   запустить SSH-сервер и показать, на каком адресе он отвечает'
     Write-Host '  stop    остановить SSH-сервер (активные сессии завершаются) и проверить остановку'
@@ -58,30 +68,99 @@ function Show-Help {
     Write-Host ''
     Write-Host "Список адресов: $Targets"
     Write-Host '  строки вида   имя = хост[:порт]   (# - комментарий); адреса телефона добавляются автоматически через adb.'
+    Write-Host '  служебные строки:   adb-path = C:\путь\adb.exe     adb-connect = 192.168.1.50:5555'
     Write-Host 'На телефоне должна быть включена опция "Allow starting the service by an external Intent".'
 }
 
-function Test-AdbPresent {
-    if ($NoAdb) { return $true }
-    if (Get-Command adb -ErrorAction SilentlyContinue) { return $true }
-    Write-Host 'adb не найден в PATH. Установите Android platform-tools или используйте -NoAdb.' -ForegroundColor Red
-    return $false
+# Значение служебной строки "ключ = значение" из файла адресов ('' если нет).
+function Get-FileSetting {
+    param([string]$Key)
+    if (-not (Test-Path -LiteralPath $Targets)) { return '' }
+    foreach ($raw in (Get-Content -LiteralPath $Targets)) {
+        $line = $raw.Trim()
+        if ($line -eq '' -or $line.StartsWith('#')) { continue }
+        $eq = $line.IndexOf('=')
+        if ($eq -le 0) { continue }
+        if ($line.Substring(0, $eq).Trim() -ieq $Key) { return $line.Substring($eq + 1).Trim() }
+    }
+    return ''
 }
 
 function Invoke-Adb {
-    param([string[]]$AdbArgs)
+    param([string[]]$AdbArgs, [switch]$NoSerial)
     $all = @()
-    if ($Device) { $all += @('-s', $Device) }
+    if ($Device -and -not $NoSerial) { $all += @('-s', $Device) }
     $all += $AdbArgs
-    $out = & adb @all 2>&1
+    $out = & $script:Adb @all 2>&1
     $code = $LASTEXITCODE
     $text = (($out | ForEach-Object { "$_" }) -join "`n").Trim()
     return @{ Code = $code; Text = $text }
 }
 
+# Найти adb, при необходимости подключиться по Wi-Fi, убедиться, что есть готовое устройство.
+# Возвращает $true, если можно отправлять команды на телефон.
+function Initialize-Adb {
+    $path = $AdbPath
+    if (-not $path -and $env:SSHD4A_ADB) { $path = $env:SSHD4A_ADB }
+    if (-not $path) { $path = Get-FileSetting -Key 'adb-path' }
+    if ($path) {
+        if (-not (Test-Path -LiteralPath $path)) {
+            Write-Host "adb не найден по пути: $path" -ForegroundColor Red
+            return $false
+        }
+        $script:Adb = $path
+    } else {
+        $cmd = Get-Command adb -ErrorAction SilentlyContinue
+        if (-not $cmd) {
+            Write-Host 'adb не найден в PATH. Установите Android platform-tools, укажите -AdbPath или строку adb-path в файле адресов.' -ForegroundColor Red
+            return $false
+        }
+        $script:Adb = $cmd.Source
+    }
+    Write-Host "adb: $($script:Adb)"
+
+    $conn = $Connect
+    if (-not $conn) { $conn = Get-FileSetting -Key 'adb-connect' }
+    if ($conn) {
+        $c = Invoke-Adb -AdbArgs @('connect', $conn) -NoSerial
+        Write-Host ('adb connect {0}: {1}' -f $conn, $c.Text)
+    }
+
+    $r = Invoke-Adb -AdbArgs @('devices', '-l') -NoSerial
+    $ready = @()
+    $other = @()
+    foreach ($line in ($r.Text -split "`n")) {
+        if ($line -match '^(\S+)\s+(device|unauthorized|offline|no permissions)\b') {
+            if ($Matches[2] -eq 'device') { $ready += $Matches[1] } else { $other += ('{0} ({1})' -f $Matches[1], $Matches[2]) }
+        }
+    }
+    if ($Device) {
+        if ($ready -contains $Device) { return $true }
+        Write-Host "Устройство '$Device' не найдено среди готовых к работе." -ForegroundColor Red
+    } elseif ($ready.Count -eq 1) {
+        Write-Host "Устройство: $($ready[0])"
+        return $true
+    } elseif ($ready.Count -gt 1) {
+        Write-Host 'Подключено несколько устройств, укажите нужное ключом -Device:' -ForegroundColor Red
+        foreach ($d in $ready) { Write-Host "    $d" }
+        return $false
+    } else {
+        Write-Host 'adb не видит ни одного готового устройства.' -ForegroundColor Red
+    }
+    Write-Host 'Вывод "adb devices -l":'
+    Write-Host $r.Text
+    if ($other.Count -gt 0) { Write-Host ('Есть устройства не в рабочем состоянии: ' + ($other -join ', ')) -ForegroundColor Yellow }
+    Write-Host 'Возможные причины:'
+    Write-Host '  - программа AYA (или другая) запустила СВОЙ adb-сервер другой версии: укажите её adb.exe ключом -AdbPath'
+    Write-Host '    (или строкой adb-path в файле адресов), чтобы использовать тот же сервер;'
+    Write-Host '  - подключение по Wi-Fi: укажите -Connect адрес:порт (или adb-connect в файле адресов);'
+    Write-Host '  - на телефоне не подтверждена отладка по USB/Wi-Fi (статус unauthorized).'
+    return $false
+}
+
 function Get-DevicePort {
     if ($Port -gt 0) { return $Port }
-    if (-not $NoAdb) {
+    if (-not $NoAdb -and -not $script:AdbFailed) {
         $r = Invoke-Adb @('shell', "cat $DeviceBase/etc/sshd-port")
         if ($r.Code -eq 0 -and $r.Text -match '^\s*(\d{1,5})\s*$') { return [int]$Matches[1] }
     }
@@ -90,7 +169,7 @@ function Get-DevicePort {
 
 function Get-PhoneAddresses {
     $list = @()
-    if ($NoAdb) { return $list }
+    if ($NoAdb -or $script:AdbFailed) { return $list }
     $r = Invoke-Adb @('shell', 'ip -o -4 addr show')
     if ($r.Code -ne 0) { return $list }
     foreach ($line in ($r.Text -split "`n")) {
@@ -118,6 +197,7 @@ function Get-ConfiguredTargets {
             $name = $line.Substring(0, $eq).Trim()
             $addr = $line.Substring($eq + 1).Trim()
         }
+        if ($ReservedKeys -contains $name.ToLower()) { continue }
         $h = $addr
         $p = $DefaultPort
         $colon = $addr.LastIndexOf(':')
@@ -196,13 +276,15 @@ function Find-Working {
     return $working
 }
 
-# Показать, откуда взяты адреса (файл / телефон по adb), чтобы было видно, что нашлось.
+# Показать, какие адреса взяты из файла и с телефона.
 function Show-Sources {
     param([int]$DefaultPort)
     $cfg = @(Get-ConfiguredTargets -DefaultPort $DefaultPort)
     $ph = @(Get-PhoneAddresses)
-    Write-Host ('Адреса из файла: {0}; адреса телефона по adb: {1}' -f $cfg.Count, $ph.Count)
-    foreach ($a in $ph) { Write-Host ('    {0}  {1}' -f $a.Name, $a.Host) -ForegroundColor DarkGray }
+    Write-Host ('Адреса из файла {0}: {1}' -f (Split-Path -Leaf $Targets), $cfg.Count)
+    foreach ($a in $cfg) { Write-Host ('    {0,-24} {1}:{2}' -f $a.Name, $a.Host, $a.Port) }
+    Write-Host ('Адреса телефона по adb: {0}' -f $ph.Count)
+    foreach ($a in $ph) { Write-Host ('    {0,-24} {1}' -f $a.Name, $a.Host) }
 }
 
 function Send-Control {
@@ -240,13 +322,29 @@ function Show-Connect {
 }
 
 if ($Action -eq 'help') { Show-Help; exit 0 }
-if (-not (Test-AdbPresent)) { exit 1 }
 
 Write-Host "sshd4a-ctl $ScriptVersion"
 
+if (-not $NoAdb) {
+    if (-not (Initialize-Adb)) { $script:AdbFailed = $true }
+}
+
 $devPort = Get-DevicePort
-Write-Host "Порт SSH: $devPort"
+if ($script:AdbFailed -or $NoAdb) {
+    Write-Host "Порт SSH: $devPort (по умолчанию или из -Port: с телефона порт прочитать нельзя)"
+} else {
+    Write-Host "Порт SSH: $devPort"
+}
 Show-Sources -DefaultPort $devPort
+
+$forceFail = $false
+if ($script:AdbFailed -and ($Action -eq 'start' -or $Action -eq 'stop')) {
+    Write-Host ''
+    Write-Host ('Команду {0} отправить нельзя: нет связи с телефоном по adb.' -f $Action.ToUpper()) -ForegroundColor Red
+    Write-Host 'Ниже проверка адресов из файла (вдруг сервер уже запущен):'
+    $Action = 'status'
+    $forceFail = $true
+}
 
 if ($Action -eq 'status' -or $Action -eq 'scan') {
     $cands = @(Get-Candidates -DefaultPort $devPort)
@@ -254,8 +352,14 @@ if ($Action -eq 'status' -or $Action -eq 'scan') {
         Write-Host "Нет адресов для проверки: заполните $Targets или подключите телефон по adb." -ForegroundColor Yellow
         exit 1
     }
+    Write-Host ''
+    Write-Host 'Проверка адресов:'
     $working = @(Find-Working -Candidates $cands -Quiet $false)
-    if ($working.Count -gt 0) { Show-Connect -Working $working; exit 0 }
+    if ($working.Count -gt 0) {
+        Show-Connect -Working $working
+        if ($forceFail) { exit 1 }
+        exit 0
+    }
     Write-Host ''
     Write-Host 'SSH-сервер не отвечает ни на одном адресе.' -ForegroundColor Yellow
     exit 1
@@ -268,6 +372,7 @@ if ($Action -eq 'start') {
         Show-Connect -Working $already
         exit 0
     }
+    Write-Host ''
     Write-Host 'Отправляю START на телефон...'
     if (-not (Send-Control -What 'START')) { exit 1 }
     $deadline = (Get-Date).AddSeconds($Wait)
@@ -293,7 +398,7 @@ if ($Action -eq 'stop') {
     $before = @(Find-Working -Candidates $cands -Quiet $true)
     if ($before.Count -gt 0) {
         Write-Host 'Сейчас сервер отвечает на:'
-        foreach ($b in $before) { Write-Host ('  {0}  {1}:{2}' -f $b.Name, $b.Host, $b.Port) }
+        foreach ($b in $before) { Write-Host ('  {0}  {1}:{2}   [{3}]' -f $b.Name, $b.Host, $b.Port, (Get-SourceLabel -Candidate $b)) }
     }
     Write-Host 'Отправляю STOP на телефон...'
     if (-not (Send-Control -What 'STOP')) { exit 1 }
@@ -308,7 +413,7 @@ if ($Action -eq 'stop') {
         exit 0
     }
     Write-Host 'Сервер всё ещё отвечает на:' -ForegroundColor Red
-    foreach ($s in $still) { Write-Host ('  {0}  {1}:{2}' -f $s.Name, $s.Host, $s.Port) }
+    foreach ($s in $still) { Write-Host ('  {0}  {1}:{2}   [{3}]' -f $s.Name, $s.Host, $s.Port, (Get-SourceLabel -Candidate $s)) }
     Write-Host 'Остановка не удалась: STOP принимается только для сервера, запущенного внешней командой.'
     Show-ControlLog
     exit 1
