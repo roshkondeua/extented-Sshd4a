@@ -46,6 +46,7 @@ $Pkg = 'com.roshkond.sshd4a.extended'
 $Activity = "$Pkg/com.hardbacknutter.sshd.QuickStartActivity"
 $ActionBase = 'com.hardbacknutter.sshd.fg'
 $DeviceBase = '/data/local/tmp/Sshd4a'
+$ScriptVersion = '1.1 (2026-11-14)'
 if (-not $Targets) { $Targets = Join-Path $PSScriptRoot 'sshd4a-targets.txt' }
 
 function Show-Help {
@@ -97,7 +98,7 @@ function Get-PhoneAddresses {
             $iface = $Matches[1]
             $ip = $Matches[2]
             if ($ip.StartsWith('127.')) { continue }
-            $list += [pscustomobject]@{ Name = "телефон:$iface"; Host = $ip; Port = 0 }
+            $list += [pscustomobject]@{ Name = "телефон:$iface"; Host = $ip; Port = 0; Source = 'phone' }
         }
     }
     return $list
@@ -126,7 +127,7 @@ function Get-ConfiguredTargets {
             if ([int]::TryParse($addr.Substring($colon + 1).Trim(), [ref]$pp) -and $pp -gt 0) { $p = $pp }
         }
         if (-not $name) { $name = $h }
-        $list += [pscustomobject]@{ Name = $name; Host = $h; Port = $p }
+        $list += [pscustomobject]@{ Name = $name; Host = $h; Port = $p; Source = 'file' }
     }
     return $list
 }
@@ -136,7 +137,7 @@ function Get-Candidates {
     $all = @()
     $all += @(Get-ConfiguredTargets -DefaultPort $DefaultPort)
     foreach ($a in (Get-PhoneAddresses)) {
-        $all += [pscustomobject]@{ Name = $a.Name; Host = $a.Host; Port = $DefaultPort }
+        $all += [pscustomobject]@{ Name = $a.Name; Host = $a.Host; Port = $DefaultPort; Source = 'phone' }
     }
     $seen = @{}
     $result = @()
@@ -148,6 +149,13 @@ function Get-Candidates {
         }
     }
     return $result
+}
+
+# Откуда взят адрес: из файла sshd4a-targets.txt или это адрес самого телефона (adb).
+function Get-SourceLabel {
+    param([object]$Candidate)
+    if ($Candidate.Source -eq 'file') { return ('из ' + (Split-Path -Leaf $Targets)) }
+    return 'адрес телефона (adb)'
 }
 
 function Test-SshEndpoint {
@@ -179,10 +187,10 @@ function Find-Working {
         if ($banner -and $banner.StartsWith('SSH-')) {
             $working += $c
             if (-not $Quiet) {
-                Write-Host ('  [ЕСТЬ] {0,-26} {1}:{2}   {3}' -f $c.Name, $c.Host, $c.Port, $banner) -ForegroundColor Green
+                Write-Host ('  [ЕСТЬ] {0,-24} {1}:{2}   [{3}]   {4}' -f $c.Name, $c.Host, $c.Port, (Get-SourceLabel -Candidate $c), $banner) -ForegroundColor Green
             }
         } elseif (-not $Quiet) {
-            Write-Host ('  [нет ] {0,-26} {1}:{2}' -f $c.Name, $c.Host, $c.Port) -ForegroundColor DarkGray
+            Write-Host ('  [нет ] {0,-24} {1}:{2}   [{3}]' -f $c.Name, $c.Host, $c.Port, (Get-SourceLabel -Candidate $c)) -ForegroundColor DarkGray
         }
     }
     return $working
@@ -219,14 +227,22 @@ function Show-ControlLog {
 function Show-Connect {
     param([object[]]$Working)
     Write-Host ''
-    Write-Host 'SSH-сервер доступен:' -ForegroundColor Green
+    Write-Host 'SSH-сервер доступен по адресам:' -ForegroundColor Green
     foreach ($w in $Working) {
-        Write-Host ('  {0}: ssh -p {1} <пользователь>@{2}' -f $w.Name, $w.Port, $w.Host) -ForegroundColor Green
+        Write-Host ('  {0,-24} ssh -p {1} <пользователь>@{2}   [{3}]' -f $w.Name, $w.Port, $w.Host, (Get-SourceLabel -Candidate $w)) -ForegroundColor Green
+    }
+    $fromFile = @($Working | Where-Object { $_.Source -eq 'file' })
+    if ($fromFile.Count -gt 0) {
+        Write-Host ('Из {0} отвечают: {1}' -f (Split-Path -Leaf $Targets), (($fromFile | ForEach-Object { $_.Name }) -join ', ')) -ForegroundColor Green
+    } else {
+        Write-Host ('Ни один адрес из {0} не отвечает (отвечают только адреса телефона).' -f (Split-Path -Leaf $Targets)) -ForegroundColor Yellow
     }
 }
 
 if ($Action -eq 'help') { Show-Help; exit 0 }
 if (-not (Test-AdbPresent)) { exit 1 }
+
+Write-Host "sshd4a-ctl $ScriptVersion"
 
 $devPort = Get-DevicePort
 Write-Host "Порт SSH: $devPort"
@@ -248,7 +264,7 @@ if ($Action -eq 'status' -or $Action -eq 'scan') {
 if ($Action -eq 'start') {
     $already = @(Find-Working -Candidates @(Get-Candidates -DefaultPort $devPort) -Quiet $true)
     if ($already.Count -gt 0) {
-        Write-Host 'Сервер уже работает.'
+        Write-Host 'Сервер уже отвечает, START не нужен.'
         Show-Connect -Working $already
         exit 0
     }
