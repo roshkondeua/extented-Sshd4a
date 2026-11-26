@@ -1,0 +1,120 @@
+name: Build static Midnight Commander (Android arm64)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [mc-build-test]
+    paths:
+      - .github/workflows/mc-static.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake autopoint build-essential bison gettext libtool meson ninja-build pkg-config python3-pip texinfo wget xz-utils
+          python3 -m pip install --break-system-packages ziglang==0.13.0
+      - name: Build static Android arm64 binary
+        shell: bash
+        run: |
+          set -euxo pipefail
+          export ZIG="$(python3 -c 'import ziglang, pathlib; print(pathlib.Path(ziglang.__file__).parent / "zig")')"
+          export TARGET=aarch64-linux-musl
+          export PREFIX="$GITHUB_WORKSPACE/prefix"
+          export BUILD="$GITHUB_WORKSPACE/build"
+          mkdir -p "$PREFIX/bin" "$PREFIX/lib/pkgconfig" "$BUILD" "$GITHUB_WORKSPACE/dist"
+          cat > "$PREFIX/bin/aarch64-linux-musl-cc" <<EOF
+          #!/bin/sh
+          exec "$ZIG" cc -target "$TARGET" "\$@"
+          EOF
+          cat > "$PREFIX/bin/aarch64-linux-musl-c++" <<EOF
+          #!/bin/sh
+          exec "$ZIG" c++ -target "$TARGET" "\$@"
+          EOF
+          chmod +x "$PREFIX/bin/aarch64-linux-musl-cc" "$PREFIX/bin/aarch64-linux-musl-c++"
+          export CC="$PREFIX/bin/aarch64-linux-musl-cc"
+          export CXX="$PREFIX/bin/aarch64-linux-musl-c++"
+          export AR="$ZIG ar"
+          export RANLIB="$ZIG ranlib"
+          export STRIP="$ZIG strip"
+          export CFLAGS='-O2 -fPIE'
+          export CXXFLAGS='-O2 -fPIE'
+          export LDFLAGS='-static -static-pie -Wl,--gc-sections'
+          export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig"
+          export PKG_CONFIG_LIBDIR="$PKG_CONFIG_PATH"
+          export PKG_CONFIG_SYSROOT_DIR=/
+          export PATH="$PREFIX/bin:$PATH"
+
+          cd "$BUILD"
+          wget -q https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz
+          tar xf libffi-3.4.6.tar.gz
+          cd libffi-3.4.6
+          ./configure --host="$TARGET" --prefix="$PREFIX" --enable-static --disable-shared --disable-docs
+          make -j2 && make install
+
+          cd "$BUILD"
+          wget -q https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.45/pcre2-10.45.tar.gz
+          tar xf pcre2-10.45.tar.gz
+          cd pcre2-10.45
+          ./configure --host="$TARGET" --prefix="$PREFIX" --enable-static --disable-shared --disable-pcre2-16 --disable-pcre2-32 --disable-jit --disable-pcre2grep-libz --disable-pcre2grep-libbz2
+          make -j2 && make install
+
+          cd "$BUILD"
+          wget -q https://download.gnome.org/sources/glib/2.82/glib-2.82.4.tar.xz
+          tar xf glib-2.82.4.tar.xz
+          cat > cross-file.txt <<EOF
+          [binaries]
+          c = ['$PREFIX/bin/aarch64-linux-musl-cc']
+          cpp = ['$PREFIX/bin/aarch64-linux-musl-c++']
+          ar = ['$ZIG', 'ar']
+          strip = ['$ZIG', 'strip']
+          pkg-config = 'pkg-config'
+          [host_machine]
+          system = 'linux'
+          cpu_family = 'aarch64'
+          cpu = 'aarch64'
+          endian = 'little'
+          [properties]
+          needs_exe_wrapper = true
+          [built-in options]
+          c_args = ['-O2']
+          c_link_args = ['-static', '-static-pie']
+          EOF
+          meson setup glib-build glib-2.82.4 --cross-file cross-file.txt --prefix="$PREFIX" --default-library=static -Dtests=false -Dinstalled_tests=false -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dselinux=disabled -Dlibmount=disabled -Dlibelf=disabled -Dnls=disabled -Dglib_debug=disabled
+          ninja -C glib-build -j2 install
+
+          cd "$BUILD"
+          wget -q https://invisible-mirror.net/archives/ncurses/ncurses-6.5.tar.gz
+          tar xf ncurses-6.5.tar.gz
+          cd ncurses-6.5
+          ./configure --host="$TARGET" --prefix="$PREFIX" --with-shared=no --with-normal --without-cxx --without-cxx-binding --without-ada --without-manpages --without-tests --enable-widec --with-termlib
+          make -j2 && make install
+
+          cd "$BUILD"
+          wget -q https://ftp.osuosl.org/pub/midnightcommander/mc-4.8.33.tar.xz
+          tar xf mc-4.8.33.tar.xz
+          cd mc-4.8.33
+          ./configure --host="$TARGET" --prefix=/system/xbin --with-screen=ncurses --with-search-engine=glib --disable-nls --disable-vfs-sftp
+          make -j2
+          cp src/mc "$GITHUB_WORKSPACE/dist/mc"
+          "$STRIP" "$GITHUB_WORKSPACE/dist/mc"
+          file "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/build-info.txt"
+          readelf -l "$GITHUB_WORKSPACE/dist/mc" | tee -a "$GITHUB_WORKSPACE/dist/build-info.txt"
+          if readelf -l "$GITHUB_WORKSPACE/dist/mc" | grep -q INTERP; then echo 'Unexpected dynamic ELF interpreter'; exit 1; fi
+          if readelf -d "$GITHUB_WORKSPACE/dist/mc" 2>/dev/null | grep -q NEEDED; then echo 'Unexpected dynamic dependency'; exit 1; fi
+          "$GITHUB_WORKSPACE/dist/mc" --version
+          "$GITHUB_WORKSPACE/dist/mc" --help >/dev/null
+          sha256sum "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/SHA256SUMS"
+          tar -C "$GITHUB_WORKSPACE/dist" -czf "$GITHUB_WORKSPACE/mc-4.8.33-android-arm64.tar.gz" mc SHA256SUMS build-info.txt
+      - name: Upload test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mc-4.8.33-android-arm64-test
+          path: mc-4.8.33-android-arm64.tar.gz
+          if-no-files-found: error
