@@ -18,7 +18,7 @@ jobs:
       - name: Install build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y autoconf automake autopoint build-essential bison gettext libtool meson ninja-build pkg-config python3-pip texinfo wget xz-utils
+          sudo apt-get install -y autoconf automake autopoint binutils-aarch64-linux-gnu build-essential bison gettext libtool meson ninja-build pkg-config python3-pip texinfo wget xz-utils
           python3 -m pip install --break-system-packages ziglang==0.13.0
       - name: Build static Android arm64 binary
         shell: bash
@@ -43,7 +43,6 @@ jobs:
           export CXX="$PREFIX/bin/aarch64-linux-musl-c++"
           export AR="$ZIG ar"
           export RANLIB="$ZIG ranlib"
-          export STRIP="$ZIG strip"
           export CFLAGS='-O2 -fPIE'
           export CXXFLAGS='-O2 -fPIE'
           export LDFLAGS='-static -static-pie -Wl,--gc-sections'
@@ -117,7 +116,7 @@ jobs:
           if ! ./configure --host="$TARGET" --prefix=/system/xbin --with-screen=ncursesw --with-search-engine=glib --disable-nls --disable-vfs-sftp; then tail -n 120 config.log; exit 1; fi
           make -j2
           cp src/mc "$GITHUB_WORKSPACE/dist/mc"
-          "$ZIG" strip "$GITHUB_WORKSPACE/dist/mc"
+          aarch64-linux-gnu-strip "$GITHUB_WORKSPACE/dist/mc"
           file "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/build-info.txt"
           readelf -l "$GITHUB_WORKSPACE/dist/mc" | tee -a "$GITHUB_WORKSPACE/dist/build-info.txt"
           if readelf -l "$GITHUB_WORKSPACE/dist/mc" | grep -q INTERP; then echo 'Unexpected dynamic ELF interpreter'; exit 1; fi
