@@ -21,3 +21,5 @@ unzip|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-And
 gzip|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/gzip|d5d62f67a3fb2479bc7c11c2e935ffe1f1661468d9114b929836aa36ac556850|gzip
 less|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/less|cc4cf3ab871f5ff3d434e20c8a9a838e345f890e66cf8541fdae7735a2059feb|less
 socat|arm64-v8a|unknown|https://raw.githubusercontent.com/bnsmb/binaries-for-Android/main/binaries/socat|8d65dc2b21f18baf8cbeee610217a3d0d6821f81259caecb043c3ab731b36313|socat
+
+mc|arm64-v8a|4.8.33|https://raw.githubusercontent.com/roshkondeua/extented-Sshd4a/main/docs/pkg-index/binaries/mc|f1f683f7171076b1e115181b0f200eeb606dcd4c9432c58571c9bbd152093695|mc
