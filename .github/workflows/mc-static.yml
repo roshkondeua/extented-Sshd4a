@@ -103,18 +103,17 @@ jobs:
           wget -q https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz
           tar xf ncurses-6.5.tar.gz
           cd ncurses-6.5
-          ./configure --host="$TARGET" --prefix="$PREFIX" --with-shared=no --with-normal --without-cxx --without-cxx-binding --without-ada --without-manpages --without-tests --enable-widec --with-termlib
+          ./configure --host="$TARGET" --prefix="$PREFIX" --with-shared=no --with-normal --without-cxx --without-cxx-binding --without-ada --without-manpages --without-tests --enable-widec
           make -j2 && make install.libs install.includes
           export CPPFLAGS="-I$PREFIX/include"
           export LDFLAGS="-L$PREFIX/lib -static -static-pie -Wl,--gc-sections"
           printf '#include <ncursesw/curses.h>\nint main(void) { return has_colors() ? 0 : 1; }\n' > "$BUILD/ncurses-probe.c"
-          "$CC" $CFLAGS $CPPFLAGS $LDFLAGS -o "$BUILD/ncurses-probe" "$BUILD/ncurses-probe.c" -lncursesw -ltinfow
+          "$CC" $CFLAGS $CPPFLAGS $LDFLAGS -o "$BUILD/ncurses-probe" "$BUILD/ncurses-probe.c" -lncursesw
 
           cd "$BUILD"
           wget -q https://ftp.osuosl.org/pub/midnightcommander/mc-4.8.33.tar.xz
           tar xf mc-4.8.33.tar.xz
           cd mc-4.8.33
-          export LIBS="-ltinfow"
           if ! ./configure --host="$TARGET" --prefix=/system/xbin --with-screen=ncursesw --with-search-engine=glib --disable-nls --disable-vfs-sftp; then tail -n 120 config.log; exit 1; fi
           make -j2
           cp src/mc "$GITHUB_WORKSPACE/dist/mc"
