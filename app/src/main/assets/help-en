@@ -113,6 +113,8 @@ PACKAGE MANAGER (pkg)
   pkg repo add URL            add your own repo (an index file URL)
   pkg repo remove URL         remove a repo
   Index line format (one per package, '#' = comment):
-    name|arch|version|url|sha256|install_name
+    name|arch|version|url|sha256|install_name[|bundle_url|bundle_sha256]
+  Optional bundles are installed automatically in the shared package data area;
+  per-user application settings remain under each user's HOME.
   The default repo is built from bnsmb/binaries-for-Android (arm64 only) plus
   this project's own bash builds. Downloads use busybox wget.
