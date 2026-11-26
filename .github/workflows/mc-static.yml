@@ -72,6 +72,8 @@ jobs:
           [binaries]
           c = ['$PREFIX/bin/aarch64-linux-musl-cc']
           cpp = ['$PREFIX/bin/aarch64-linux-musl-c++']
+          c_ld = 'lld'
+          cpp_ld = 'lld'
           ar = ['$ZIG', 'ar']
           strip = ['$ZIG', 'strip']
           pkg-config = 'pkg-config'
