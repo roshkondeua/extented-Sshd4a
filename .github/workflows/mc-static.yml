@@ -121,8 +121,8 @@ jobs:
           readelf -l "$GITHUB_WORKSPACE/dist/mc" | tee -a "$GITHUB_WORKSPACE/dist/build-info.txt"
           if readelf -l "$GITHUB_WORKSPACE/dist/mc" | grep -q INTERP; then echo 'Unexpected dynamic ELF interpreter'; exit 1; fi
           if readelf -d "$GITHUB_WORKSPACE/dist/mc" 2>/dev/null | grep -q NEEDED; then echo 'Unexpected dynamic dependency'; exit 1; fi
-          qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --version
-          qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --help >/dev/null
+          TERM=xterm-256color qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --version
+          TERM=xterm-256color qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --help >/dev/null
           sha256sum "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/SHA256SUMS"
           tar -C "$GITHUB_WORKSPACE/dist" -czf "$GITHUB_WORKSPACE/mc-4.8.33-android-arm64.tar.gz" mc SHA256SUMS build-info.txt
       - name: Upload test artifact
