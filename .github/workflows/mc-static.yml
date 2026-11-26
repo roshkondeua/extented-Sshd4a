@@ -110,6 +110,8 @@ jobs:
           wget -q https://ftp.osuosl.org/pub/midnightcommander/mc-4.8.33.tar.xz
           tar xf mc-4.8.33.tar.xz
           cd mc-4.8.33
+          export CPPFLAGS="-I$PREFIX/include"
+          export LDFLAGS="-L$PREFIX/lib -static -static-pie -Wl,--gc-sections"
           ./configure --host="$TARGET" --prefix=/system/xbin --with-screen=ncurses --with-search-engine=glib --disable-nls --disable-vfs-sftp
           make -j2
           cp src/mc "$GITHUB_WORKSPACE/dist/mc"
