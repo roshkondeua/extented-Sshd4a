@@ -117,7 +117,7 @@ jobs:
           if ! ./configure --host="$TARGET" --prefix=/system/xbin --with-screen=ncursesw --with-search-engine=glib --disable-nls --disable-vfs-sftp; then tail -n 120 config.log; exit 1; fi
           make -j2
           cp src/mc "$GITHUB_WORKSPACE/dist/mc"
-          "$STRIP" "$GITHUB_WORKSPACE/dist/mc"
+          "$ZIG" strip "$GITHUB_WORKSPACE/dist/mc"
           file "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/build-info.txt"
           readelf -l "$GITHUB_WORKSPACE/dist/mc" | tee -a "$GITHUB_WORKSPACE/dist/build-info.txt"
           if readelf -l "$GITHUB_WORKSPACE/dist/mc" | grep -q INTERP; then echo 'Unexpected dynamic ELF interpreter'; exit 1; fi
