@@ -67,7 +67,7 @@ jobs:
           make -j2 && make install
 
           cd "$BUILD"
-          wget -q https://zlib.net/fossils/zlib-1.3.1.tar.gz
+          wget -q https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
           tar xf zlib-1.3.1.tar.gz
           cd zlib-1.3.1
           ./configure --static --prefix="$PREFIX"
