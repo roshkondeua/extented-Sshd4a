@@ -18,7 +18,7 @@ jobs:
       - name: Install build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y autoconf automake autopoint binutils-aarch64-linux-gnu build-essential bison gettext libtool meson ninja-build pkg-config python3-pip texinfo wget xz-utils
+          sudo apt-get install -y autoconf automake autopoint binutils-aarch64-linux-gnu build-essential bison gettext libtool meson ninja-build pkg-config python3-pip qemu-user texinfo wget xz-utils
           python3 -m pip install --break-system-packages ziglang==0.13.0
       - name: Build static Android arm64 binary
         shell: bash
@@ -121,8 +121,8 @@ jobs:
           readelf -l "$GITHUB_WORKSPACE/dist/mc" | tee -a "$GITHUB_WORKSPACE/dist/build-info.txt"
           if readelf -l "$GITHUB_WORKSPACE/dist/mc" | grep -q INTERP; then echo 'Unexpected dynamic ELF interpreter'; exit 1; fi
           if readelf -d "$GITHUB_WORKSPACE/dist/mc" 2>/dev/null | grep -q NEEDED; then echo 'Unexpected dynamic dependency'; exit 1; fi
-          "$GITHUB_WORKSPACE/dist/mc" --version
-          "$GITHUB_WORKSPACE/dist/mc" --help >/dev/null
+          qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --version
+          qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --help >/dev/null
           sha256sum "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/SHA256SUMS"
           tar -C "$GITHUB_WORKSPACE/dist" -czf "$GITHUB_WORKSPACE/mc-4.8.33-android-arm64.tar.gz" mc SHA256SUMS build-info.txt
       - name: Upload test artifact
