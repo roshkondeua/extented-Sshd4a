@@ -104,7 +104,7 @@ jobs:
           tar xf ncurses-6.5.tar.gz
           cd ncurses-6.5
           ./configure --host="$TARGET" --prefix="$PREFIX" --with-shared=no --with-normal --without-cxx --without-cxx-binding --without-ada --without-manpages --without-tests --enable-widec --with-termlib
-          make -j2 && make install
+          make -j2 && make install.libs install.includes
 
           cd "$BUILD"
           wget -q https://ftp.osuosl.org/pub/midnightcommander/mc-4.8.33.tar.xz
