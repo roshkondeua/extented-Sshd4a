@@ -42,14 +42,14 @@ param(
     [int]$ProbeTimeout = 2,
     # полный путь к adb.exe (например, к тому, что использует программа AYA)
     [string]$AdbPath = '',
-    # выполнить "adb connect адрес:порт" перед работой (беспроводная отладка)
+    # adb-адрес телефона (адрес:порт) для "adb connect"; перебор нескольких — строки adb.имя = адрес в файле адресов
     [string]$Connect = '',
     # не вызывать adb (только проверить адреса из файла)
     [switch]$NoAdb
 )
 
 $ErrorActionPreference = 'Continue'
-$ScriptVersion = '1.2 (2026-11-14)'
+$ScriptVersion = '1.3 (2026-11-14)'
 $Pkg = 'com.roshkond.sshd4a.extended'
 $Activity = "$Pkg/com.hardbacknutter.sshd.QuickStartActivity"
 $ActionBase = 'com.hardbacknutter.sshd.fg'
@@ -57,7 +57,13 @@ $DeviceBase = '/data/local/tmp/Sshd4a'
 $script:Adb = 'adb'
 $script:AdbFailed = $false
 if (-not $Targets) { $Targets = Join-Path $PSScriptRoot 'sshd4a-targets.txt' }
-$ReservedKeys = @('adb-path', 'adb-connect')
+
+# Служебные ключи файла адресов: это не адреса SSH.
+function Test-ReservedKey {
+    param([string]$Name)
+    $n = $Name.ToLower()
+    return ($n -eq 'adb-path' -or $n -eq 'adb-connect' -or $n.StartsWith('adb.'))
+}
 
 function Show-Help {
     Write-Host 'Использование: sshd4a-ctl.bat <start|stop|status|scan> [-Device серийник] [-Port N] [-Wait сек] [-AdbPath adb.exe] [-Connect адрес:порт] [-NoAdb]'
@@ -68,7 +74,7 @@ function Show-Help {
     Write-Host ''
     Write-Host "Список адресов: $Targets"
     Write-Host '  строки вида   имя = хост[:порт]   (# - комментарий); адреса телефона добавляются автоматически через adb.'
-    Write-Host '  служебные строки:   adb-path = C:\путь\adb.exe     adb-connect = 192.168.1.50:5555'
+    Write-Host '  служебные строки:   adb-path = C:\путь\adb.exe     adb.имя = адрес:порт   (адреса ADB телефона, перебираются по порядку)'
     Write-Host 'На телефоне должна быть включена опция "Allow starting the service by an external Intent".'
 }
 
@@ -97,7 +103,86 @@ function Invoke-Adb {
     return @{ Code = $code; Text = $text }
 }
 
-# Найти adb, при необходимости подключиться по Wi-Fi, убедиться, что есть готовое устройство.
+# Все значения служебной строки (ключ может повторяться): "ключ = значение".
+function Get-FileSettings {
+    param([string]$Key)
+    $values = @()
+    if (-not (Test-Path -LiteralPath $Targets)) { return $values }
+    foreach ($raw in (Get-Content -LiteralPath $Targets)) {
+        $line = $raw.Trim()
+        if ($line -eq '' -or $line.StartsWith('#')) { continue }
+        $eq = $line.IndexOf('=')
+        if ($eq -le 0) { continue }
+        if ($line.Substring(0, $eq).Trim() -ieq $Key) { $values += $line.Substring($eq + 1).Trim() }
+    }
+    return $values
+}
+
+function ConvertTo-AdbTarget {
+    param([string]$Name, [string]$Addr)
+    $h = $Addr
+    $p = 5555
+    $colon = $Addr.LastIndexOf(':')
+    if ($colon -gt 0 -and $Addr.IndexOf(':') -eq $colon) {
+        $h = $Addr.Substring(0, $colon).Trim()
+        $pp = 0
+        if ([int]::TryParse($Addr.Substring($colon + 1).Trim(), [ref]$pp) -and $pp -gt 0) { $p = $pp }
+    }
+    if (-not $Name) { $Name = $h }
+    return [pscustomobject]@{ Name = $Name; Host = $h; Port = $p }
+}
+
+# Адреса ADB для подключения: ключ -Connect, строки "adb-connect = адрес" и "adb.имя = адрес" из файла.
+function Get-AdbTargets {
+    $list = @()
+    if ($Connect) { $list += ConvertTo-AdbTarget -Name 'ключ -Connect' -Addr $Connect }
+    if (Test-Path -LiteralPath $Targets) {
+        foreach ($raw in (Get-Content -LiteralPath $Targets)) {
+            $line = $raw.Trim()
+            if ($line -eq '' -or $line.StartsWith('#')) { continue }
+            $eq = $line.IndexOf('=')
+            if ($eq -le 0) { continue }
+            $key = $line.Substring(0, $eq).Trim()
+            $val = $line.Substring($eq + 1).Trim()
+            if ($key -ieq 'adb-connect') {
+                $list += ConvertTo-AdbTarget -Name '' -Addr $val
+            } elseif ($key.ToLower().StartsWith('adb.') -and $key.Length -gt 4) {
+                $list += ConvertTo-AdbTarget -Name $key.Substring(4).Trim() -Addr $val
+            }
+        }
+    }
+    return $list
+}
+
+# Просто проверить, что TCP-порт принимает соединения.
+function Test-TcpOpen {
+    param([string]$HostName, [int]$PortNumber, [int]$TimeoutMs)
+    $client = New-Object System.Net.Sockets.TcpClient
+    try {
+        $iar = $client.BeginConnect($HostName, $PortNumber, $null, $null)
+        if (-not $iar.AsyncWaitHandle.WaitOne($TimeoutMs)) { return $false }
+        $client.EndConnect($iar)
+        return $true
+    } catch {
+        return $false
+    } finally {
+        $client.Close()
+    }
+}
+
+function Get-AdbDevices {
+    $r = Invoke-Adb -AdbArgs @('devices', '-l') -NoSerial
+    $ready = @()
+    $other = @()
+    foreach ($line in ($r.Text -split "`n")) {
+        if ($line -match '^(\S+)\s+(device|unauthorized|offline|no permissions)\b') {
+            if ($Matches[2] -eq 'device') { $ready += $Matches[1] } else { $other += ('{0} ({1})' -f $Matches[1], $Matches[2]) }
+        }
+    }
+    return [pscustomobject]@{ Ready = $ready; Other = $other; Text = $r.Text }
+}
+
+# Найти adb, выбрать устройство (USB/уже подключённое или по списку адресов ADB).
 # Возвращает $true, если можно отправлять команды на телефон.
 function Initialize-Adb {
     $path = $AdbPath
@@ -119,41 +204,58 @@ function Initialize-Adb {
     }
     Write-Host "adb: $($script:Adb)"
 
-    $conn = $Connect
-    if (-not $conn) { $conn = Get-FileSetting -Key 'adb-connect' }
-    if ($conn) {
-        $c = Invoke-Adb -AdbArgs @('connect', $conn) -NoSerial
-        Write-Host ('adb connect {0}: {1}' -f $conn, $c.Text)
-    }
+    $targets = @(Get-AdbTargets)
+    $d = Get-AdbDevices
+    $ready = @($d.Ready)
 
-    $r = Invoke-Adb -AdbArgs @('devices', '-l') -NoSerial
-    $ready = @()
-    $other = @()
-    foreach ($line in ($r.Text -split "`n")) {
-        if ($line -match '^(\S+)\s+(device|unauthorized|offline|no permissions)\b') {
-            if ($Matches[2] -eq 'device') { $ready += $Matches[1] } else { $other += ('{0} ({1})' -f $Matches[1], $Matches[2]) }
-        }
-    }
     if ($Device) {
         if ($ready -contains $Device) { return $true }
-        Write-Host "Устройство '$Device' не найдено среди готовых к работе." -ForegroundColor Red
-    } elseif ($ready.Count -eq 1) {
-        Write-Host "Устройство: $($ready[0])"
-        return $true
-    } elseif ($ready.Count -gt 1) {
-        Write-Host 'Подключено несколько устройств, укажите нужное ключом -Device:' -ForegroundColor Red
-        foreach ($d in $ready) { Write-Host "    $d" }
-        return $false
-    } else {
-        Write-Host 'adb не видит ни одного готового устройства.' -ForegroundColor Red
+    } elseif (-not $Connect) {
+        if ($ready.Count -eq 1) {
+            Write-Host "Устройство: $($ready[0])"
+            return $true
+        }
+        if ($ready.Count -gt 1) {
+            Write-Host 'Подключено несколько устройств, укажите нужное ключом -Device:' -ForegroundColor Red
+            foreach ($x in $ready) { Write-Host "    $x" }
+            return $false
+        }
     }
+
+    if ($targets.Count -gt 0) {
+        Write-Host ('Адреса ADB: {0}' -f $targets.Count)
+        foreach ($t in $targets) { Write-Host ('    {0,-24} {1}:{2}' -f $t.Name, $t.Host, $t.Port) }
+        Write-Host 'Подключение к ADB:'
+        foreach ($t in $targets) {
+            $serial = '{0}:{1}' -f $t.Host, $t.Port
+            if ($ready -contains $serial) {
+                Write-Host ('  [ЕСТЬ] {0,-24} {1}   уже подключено' -f $t.Name, $serial) -ForegroundColor Green
+                $script:Device = $serial
+                return $true
+            }
+            if (-not (Test-TcpOpen -HostName $t.Host -PortNumber $t.Port -TimeoutMs ($ProbeTimeout * 1000))) {
+                Write-Host ('  [нет ] {0,-24} {1}   порт закрыт или адрес недоступен' -f $t.Name, $serial) -ForegroundColor DarkGray
+                continue
+            }
+            $c = Invoke-Adb -AdbArgs @('connect', $serial) -NoSerial
+            if ($c.Text -match 'connected to' -and $c.Text -notmatch 'failed|unable|cannot') {
+                Write-Host ('  [ЕСТЬ] {0,-24} {1}   {2}' -f $t.Name, $serial, $c.Text) -ForegroundColor Green
+                Write-Host ('ADB подключён через: {0} ({1})' -f $t.Name, $serial) -ForegroundColor Green
+                $script:Device = $serial
+                return $true
+            }
+            Write-Host ('  [нет ] {0,-24} {1}   {2}' -f $t.Name, $serial, $c.Text) -ForegroundColor DarkGray
+        }
+    }
+
+    Write-Host 'adb не видит ни одного готового устройства.' -ForegroundColor Red
     Write-Host 'Вывод "adb devices -l":'
-    Write-Host $r.Text
-    if ($other.Count -gt 0) { Write-Host ('Есть устройства не в рабочем состоянии: ' + ($other -join ', ')) -ForegroundColor Yellow }
+    Write-Host $d.Text
+    if (@($d.Other).Count -gt 0) { Write-Host ('Есть устройства не в рабочем состоянии: ' + (@($d.Other) -join ', ')) -ForegroundColor Yellow }
     Write-Host 'Возможные причины:'
-    Write-Host '  - программа AYA (или другая) запустила СВОЙ adb-сервер другой версии: укажите её adb.exe ключом -AdbPath'
-    Write-Host '    (или строкой adb-path в файле адресов), чтобы использовать тот же сервер;'
-    Write-Host '  - подключение по Wi-Fi: укажите -Connect адрес:порт (или adb-connect в файле адресов);'
+    Write-Host '  - используется не тот adb, что у вашей программы (AYA и т. п.): укажите её adb.exe ключом -AdbPath'
+    Write-Host '    (или строкой adb-path в файле адресов);'
+    Write-Host '  - подключение по Wi-Fi: добавьте адреса ADB телефона в файл адресов (строки adb.имя = адрес:порт) или ключ -Connect;'
     Write-Host '  - на телефоне не подтверждена отладка по USB/Wi-Fi (статус unauthorized).'
     return $false
 }
@@ -197,7 +299,7 @@ function Get-ConfiguredTargets {
             $name = $line.Substring(0, $eq).Trim()
             $addr = $line.Substring($eq + 1).Trim()
         }
-        if ($ReservedKeys -contains $name.ToLower()) { continue }
+        if (Test-ReservedKey -Name $name) { continue }
         $h = $addr
         $p = $DefaultPort
         $colon = $addr.LastIndexOf(':')
