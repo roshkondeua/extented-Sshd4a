@@ -114,6 +114,7 @@ jobs:
           wget -q https://ftp.osuosl.org/pub/midnightcommander/mc-4.8.33.tar.xz
           tar xf mc-4.8.33.tar.xz
           cd mc-4.8.33
+          export LIBS="-ltinfow"
           if ! ./configure --host="$TARGET" --prefix=/system/xbin --with-screen=ncursesw --with-search-engine=glib --disable-nls --disable-vfs-sftp; then tail -n 120 config.log; exit 1; fi
           make -j2
           cp src/mc "$GITHUB_WORKSPACE/dist/mc"
