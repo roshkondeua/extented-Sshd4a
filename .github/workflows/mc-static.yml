@@ -31,6 +31,7 @@ jobs:
           mkdir -p "$PREFIX/bin" "$PREFIX/lib/pkgconfig" "$BUILD" "$GITHUB_WORKSPACE/dist"
           cat > "$PREFIX/bin/aarch64-linux-musl-cc" <<EOF
           #!/bin/sh
+          case " \$* " in *" -Wl,--version "*) echo 'LLD 17.0.6 (compatible with GNU linkers)'; exit 0;; esac
           exec "$ZIG" cc -target "$TARGET" "\$@"
           EOF
           cat > "$PREFIX/bin/aarch64-linux-musl-c++" <<EOF
