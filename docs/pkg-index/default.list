@@ -1,5 +1,5 @@
 # Sshd4a extented - default package index
-# Format: name|arch|version|url|sha256|install_name
+# Format: name|arch|version|url|sha256|install_name[|bundle_url|bundle_sha256]
 #
 # Most entries: bnsmb/binaries-for-Android (arm64-v8a only for now).
 # bash: self-hosted in this repo (docs/pkg-index/binaries/) - the bnsmb

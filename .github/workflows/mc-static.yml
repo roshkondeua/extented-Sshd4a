@@ -2,10 +2,20 @@ name: Build static Midnight Commander (Android arm64)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [mc-build-test]
+  pull_request:
+    branches: [main]
     paths:
       - .github/workflows/mc-static.yml
+      - app/src/main/assets/pkg
+      - docs/pkg-index/**
+      - tools/test-pkg-bundle.sh
+  push:
+    branches: [mc-build-test, mc-shared-data]
+    paths:
+      - .github/workflows/mc-static.yml
+      - app/src/main/assets/pkg
+      - docs/pkg-index/**
+      - tools/test-pkg-bundle.sh
 
 permissions:
   contents: read
@@ -28,7 +38,8 @@ jobs:
           export TARGET=aarch64-linux-musl
           export PREFIX="$GITHUB_WORKSPACE/prefix"
           export BUILD="$GITHUB_WORKSPACE/build"
-          mkdir -p "$PREFIX/bin" "$PREFIX/lib/pkgconfig" "$BUILD" "$GITHUB_WORKSPACE/dist"
+          export STAGE="$GITHUB_WORKSPACE/stage"
+          mkdir -p "$PREFIX/bin" "$PREFIX/lib/pkgconfig" "$BUILD" "$STAGE" "$GITHUB_WORKSPACE/dist"
           cat > "$PREFIX/bin/aarch64-linux-musl-cc" <<EOF
           #!/bin/sh
           case " \$* " in *" -Wl,--version "*) echo 'LLD 17.0.6 (compatible with GNU linkers)'; exit 0;; esac
@@ -113,9 +124,27 @@ jobs:
           wget -q https://ftp.osuosl.org/pub/midnightcommander/mc-4.8.33.tar.xz
           tar xf mc-4.8.33.tar.xz
           cd mc-4.8.33
-          if ! ./configure --host="$TARGET" --prefix=/system/xbin --with-screen=ncursesw --with-search-engine=glib --disable-nls --disable-vfs-sftp; then tail -n 120 config.log; exit 1; fi
+          if ! ./configure --host="$TARGET" --prefix=/data/local/tmp/Sshd4a --sysconfdir=/data/local/tmp/Sshd4a/share/mc/sysconf --libexecdir=/data/local/tmp/Sshd4a/share/mc/libexec --with-screen=ncursesw --with-search-engine=glib --disable-nls --disable-vfs-sftp; then tail -n 120 config.log; exit 1; fi
           make -j2
-          cp src/mc "$GITHUB_WORKSPACE/dist/mc"
+          make DESTDIR="$STAGE" install
+          MC_PREFIX="$STAGE/data/local/tmp/Sshd4a"
+          test -x "$MC_PREFIX/bin/mc"
+          test -f "$MC_PREFIX/share/mc/skins/default.ini"
+          cp "$MC_PREFIX/bin/mc" "$GITHUB_WORKSPACE/dist/mc"
+          tar --dereference --format=ustar -czf "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" -C "$MC_PREFIX" share/mc
+          tar -tzf "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" | tee "$GITHUB_WORKSPACE/dist/mc-data-files.txt"
+          grep -qx 'share/mc/skins/default.ini' "$GITHUB_WORKSPACE/dist/mc-data-files.txt"
+          if tar -tzf "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" | grep -Ev '^share/mc(/|$)' | grep -q .; then echo 'Unexpected path in MC shared data archive'; exit 1; fi
+          python3 - "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" <<'PY'
+          import sys, tarfile
+          with tarfile.open(sys.argv[1], 'r:gz') as archive:
+              for member in archive.getmembers():
+                  name = member.name.rstrip('/')
+                  if name != 'share/mc' and not name.startswith('share/mc/'):
+                      raise SystemExit(f'Unexpected archive path: {member.name}')
+                  if '..' in name.split('/') or not (member.isdir() or member.isfile()):
+                      raise SystemExit(f'Unsafe archive member: {member.name}')
+          PY
           aarch64-linux-gnu-strip "$GITHUB_WORKSPACE/dist/mc"
           file "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/build-info.txt"
           readelf -l "$GITHUB_WORKSPACE/dist/mc" | tee -a "$GITHUB_WORKSPACE/dist/build-info.txt"
@@ -123,8 +152,9 @@ jobs:
           if readelf -d "$GITHUB_WORKSPACE/dist/mc" 2>/dev/null | grep -q NEEDED; then echo 'Unexpected dynamic dependency'; exit 1; fi
           TERM=xterm-256color qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --version
           TERM=xterm-256color qemu-aarch64 "$GITHUB_WORKSPACE/dist/mc" --help >/dev/null
-          sha256sum "$GITHUB_WORKSPACE/dist/mc" | tee "$GITHUB_WORKSPACE/dist/SHA256SUMS"
-          tar -C "$GITHUB_WORKSPACE/dist" -czf "$GITHUB_WORKSPACE/mc-4.8.33-android-arm64.tar.gz" mc SHA256SUMS build-info.txt
+          (cd "$GITHUB_WORKSPACE/dist" && sha256sum mc mc-data.tar.gz > SHA256SUMS && cat SHA256SUMS)
+          sh "$GITHUB_WORKSPACE/tools/test-pkg-bundle.sh" "$GITHUB_WORKSPACE/app/src/main/assets/pkg" "$GITHUB_WORKSPACE/dist/mc" "$GITHUB_WORKSPACE/dist/mc-data.tar.gz"
+          tar -C "$GITHUB_WORKSPACE/dist" -czf "$GITHUB_WORKSPACE/mc-4.8.33-android-arm64.tar.gz" mc mc-data.tar.gz SHA256SUMS build-info.txt mc-data-files.txt
       - name: Upload test artifact
         uses: actions/upload-artifact@v4
         with:

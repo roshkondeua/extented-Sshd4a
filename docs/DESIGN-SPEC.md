@@ -82,6 +82,7 @@ bash 4.1.0 и 3.2.0 лежат в `docs/pkg-index/binaries/`.
 ```
 bin/            pkg-установленные утилиты и команды (pkg, sshd4a, version, ver, help, termux, tmx, busybox)
 etc/            конфигурация (см. 4.1)
+share/          общие данные pkg-пакетов; MC устанавливает сюда share/mc/
 tmp/            общий /tmp, права 1777 (нужен tmux и др.; на Android /tmp нет)
 root/home/      HOME root; chmod 701; внутри autostart.d (700, root)
 shell/home/     HOME shell; chown 2000, chmod 701; внутри autostart.d (700, 2000)
@@ -144,13 +145,17 @@ root и shell — из одного `su`-скрипта (shell через вло
 ## 8. Пакетный менеджер `pkg`
 
 Скрипт `assets/pkg` → `bin/pkg`. Индекс `docs/pkg-index/default.list`, отдаётся через
-`raw.githubusercontent.com`. Формат строки: `name|arch|version|url|sha256|install_name`, `#` — комментарий.
+`raw.githubusercontent.com`. Основной формат строки: `name|arch|version|url|sha256|install_name`;
+необязательные поля `bundle_url|bundle_sha256` добавляют проверяемые общие данные и остаются
+незаметными для старых версий установщика. Общие данные MC устанавливаются в `share/mc`; `pkg remove mc`
+удаляет их вместе с бинарником, не затрагивая персональные файлы в HOME.
 
 Команды: `pkg update`, `list`, `installed`, `install [--force] ИМЯ`, `remove ИМЯ`,
 `repo list|add URL|remove URL`.
 
 - Загрузка через `busybox wget` (curl с c-ares не резолвит DNS на Android); без busybox — curl.
-- Проверка sha256; без `--force` не перекрывает то, что уже есть в системе.
+- Проверка sha256 бинарника и optional bundle; безопасное извлечение MC data files.
+- Без `--force` не перекрывает то, что уже есть в системе.
 - Индекс по умолчанию — в основном bnsmb/binaries-for-Android (только arm64), плюс собственные
   сборки bash для обеих архитектур. Под armeabi-v7a пока только bash.
 - Устанавливает в `bin/`, принадлежащий root: для роли user установка не работает.
