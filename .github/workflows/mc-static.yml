@@ -131,7 +131,7 @@ jobs:
           test -x "$MC_PREFIX/bin/mc"
           test -f "$MC_PREFIX/share/mc/skins/default.ini"
           cp "$MC_PREFIX/bin/mc" "$GITHUB_WORKSPACE/dist/mc"
-          tar --dereference --format=ustar -czf "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" -C "$MC_PREFIX" share/mc
+          tar --dereference --hard-dereference --format=ustar -czf "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" -C "$MC_PREFIX" share/mc
           tar -tzf "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" | tee "$GITHUB_WORKSPACE/dist/mc-data-files.txt"
           grep -qx 'share/mc/skins/default.ini' "$GITHUB_WORKSPACE/dist/mc-data-files.txt"
           if tar -tzf "$GITHUB_WORKSPACE/dist/mc-data.tar.gz" | grep -Ev '^share/mc(/|$)' | grep -q .; then echo 'Unexpected path in MC shared data archive'; exit 1; fi
