@@ -16,6 +16,12 @@ COMMANDS
                           or another terminal app
   With the Magisk module (Settings) the command is in /system/bin, and `sshd` is an
   alias: sshd start | stop | status | shell
+  sshd4a survival [status|apply|revert]
+                          why Android kills the app: status shows the device, the
+                          kill-related settings and the last exit records; apply sets
+                          the known workarounds (phantom-process limit, battery
+                          whitelist, background appops), revert undoes them.
+                          Needs adb shell or root; may cost some battery.
   sshd4a env [--file]     print shell code that adds Sshd4a's bin dir to PATH
                           (--file: print the path of the equivalent file)
   pkg                     package manager (see below)

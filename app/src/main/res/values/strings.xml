@@ -172,6 +172,14 @@
     <string name="pt_exec_token">Required token (optional, leave blank to disable checking)</string>
 
 
+
+    <!-- Preference category title -->
+    <string name="pc_survival">Background survival</string>
+    <string name="ps_survival_info">Some Android versions (and MIUI) kill background apps despite a
+        foreground service. Exempting the app from battery optimization helps. More: run
+        \'sshd4a survival\' from adb shell or root.</string>
+    <string name="lbl_battery_exempt">Exempt from battery optimization</string>
+    <string name="info_battery_already_exempt">Already exempt from battery optimization.</string>
     <!-- Preference category title -->
     <string name="pc_magisk_module">Magisk module (optional)</string>
     <!-- Preference summary/info message. -->

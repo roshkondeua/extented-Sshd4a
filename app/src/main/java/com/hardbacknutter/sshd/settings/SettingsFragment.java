@@ -292,6 +292,12 @@ public class SettingsFragment
                      R.string.pt_exec_token,
                      null, null);
 
+        factory.header(R.string.pc_survival, p -> {
+            p.setSummary(R.string.ps_survival_info);
+        });
+        factory.action("battery_exempt", R.string.lbl_battery_exempt,
+                       this::onBatteryExempt, null);
+
         factory.header(R.string.pc_magisk_module, p -> {
             p.setSummary(R.string.ps_magisk_module_info);
         });
@@ -592,6 +598,34 @@ public class SettingsFragment
         // false = don't apply the checked-state change yet; the dialog above
         // applies it explicitly on confirm, and simply leaves it off on cancel.
         return false;
+    }
+
+    private boolean onBatteryExempt(@NonNull final Setting setting) {
+        final Context context = getContext();
+        if (context == null) {
+            return true;
+        }
+        final android.os.PowerManager pm = (android.os.PowerManager)
+                context.getSystemService(Context.POWER_SERVICE);
+        if (pm != null && pm.isIgnoringBatteryOptimizations(context.getPackageName())) {
+            Snackbar.make(requireView(), R.string.info_battery_already_exempt,
+                          Snackbar.LENGTH_LONG).show();
+            return true;
+        }
+        try {
+            startActivity(new android.content.Intent(
+                    android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                    android.net.Uri.parse("package:" + context.getPackageName())));
+        } catch (@NonNull final Exception e) {
+            // no handler for the direct request: open the general list instead
+            try {
+                startActivity(new android.content.Intent(
+                        android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+            } catch (@NonNull final Exception ignored) {
+                // nothing more we can do
+            }
+        }
+        return true;
     }
 
     private boolean onMagiskInstall(@NonNull final Setting setting) {

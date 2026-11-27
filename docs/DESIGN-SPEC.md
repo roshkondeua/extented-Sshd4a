@@ -1,6 +1,6 @@
 # Sshd4a extented — техническая спецификация
 
-Актуально для версии **1.13.2.37**. Документ описывает то, что реализовано и проверено
+Актуально для версии **1.13.2.39**. Документ описывает то, что реализовано и проверено
 на устройстве, отдельно от планов (раздел 13). Пометки: **[проверено]** — подтверждено
 на устройстве владельца; **[не проверено]** — реализовано, но ещё не подтверждено.
 
@@ -297,15 +297,15 @@ am broadcast -n com.roshkond.sshd4a.extended/com.hardbacknutter.sshd.ExecReceive
 Гипотеза (не подтверждена): «убийца фантомных процессов» Android 12 (больше 32 процессов или высокая
 нагрузка). Проверка — записи `ExitReasonLogger`.
 
-Известные меры через adb (не применялись):
-```
-device_config set_sync_disabled_for_tests persistent
-device_config put activity_manager max_phantom_processes 2147483647
-cmd deviceidle whitelist +<pkg>
-cmd appops set <pkg> RUN_IN_BACKGROUND allow
-cmd appops set <pkg> RUN_ANY_IN_BACKGROUND allow
-```
-На Android 12L и 13+: `settings put global settings_enable_monitor_phantom_procs false`.
+**Инструмент (1.13.2.39): `sshd4a survival [status|apply|revert]`** (из `adb shell` или root; одна команда вместо ручного набора):
+- `status`: модель, версия Android/SDK, MIUI, состояние настройки фантомного убийцы, белый список батареи, appops `RUN_IN_BACKGROUND` /
+  `RUN_ANY_IN_BACKGROUND` и последние записи `dumpsys activity exit-info` (причина, importance, описание);
+- `apply`: Android 12 (SDK 31): `device_config set_sync_disabled_for_tests persistent` и `device_config put activity_manager max_phantom_processes 2147483647`;
+  Android 12L/13+ (SDK ≥ 32): `settings put global settings_enable_monitor_phantom_procs false`; затем `cmd deviceidle whitelist +<пакет>` и
+  `cmd appops set <пакет> RUN_IN_BACKGROUND|RUN_ANY_IN_BACKGROUND allow`;
+- `revert`: возвращает системные значения (`device_config delete …`, `set_sync_disabled_for_tests none` / `…phantom_procs true`, `whitelist -пакет`, `appops … default`).
+Возможен расход батареи. Не применялось на Redmi 12C **[не проверено]**. В настройках приложения есть кнопка «Exempt from battery optimization»
+(разрешение `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`).
 
 Идеи: служба специальных возможностей (система держит привязку к процессу); эксперимент
 `setsid nohup sleep 86400 &` от uid shell; встроенный ADB-клиент (беспроводная отладка Android 11+) для
